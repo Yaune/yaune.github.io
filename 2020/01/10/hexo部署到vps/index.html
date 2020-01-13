@@ -271,6 +271,11 @@
           
 
           
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 阅读数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
 
           
 
@@ -290,8 +295,8 @@
 
       
         <p>本教程旨在通过在私有云服务器上部署git仓库，使其作为hexo的服务器，并实现deploy博客的同时vps服务器与github仓库同步更新。<a id="more"></a><br><code>注意:</code>本教程基于centos7.5，且在root用户下开始操作。</p>
-<h2 id="一-安装工具"><a href="#一-安装工具" class="headerlink" title="一.安装工具"></a>一.安装工具</h2><p>首先要自行安装需要的工具git、node.js和nginx。</p>
-<h3 id="1-1-安装node-js"><a href="#1-1-安装node-js" class="headerlink" title="1.1 安装node.js"></a>1.1 安装node.js</h3><p>node.js为hexo的基本运行环境</p>
+<h2 id="安装工具"><a href="#安装工具" class="headerlink" title="安装工具"></a>安装工具</h2><p>首先要自行安装需要的工具git、node.js和nginx。</p>
+<h3 id="安装node-js"><a href="#安装node-js" class="headerlink" title="安装node.js"></a>安装node.js</h3><p>node.js为hexo的基本运行环境</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install nodejs</span><br></pre></td></tr></table></figure>
 
 <p>使用n更新到最新版nodejs</p>
@@ -301,15 +306,15 @@
 <p>需要将/bin目录中的node和npm备份后将/usr/local/bin/软连接到/bin目录中</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/local/bin/npm /bin/npm</span><br><span class="line">ln -s /usr/local/bin/node /bin/node</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-2-安装git、nginx"><a href="#1-2-安装git、nginx" class="headerlink" title="1.2 安装git、nginx"></a>1.2 安装git、nginx</h3><p>git用于搭建git仓库，nginx用于搭建静态网页服务器</p>
+<h3 id="安装git、nginx"><a href="#安装git、nginx" class="headerlink" title="安装git、nginx"></a>安装git、nginx</h3><p>git用于搭建git仓库，nginx用于搭建静态网页服务器</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install git nginx -y</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-3-安装hexo"><a href="#1-3-安装hexo" class="headerlink" title="1.3 安装hexo"></a>1.3 安装hexo</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli hexo-server -g</span><br></pre></td></tr></table></figure>
+<h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli hexo-server -g</span><br></pre></td></tr></table></figure>
 
 <p>安装完后验证</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo</span><br></pre></td></tr></table></figure>
 
-<h2 id="二-搭建git仓库"><a href="#二-搭建git仓库" class="headerlink" title="二. 搭建git仓库"></a>二. 搭建git仓库</h2><h3 id="2-1-新建git用户并设置密码"><a href="#2-1-新建git用户并设置密码" class="headerlink" title="2.1 新建git用户并设置密码"></a>2.1 新建git用户并设置密码</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adduser git</span><br><span class="line">passwd git</span><br></pre></td></tr></table></figure>
+<h2 id="搭建git仓库"><a href="#搭建git仓库" class="headerlink" title="搭建git仓库"></a>搭建git仓库</h2><h3 id="新建git用户并设置密码"><a href="#新建git用户并设置密码" class="headerlink" title="新建git用户并设置密码"></a>新建git用户并设置密码</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adduser git</span><br><span class="line">passwd git</span><br></pre></td></tr></table></figure>
 
 <p>修改权限</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 740 /etc/sudoers</span><br><span class="line">vim /etc/sudoers</span><br></pre></td></tr></table></figure>
@@ -318,7 +323,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git     ALL=(ALL)       ALL</span><br></pre></td></tr></table></figure>
 
 <p>保存后改回sudoer权限：<code>chmod 400 /etc/sudoers</code></p>
-<h3 id="2-2-创建免密登陆证书"><a href="#2-2-创建免密登陆证书" class="headerlink" title="2.2 创建免密登陆证书"></a>2.2 创建免密登陆证书</h3><p>在服务器中打开RSA认证</p>
+<h3 id="创建免密登陆证书"><a href="#创建免密登陆证书" class="headerlink" title="创建免密登陆证书"></a>创建免密登陆证书</h3><p>在服务器中打开RSA认证</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
 
 <p>找到并开启(若没有则添加)</p>
@@ -331,13 +336,13 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">touch /home/git/.ssh/authorized_keys</span><br><span class="line">sudo chmod 600 /home/git/.ssh/authorized_keys</span><br><span class="line">vim /home/git/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
 
 <p>若之前未有上传文件至github等仓库的经历，本地客户端无ssh的keys，可以通过以下教程生成<br><a href="https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent" target="_blank" rel="noopener">generating SSH keys</a></p>
-<h3 id="2-3-修改git用户权限"><a href="#2-3-修改git用户权限" class="headerlink" title="2.3 修改git用户权限"></a>2.3 修改git用户权限</h3><p>给git用户设置权限，限制其只能使用git-shell向git仓库push或pull等，而不能登陆机器并取得普通shell命令控制系统。<br>使用<code>which git-shell</code>判断是否安装了git-shell。如果未安装，则<code>yum install git</code><br>判断shells文件路径是否存在：<code>cat /etc/shells</code>，如果shells文件不存在或者文件中没有/usr/bin/git-shell，则</p>
+<h3 id="修改git用户权限"><a href="#修改git用户权限" class="headerlink" title="修改git用户权限"></a>修改git用户权限</h3><p>给git用户设置权限，限制其只能使用git-shell向git仓库push或pull等，而不能登陆机器并取得普通shell命令控制系统。<br>使用<code>which git-shell</code>判断是否安装了git-shell。如果未安装，则<code>yum install git</code><br>判断shells文件路径是否存在：<code>cat /etc/shells</code>，如果shells文件不存在或者文件中没有/usr/bin/git-shell，则</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/shells</span><br></pre></td></tr></table></figure>
 
 <p>在最下面添加</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/git-shell</span><br></pre></td></tr></table></figure>
 
-<h3 id="2-4-创建仓库"><a href="#2-4-创建仓库" class="headerlink" title="2.4 创建仓库"></a>2.4 创建仓库</h3><p>在/var/repo创建裸仓库(切换为root用户)</p>
+<h3 id="创建仓库"><a href="#创建仓库" class="headerlink" title="创建仓库"></a>创建仓库</h3><p>在/var/repo创建裸仓库(切换为root用户)</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /var/repo</span><br><span class="line">cd /var/repo</span><br><span class="line">git init --bare blog.git</span><br></pre></td></tr></table></figure>
 
 <p>配置git hooks使得在仓库更新的时候，nginx配置文件中root指向的目录同步更新(这里root指向的是/var/www/hexo，具体见步骤三)</p>
@@ -352,7 +357,7 @@
 <p>更改blog.git拥有者</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chown -R git:git blog.git</span><br></pre></td></tr></table></figure>
 
-<h3 id="2-5-使用chsh命令修改任意系统用户的shell权限"><a href="#2-5-使用chsh命令修改任意系统用户的shell权限" class="headerlink" title="2.5 使用chsh命令修改任意系统用户的shell权限"></a>2.5 使用chsh命令修改任意系统用户的shell权限</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chsh git</span><br></pre></td></tr></table></figure>
+<h3 id="使用chsh命令修改任意系统用户的shell权限"><a href="#使用chsh命令修改任意系统用户的shell权限" class="headerlink" title="使用chsh命令修改任意系统用户的shell权限"></a>使用chsh命令修改任意系统用户的shell权限</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chsh git</span><br></pre></td></tr></table></figure>
 
 <p>在 <code>Login  Shell [/bin/bash]</code>后输入:/usr/bin/git-shell<br>修改完后验证<code>cat /etc/passwd</code>是否以git-shell结尾</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">it:x:1003:1003:,,,:/home/git:/usr/bin/git-shell</span><br></pre></td></tr></table></figure>
@@ -360,15 +365,15 @@
 <p>修改后，使用<code>ssh git@服务器ip</code>登陆将被拒绝：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh git@gitserver</span></span><br><span class="line">fatal: Interactive git shell is not enabled.</span><br><span class="line">hint: ~/git-shell-commands should exist and have read and execute access.</span><br><span class="line">Connection to gitserver closed.</span><br></pre></td></tr></table></figure>
 
-<h3 id="2-6-git测试"><a href="#2-6-git测试" class="headerlink" title="2.6 git测试"></a>2.6 git测试</h3><p>完成上述步骤后，通过测试判断git服务器是否部署成功,在本地客户端执行</p>
+<h3 id="git测试"><a href="#git测试" class="headerlink" title="git测试"></a>git测试</h3><p>完成上述步骤后，通过测试判断git服务器是否部署成功,在本地客户端执行</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@服务器ip:/var/repo/blog.git</span><br></pre></td></tr></table></figure>
 
 <p>输入密码后若blog.git中没有内容将会提示:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">···</span><br><span class="line">git@服务器ip`s password:</span><br><span class="line">warning: You appear to have cloned an empty repository</span><br></pre></td></tr></table></figure>
 
-<h2 id="三-搭建nginx服务"><a href="#三-搭建nginx服务" class="headerlink" title="三. 搭建nginx服务"></a>三. 搭建nginx服务</h2><h3 id="3-1-创建根目录"><a href="#3-1-创建根目录" class="headerlink" title="3.1 创建根目录"></a>3.1 创建根目录</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir /var/www</span><br><span class="line">mkdir /var/www/hexo</span><br><span class="line">chown -R git:git /var/www/hexo</span><br><span class="line">chmod -R 755 /var/www/hexo</span><br></pre></td></tr></table></figure>
+<h2 id="搭建nginx服务"><a href="#搭建nginx服务" class="headerlink" title="搭建nginx服务"></a>搭建nginx服务</h2><h3 id="创建根目录"><a href="#创建根目录" class="headerlink" title="创建根目录"></a>创建根目录</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir /var/www</span><br><span class="line">mkdir /var/www/hexo</span><br><span class="line">chown -R git:git /var/www/hexo</span><br><span class="line">chmod -R 755 /var/www/hexo</span><br></pre></td></tr></table></figure>
 
-<h3 id="3-2-修改nginx配置文件"><a href="#3-2-修改nginx配置文件" class="headerlink" title="3.2 修改nginx配置文件"></a>3.2 修改nginx配置文件</h3><p>为了让浏览器能直接访问静态页面，需要使用nginx将端口或者域名指向hexo静态文件目录可通过<br><code>nginx t</code>查找配置文件,centos默认配置文件位置/etc/nginx/nginx.conf</p>
+<h3 id="修改nginx配置文件"><a href="#修改nginx配置文件" class="headerlink" title="修改nginx配置文件"></a>修改nginx配置文件</h3><p>为了让浏览器能直接访问静态页面，需要使用nginx将端口或者域名指向hexo静态文件目录可通过<br><code>nginx t</code>查找配置文件,centos默认配置文件位置/etc/nginx/nginx.conf</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
 
 <p>找到<code>root</code>修改指向/var/www/hexo（git hook目录）</p>
@@ -377,7 +382,7 @@
 <p>配置完后重启nginx服务器</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service nginx restart</span><br></pre></td></tr></table></figure>
 
-<h2 id="四-本地配置"><a href="#四-本地配置" class="headerlink" title="四. 本地配置"></a>四. 本地配置</h2><p>在本地已经装好hexo的客户端中修改_config.yml文件</p>
+<h2 id="本地配置"><a href="#本地配置" class="headerlink" title="本地配置"></a>本地配置</h2><p>在本地已经装好hexo的客户端中修改_config.yml文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo:</span><br><span class="line">        github: git@github.com:用户名/仓库名</span><br><span class="line">        vps:    git@服务器ip:/var/repo/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 <p>之后使用<code>hexo d</code>命令便可判断部署完成情况</p>
 <h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><ol>
@@ -541,7 +546,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-安装工具"><span class="nav-number">1.</span> <span class="nav-text">一.安装工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-安装node-js"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 安装node.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-安装git、nginx"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 安装git、nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-安装hexo"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 安装hexo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-搭建git仓库"><span class="nav-number">2.</span> <span class="nav-text">二. 搭建git仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-新建git用户并设置密码"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 新建git用户并设置密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-创建免密登陆证书"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 创建免密登陆证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-修改git用户权限"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 修改git用户权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-创建仓库"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 创建仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-使用chsh命令修改任意系统用户的shell权限"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 使用chsh命令修改任意系统用户的shell权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-git测试"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 git测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-搭建nginx服务"><span class="nav-number">3.</span> <span class="nav-text">三. 搭建nginx服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-创建根目录"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 创建根目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-修改nginx配置文件"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 修改nginx配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-本地配置"><span class="nav-number">4.</span> <span class="nav-text">四. 本地配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的问题"><span class="nav-number">5.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装工具"><span class="nav-number">1.</span> <span class="nav-text">安装工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装node-js"><span class="nav-number">1.1.</span> <span class="nav-text">安装node.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装git、nginx"><span class="nav-number">1.2.</span> <span class="nav-text">安装git、nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装hexo"><span class="nav-number">1.3.</span> <span class="nav-text">安装hexo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搭建git仓库"><span class="nav-number">2.</span> <span class="nav-text">搭建git仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建git用户并设置密码"><span class="nav-number">2.1.</span> <span class="nav-text">新建git用户并设置密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建免密登陆证书"><span class="nav-number">2.2.</span> <span class="nav-text">创建免密登陆证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改git用户权限"><span class="nav-number">2.3.</span> <span class="nav-text">修改git用户权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建仓库"><span class="nav-number">2.4.</span> <span class="nav-text">创建仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用chsh命令修改任意系统用户的shell权限"><span class="nav-number">2.5.</span> <span class="nav-text">使用chsh命令修改任意系统用户的shell权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git测试"><span class="nav-number">2.6.</span> <span class="nav-text">git测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搭建nginx服务"><span class="nav-number">3.</span> <span class="nav-text">搭建nginx服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建根目录"><span class="nav-number">3.1.</span> <span class="nav-text">创建根目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改nginx配置文件"><span class="nav-number">3.2.</span> <span class="nav-text">修改nginx配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地配置"><span class="nav-number">4.</span> <span class="nav-text">本地配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的问题"><span class="nav-number">5.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
@@ -579,6 +584,14 @@
 
 
         
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
 
 
 
