@@ -272,7 +272,7 @@
 
           
             <span class="post-meta-divider">|</span>
-            <span class="page-pv"><i class="fa fa-file-o"></i> 阅读数
+            <span class="page-pv"><i class="fa fa-file-o"></i>
             <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
             </span>
           
@@ -299,7 +299,7 @@
 <h2 id="frps-ini配置"><a href="#frps-ini配置" class="headerlink" title="frps.ini配置"></a>frps.ini配置</h2><p>在服务器中运行的frps服务端配置文件如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port	= 	5443</span><br><span class="line">bind_addr	= 	0.0.0.0</span><br><span class="line"></span><br><span class="line">auth_token	= 	frpofpadavan</span><br><span class="line">vhost_http_port = 	10080</span><br><span class="line"></span><br><span class="line">subdomain_host  =       frp.yourwebsite.com</span><br><span class="line"></span><br><span class="line">dashboard_port	= 	6443</span><br><span class="line">dashboard_user	= 	username</span><br><span class="line">dashboard_pwd	=	password</span><br><span class="line"></span><br><span class="line">max_pool_count	= 	50</span><br><span class="line">tcp_mux		= 	true</span><br></pre></td></tr></table></figure>
 
-<p>在云服务器安全组中开放端口:5443,10080,6443。其中：</p>
+<p>在云服务器安全组中开放端口: 5443,10080,6443。其中：</p>
 <ul>
 <li>bind_port<br>frp服务端监听的端口</li>
 <li>bind_addr<br>frp服务端公网ip，frps部署在服务器中，使用0.0.0.0即可</li>
