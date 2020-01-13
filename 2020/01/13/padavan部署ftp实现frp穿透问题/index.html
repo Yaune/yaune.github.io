@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="在服务器上搭建frp内网穿透功能，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口  frp在服务器上的搭建搭建具体搭建以及配置方式参考github开源项目：frp在该项目下载对应软件包配置好配置文件后运行即可，frps为服务端，frpc为客户端。 frps.ini配置在服务器中运行的frps服务端配置文件如下： 1234567891011">
+<meta name="description" content="在服务器上搭建frp内网穿透服务端，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="frp结合nginx实现内网穿透">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;01&#x2F;13&#x2F;padavan%E9%83%A8%E7%BD%B2ftp%E5%AE%9E%E7%8E%B0frp%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98&#x2F;index.html">
 <meta property="og:site_name" content="路漫漫其修远兮">
-<meta property="og:description" content="在服务器上搭建frp内网穿透功能，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口  frp在服务器上的搭建搭建具体搭建以及配置方式参考github开源项目：frp在该项目下载对应软件包配置好配置文件后运行即可，frps为服务端，frpc为客户端。 frps.ini配置在服务器中运行的frps服务端配置文件如下： 1234567891011">
+<meta property="og:description" content="在服务器上搭建frp内网穿透服务端，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2020-01-13T08:48:10.778Z">
 <meta name="twitter:card" content="summary">
@@ -289,8 +289,7 @@
       
 
       
-        <p>在服务器上搭建frp内网穿透功能，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口</p>
-<hr>
+        <p>在服务器上搭建frp内网穿透服务端，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口。<a id="more"></a></p>
 <h2 id="frp在服务器上的搭建"><a href="#frp在服务器上的搭建" class="headerlink" title="frp在服务器上的搭建"></a>frp在服务器上的搭建</h2><p>搭建具体搭建以及配置方式参考github开源项目：<a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="_blank" rel="noopener">frp</a><br>在该项目下载对应软件包配置好配置文件后运行即可，frps为服务端，frpc为客户端。</p>
 <h2 id="frps-ini配置"><a href="#frps-ini配置" class="headerlink" title="frps.ini配置"></a>frps.ini配置</h2><p>在服务器中运行的frps服务端配置文件如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port	= 	5443</span><br><span class="line">bind_addr	= 	0.0.0.0</span><br><span class="line"></span><br><span class="line">auth_token	= 	frpofpadavan</span><br><span class="line">vhost_http_port = 	10080</span><br><span class="line"></span><br><span class="line">subdomain_host  =       frp.yourwebsite.com</span><br><span class="line"></span><br><span class="line">dashboard_port	= 	6443</span><br><span class="line">dashboard_user	= 	username</span><br><span class="line">dashboard_pwd	=	password</span><br><span class="line"></span><br><span class="line">max_pool_count	= 	50</span><br><span class="line">tcp_mux		= 	true</span><br></pre></td></tr></table></figure>
