@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="路漫漫其修远兮">
 <meta property="og:description" content="本教程旨在通过在私有云服务器上部署git仓库，使其作为hexo的服务器，并实现deploy博客的同时vps服务器与github仓库同步更新。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-11-06T13:21:05.155Z">
+<meta property="og:updated_time" content="2020-11-08T09:59:21.546Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -415,22 +415,96 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
 
 <p>找到<code>root</code>修改指向/var/www/hexo（git hook目录）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">···</span><br><span class="line">server &#123;</span><br><span class="line">      listen       80 default_server;</span><br><span class="line">      listen       [::]:80 default_server;</span><br><span class="line">      server_name  www.xxx.com; # 填写个人域名若没有则为默认为_</span><br><span class="line">      root         /var/www/hexo;</span><br><span class="line">  &#125;</span><br><span class="line">···</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">···</span><br><span class="line">server &#123;</span><br><span class="line">      listen       80 default_server;</span><br><span class="line">      listen       [::]:80 default_server;</span><br><span class="line">      server_name  www.xxx.com; # 填写个人域名若没有则为默认_</span><br><span class="line">      root         /var/www/hexo;</span><br><span class="line">  &#125;</span><br><span class="line">···</span><br></pre></td></tr></table></figure>
 
 <p>配置完后重启nginx服务器</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service nginx restart</span><br></pre></td></tr></table></figure>
 
+<p>如果出现错误：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Redirecting to /bin/systemctl start nginx.service</span><br><span class="line">Job for nginx.service failed because the control process exited with error code. See "systemctl status nginx.service" and "journalctl -xe" for details.</span><br></pre></td></tr></table></figure>
+
+<p>按照提示使用<code>systemctl status nginx.service</code> 或<code>journalctl -xe</code>命令查看错误详情，比如80端口被占用，则kill占用程序或者重新分配端口，这里出现了nginx程序自身占用，所以将nginx进程kill后重新运行<code>servcie nginx restart</code>即可。</p>
 <h2 id="本地配置"><a href="#本地配置" class="headerlink" title="本地配置"></a>本地配置</h2><p>在本地已经装好hexo的客户端中修改_config.yml文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo:</span><br><span class="line">        github: git@github.com:用户名/仓库名</span><br><span class="line">        vps:    git@服务器ip:/var/repo/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<p>之后使用<code>hexo d</code>命令便可判断部署完成情况</p>
+<p>服务器ssh端口修改的可以使用</p>
+<p><code>ssh://git@serverip:port/var/repo/blog.git</code> 替代<code>git@服务器ip:/var/repo/blog.git</code></p>
+<p>之后使用<code>hexo d</code>命令便可判断部署完成情况，该命令没有问题后即可部署至服务器。</p>
+<p>本地部署命令提示(需要在hexo服务文件夹下操作(~/blog):</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">清理</span></span><br><span class="line">a@a:~/blog$ sudo hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">生成</span></span><br><span class="line">a@a:~/blog$ sudo hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">本地预览（预览需要CTRL+C才能结束预览）</span></span><br><span class="line">a@a:~/blog$ sudo hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署（针对hexo服务没有安装在root用户下，具体看 遇到的问题 章节）</span></span><br><span class="line">a@a:~/blog$ sudo chmod 777 -R /blog</span><br><span class="line">a@a:~/blog$ hexo d</span><br></pre></td></tr></table></figure>
+
+<p>至此配置以及部署完成，用户只需输入服务器ip即可访问博客，下面是域名解析至ip的方法</p>
+<h1 id="域名解析至hexo博客的服务器"><a href="#域名解析至hexo博客的服务器" class="headerlink" title="域名解析至hexo博客的服务器"></a>域名解析至hexo博客的服务器</h1><ol>
+<li><p>找到域名提供商的解析服务，添加解析信息，要添加两条</p>
+<p>第一条</p>
+<p>​    记录类型：A</p>
+<p>​    主机记录：WWW</p>
+<p>​    记录值：主机ipv4地址</p>
+<p>第二条</p>
+<p>​    记录类型：A</p>
+<p>​    主机记录：@</p>
+<p>​    记录值：主机的ipv4地址</p>
+</li>
+</ol>
+<p>主机记录就是域名前缀，常见的用法有（假设域名为:abcd.com：</p>
+<ul>
+<li>www：解析后的域名为 <a href="http://www.abcd.com" target="_blank" rel="noopener">www.abcd.com</a></li>
+<li>@：直接解析主域名 abcd.com</li>
+<li>：泛解析，匹配其他所有域名 *.abcd.com 记录类型： 要指向空间商提供的 IP 地址，选择「类型 A」，要指向一个域名，选择「类型 CNAME」</li>
+<li>A记录：地址记录，用来指定域名的IPv4地址（如：8.8.8.8），如果需要将域名指向一个IP地址，就需要添加A记录。</li>
+<li>CNAME： 如果需要将域名指向另一个域名，再由另一个域名提供ip地址，就需要添加CNAME记录。</li>
+<li>NS：域名服务器记录，如果需要把子域名交给其他DNS服务商解析，就需要添加NS记录。</li>
+<li>AAA：用来指定主机名（或域名）对应的IPv6地址（例如：ff06:0:0:0:0:0:0:c3）记录。</li>
+<li>MX：如果需要设置邮箱，让邮箱能收到邮件，就需要添加MX记录</li>
+</ul>
+<ol start="2">
+<li>修改nginx配置文件，添加用户域名，见搭建nginx服务章。</li>
+</ol>
 <h1 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h1><ol>
 <li><p>安装hexo-cli和hexo-server出错，执行<code>hexo</code>命令报错<br>解决：将nodejs更新到最新版本即可，具体见上述教程</p>
 </li>
-<li><p>使用<code>hexo d</code>命令每次都要输入密码<br>解决：查看客户端的公钥与git用户.ssh文件内的公钥是否匹配，个人出现的情况是公钥等ssh配置完全没问题，问题出现在本地安装hexo客户端的时候安装到了普通用户，而<code>hexo generate</code>和<code>hexo deploy</code>等命令在修改hexo文件内的内容后出现权限问题，使用sudo权限执行hexo命令，即<code>sudo hexo deploy</code>后出现要求输入密码的情况。<br>解决方法是在本地客户端root下重装hexo，或者更为简单的使用<code>chmod</code>修改blog整个目录的权限，然后不使用<code>sudo</code>而使用普通用户的<code>hexo d</code>进行上传。</p>
+<li><p>使用<code>hexo d</code>命令每次都要输入密码<br>解决：查看客户端的公钥与git用户.ssh文件内的公钥是否匹配，个人出现的情况是公钥等ssh配置完全没问题，问题出现在本地安装hexo客户端的时候安装到了普通用户，而<code>hexo generate</code>和<code>hexo deploy</code>等命令在修改hexo文件内的内容后出现权限问题，使用sudo权限执行hexo命令，即<code>sudo hexo deploy</code>后出现要求输入密码的情况。</p>
+</li>
+<li><p>使用sudo hexo d命令时git仓库拒绝访问，上传错误</p>
+<p>解决方法是在本地客户端root下重装hexo，或者更为简单的使用<code>chmod</code>修改blog整个目录的权限，然后不使用<code>sudo</code>而使用普通用户的<code>hexo d</code>进行上传。</p>
+</li>
+<li><p>nginx访问出现403 forbidden</p>
+<p>查看nginx日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /var/log/nginx/error.log</span><br></pre></td></tr></table></figure>
+
+<p>发现报错permission denied：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2020/11/06 21:58:11 [error] 376#0: *11 "/var/www/hexo/index.html" is forbidden (13: Permission denied), client: 103.129.196.142, server: _, request: "GET / HTTP/1.1", host: "103.129.196.142"</span><br></pre></td></tr></table></figure>
+
+<p>解决：</p>
+<p>在开启SELinux情况下，会将nginx的主页屏蔽，变成403，Security-Enhanced Linux（安全增强型 Linux）简称 SELinux，它是一个 Linux 内核模块，也是 Linux 的一个安全子系统。SELinux 主要由美国国家安全局开发，2.6 及以上版本的 Linux 内核都已经集成了该模块。SELinux 主要作用就是最大限度地减小系统中服务进程可访问的资源（最小权限原则）。<br>安全上下文是 SELinux 的核心。安全上下文分为「进程安全上下文」和「文件安全上下文」。只有两者的安全上下文对应上了，进程才能访问文件。它们的对应关系由政策中的规则决定。<br> 安全上下文有四个字段，分别用冒号隔开，形如：<code>system_u:object_r:admin_home_t:s0</code>。</p>
+<p>开启SELinux的情况下 nginx 403的原因非常有可能是nginx的线程上下文和文件安全上下文 不一致导致nginx没有权限访问相关的文件。</p>
+<p>(1) 使用<code>ps -efZ | grep nginx</code>查看nginx进程SELinux信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@ecs-12TLU www]#ps -efZ | grep nginx</span><br><span class="line">system_u:system_r:httpd_t:s0    root       463     1  0 Nov06 ?        00:00:00 nginx: master process /usr/sbin/nginx</span><br><span class="line">system_u:system_r:httpd_t:s0    nginx      464   463  0 Nov06 ?        00:00:00 nginx: worker process</span><br><span class="line">unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 root 2672 2641  0 16:12 pts/0 00:00:00 grep --color=auto nginx</span><br></pre></td></tr></table></figure>
+
+<p> 在nginx默认目录中查看SELinux信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@ecs-12TLU hexo]# ls /usr/share/nginx/html/ -Z</span><br><span class="line">-rw-r--r--. root root system_u:object_r:httpd_sys_content_t:s0 404.html</span><br><span class="line">-rw-r--r--. root root system_u:object_r:httpd_sys_content_t:s0 50x.html</span><br><span class="line">lrwxrwxrwx. root root system_u:object_r:httpd_sys_content_t:s0 en-US -&gt; ../../doc/HTML/en-US</span><br><span class="line">drwxr-xr-x. root root system_u:object_r:httpd_sys_content_t:s0 icons</span><br><span class="line">lrwxrwxrwx. root root system_u:object_r:httpd_sys_content_t:s0 img -&gt; ../../doc/HTML/img</span><br><span class="line">lrwxrwxrwx. root root system_u:object_r:httpd_sys_content_t:s0 index.html -&gt; ../../doc/HTML/index.html</span><br><span class="line">-rw-r--r--. root root system_u:object_r:httpd_sys_content_t:s0 nginx-logo.png</span><br><span class="line">lrwxrwxrwx. root root system_u:object_r:httpd_sys_content_t:s0 poweredby.png -&gt; nginx-logo.png</span><br></pre></td></tr></table></figure>
+
+<p>在nginx指定的根目录中查看SELiunx信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@ecs-12TLU ~]# cd /var/www/hexo</span><br><span class="line">[root@ecs-12TLU ~]# ls -Z</span><br><span class="line">drwxrwxrwx. git git unconfined_u:object_r:var_t:s0   2019</span><br><span class="line">drwxrwxrwx. git git unconfined_u:object_r:var_t:s0   2020</span><br><span class="line">drwxrwxrwx. git git unconfined_u:object_r:var_t:s0   archives</span><br><span class="line">drwxrwxrwx. git git unconfined_u:object_r:var_t:s0   css</span><br><span class="line">drwxrwxrwx. git git unconfined_u:object_r:var_t:s0   images</span><br><span class="line">-rwxrwxrwx. git git unconfined_u:object_r:var_t:s0   index.html</span><br><span class="line">drwxrwxrwx. git git unconfined_u:object_r:var_t:s0   js</span><br><span class="line">drwxrwxrwx. git git unconfined_u:object_r:var_t:s0   lib</span><br></pre></td></tr></table></figure>
+
+
+
 </li>
 </ol>
+<p>   从以上信息可以看出nginx的SELinux信息为<code>system_u:system_r:httpd_t</code>，其中线程上下文为<code>httpd_t</code>。</p>
+<p>   nginx默认目录文件的SELinux信息为<code>system_u:object_r:httpd_sys_content_t</code>，其中文件上下文为<code>httpd_sys_content_t</code></p>
+<p>   www目录以及文件的SELinux信息为<code>unconfined_u:object_r:var_t:s0</code>，其中文件上下文为<code>home_root_t</code>。</p>
+<p>   所以只需将www目录的文件上下文改成与nginx默认路径文件上下文一致即可(即改成<code>httpd_sys_content_t</code>)。</p>
+<p>   (2) 安装policycoreutils-python工具</p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install policycoreutils-python</span><br></pre></td></tr></table></figure>
+
+<p>   (3) 在var目录 执行semanage命令（我的www目录位于/var/www）</p>
+   <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@ecs-12TLU var]# semanage fcontext -a -t httpd_sys_content_t '/var/www(/.*)?'</span><br><span class="line">[root@ecs-12TLU var]ls -Z</span><br><span class="line">drwxrwxrwx. root root unconfined_u:object_r:var_t:s0   www</span><br></pre></td></tr></table></figure>
+
+<p>   www目录文件SELinux信息还未修改过来，接下来执行<code>restorecon</code>即可</p>
+   <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@ecs-12TLU var]# restorecon -R /var/www</span><br><span class="line">[root@ecs-12TLU var]# ls -Z</span><br><span class="line">drwxrwxrwx. root root unconfined_u:object_r:httpd_sys_content_t:s0 www</span><br></pre></td></tr></table></figure>
+
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
-<p><a href="https://www.cnblogs.com/dxxzst/p/10362382.html" target="_blank" rel="noopener">CentOS 7下使用n工具更新Node.js</a><br><a href="https://segmentfault.com/a/1190000010680022" target="_blank" rel="noopener">Hexo 个人博客部署到 CentOS 个人服务器</a><br><a href="https://www.jianshu.com/p/70bf58c48010" target="_blank" rel="noopener">HEXO 部署到云服务器详细指南</a><br><a href="https://blog.csdn.net/zhujohnle/article/details/87865726" target="_blank" rel="noopener">搭建私有git仓库，免密pull and push</a><br><a href="https://segmentfault.com/a/1190000009723457" target="_blank" rel="noopener">使用Nginx+Hexo光速搭建博客并实现服务器自动部署</a></p>
+<p><a href="https://www.cnblogs.com/dxxzst/p/10362382.html" target="_blank" rel="noopener">CentOS 7下使用n工具更新Node.js</a><br><a href="https://segmentfault.com/a/1190000010680022" target="_blank" rel="noopener">Hexo 个人博客部署到 CentOS 个人服务器</a><br><a href="https://www.jianshu.com/p/70bf58c48010" target="_blank" rel="noopener">HEXO 部署到云服务器详细指南</a><br><a href="https://blog.csdn.net/zhujohnle/article/details/87865726" target="_blank" rel="noopener">搭建私有git仓库，免密pull and push</a><br><a href="https://segmentfault.com/a/1190000009723457" target="_blank" rel="noopener">使用Nginx+Hexo光速搭建博客并实现服务器自动部署</a><br><a href="https://www.jianshu.com/p/99d8e3dac21c" target="_blank" rel="noopener">开启SELinux情况下如何解决nginx 403</a></p>
 </blockquote>
 
       
@@ -584,7 +658,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装工具"><span class="nav-number">1.</span> <span class="nav-text">安装工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装node-js和hexo"><span class="nav-number">1.1.</span> <span class="nav-text">安装node.js和hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一（此方法可能报错，建议方法二）"><span class="nav-number">1.1.1.</span> <span class="nav-text">方法一（此方法可能报错，建议方法二）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node-js安装方法二"><span class="nav-number">1.1.2.</span> <span class="nav-text">node.js安装方法二</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装git、nginx"><span class="nav-number">1.2.</span> <span class="nav-text">安装git、nginx</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建git仓库"><span class="nav-number">2.</span> <span class="nav-text">搭建git仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建git用户并设置密码"><span class="nav-number">2.1.</span> <span class="nav-text">新建git用户并设置密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建免密登陆证书"><span class="nav-number">2.2.</span> <span class="nav-text">创建免密登陆证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改git用户权限"><span class="nav-number">2.3.</span> <span class="nav-text">修改git用户权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建仓库"><span class="nav-number">2.4.</span> <span class="nav-text">创建仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用chsh命令修改任意系统用户的shell权限"><span class="nav-number">2.5.</span> <span class="nav-text">使用chsh命令修改任意系统用户的shell权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git测试"><span class="nav-number">2.6.</span> <span class="nav-text">git测试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建nginx服务"><span class="nav-number">3.</span> <span class="nav-text">搭建nginx服务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建根目录"><span class="nav-number">3.1.</span> <span class="nav-text">创建根目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改nginx配置文件"><span class="nav-number">3.2.</span> <span class="nav-text">修改nginx配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地配置"><span class="nav-number">3.3.</span> <span class="nav-text">本地配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#遇到的问题"><span class="nav-number">4.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装工具"><span class="nav-number">1.</span> <span class="nav-text">安装工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装node-js和hexo"><span class="nav-number">1.1.</span> <span class="nav-text">安装node.js和hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一（此方法可能报错，建议方法二）"><span class="nav-number">1.1.1.</span> <span class="nav-text">方法一（此方法可能报错，建议方法二）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node-js安装方法二"><span class="nav-number">1.1.2.</span> <span class="nav-text">node.js安装方法二</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装git、nginx"><span class="nav-number">1.2.</span> <span class="nav-text">安装git、nginx</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建git仓库"><span class="nav-number">2.</span> <span class="nav-text">搭建git仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建git用户并设置密码"><span class="nav-number">2.1.</span> <span class="nav-text">新建git用户并设置密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建免密登陆证书"><span class="nav-number">2.2.</span> <span class="nav-text">创建免密登陆证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改git用户权限"><span class="nav-number">2.3.</span> <span class="nav-text">修改git用户权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建仓库"><span class="nav-number">2.4.</span> <span class="nav-text">创建仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用chsh命令修改任意系统用户的shell权限"><span class="nav-number">2.5.</span> <span class="nav-text">使用chsh命令修改任意系统用户的shell权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git测试"><span class="nav-number">2.6.</span> <span class="nav-text">git测试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建nginx服务"><span class="nav-number">3.</span> <span class="nav-text">搭建nginx服务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建根目录"><span class="nav-number">3.1.</span> <span class="nav-text">创建根目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改nginx配置文件"><span class="nav-number">3.2.</span> <span class="nav-text">修改nginx配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地配置"><span class="nav-number">3.3.</span> <span class="nav-text">本地配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#域名解析至hexo博客的服务器"><span class="nav-number">4.</span> <span class="nav-text">域名解析至hexo博客的服务器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#遇到的问题"><span class="nav-number">5.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
