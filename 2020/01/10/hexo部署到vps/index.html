@@ -326,7 +326,7 @@
 
 <ol start="2">
 <li><p>下载nodejs最新的bin包（不是源码）</p>
-<p>在nodejs官方下载页<a href="https://nodejs.org/en/download/中找到下载地址，然后wget获取" target="_blank" rel="noopener">https://nodejs.org/en/download/中找到下载地址，然后wget获取</a></p>
+<p>在nodejs官方下载页<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">https://nodejs.org/en/download/</a> 中找到下载地址，然后wget获取</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://nodejs.org/dist/v14.15.0/node-v14.15.0-linux-x64.tar.xz</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>解压包</p>
@@ -430,7 +430,7 @@
 <p><code>ssh://git@serverip:port/var/repo/blog.git</code> 替代<code>git@服务器ip:/var/repo/blog.git</code></p>
 <p>之后使用<code>hexo d</code>命令便可判断部署完成情况，该命令没有问题后即可部署至服务器。</p>
 <p>本地部署命令提示(需要在hexo服务文件夹下操作(~/blog):</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">清理</span></span><br><span class="line">a@a:~/blog$ sudo hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">生成</span></span><br><span class="line">a@a:~/blog$ sudo hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">本地预览（预览需要CTRL+C才能结束预览）</span></span><br><span class="line">a@a:~/blog$ sudo hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署（针对hexo服务没有安装在root用户下，具体看 遇到的问题 章节）</span></span><br><span class="line">a@a:~/blog$ sudo chmod 777 -R /blog</span><br><span class="line">a@a:~/blog$ hexo d</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">清理</span></span><br><span class="line">a@a:~/blog$ sudo hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">生成</span></span><br><span class="line">a@a:~/blog$ sudo hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">本地预览（预览需要CTRL+C才能结束预览）</span></span><br><span class="line">a@a:~/blog$ sudo hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署（针对hexo服务没有安装在root用户下，具体看 遇到的问题 章节）</span></span><br><span class="line">a@a:~/blog$ sudo chmod 777 -R ~/blog</span><br><span class="line">a@a:~/blog$ hexo d</span><br></pre></td></tr></table></figure>
 
 <p>至此配置以及部署完成，用户只需输入服务器ip即可访问博客，下面是域名解析至ip的方法</p>
 <h1 id="域名解析至hexo博客的服务器"><a href="#域名解析至hexo博客的服务器" class="headerlink" title="域名解析至hexo博客的服务器"></a>域名解析至hexo博客的服务器</h1><ol>
@@ -443,18 +443,26 @@
 <p>​    记录类型：A</p>
 <p>​    主机记录：@</p>
 <p>​    记录值：主机的ipv4地址</p>
+<p>主机记录就是域名前缀，常见的用法有（假设域名为:abcd.com：</p>
 </li>
 </ol>
-<p>主机记录就是域名前缀，常见的用法有（假设域名为:abcd.com：</p>
 <ul>
-<li>www：解析后的域名为 <a href="http://www.abcd.com" target="_blank" rel="noopener">www.abcd.com</a></li>
-<li>@：直接解析主域名 abcd.com</li>
-<li>：泛解析，匹配其他所有域名 *.abcd.com 记录类型： 要指向空间商提供的 IP 地址，选择「类型 A」，要指向一个域名，选择「类型 CNAME」</li>
-<li>A记录：地址记录，用来指定域名的IPv4地址（如：8.8.8.8），如果需要将域名指向一个IP地址，就需要添加A记录。</li>
-<li>CNAME： 如果需要将域名指向另一个域名，再由另一个域名提供ip地址，就需要添加CNAME记录。</li>
-<li>NS：域名服务器记录，如果需要把子域名交给其他DNS服务商解析，就需要添加NS记录。</li>
-<li>AAA：用来指定主机名（或域名）对应的IPv6地址（例如：ff06:0:0:0:0:0:0:c3）记录。</li>
-<li>MX：如果需要设置邮箱，让邮箱能收到邮件，就需要添加MX记录</li>
+<li><p>www：解析后的域名为 <a href="http://www.abcd.com" target="_blank" rel="noopener">www.abcd.com</a></p>
+</li>
+<li><p>@：直接解析主域名 abcd.com</p>
+</li>
+<li><p>：泛解析，匹配其他所有域名 *.abcd.com 记录类型： 要指向空间商提供的 IP 地址，选择「类型 A」，要指向一个域名，选择「类型 CNAME」</p>
+</li>
+<li><p>A记录：地址记录，用来指定域名的IPv4地址（如：8.8.8.8），如果需要将域名指向一个IP地址，就需要添加A记录。</p>
+</li>
+<li><p>CNAME： 如果需要将域名指向另一个域名，再由另一个域名提供ip地址，就需要添加CNAME记录。</p>
+</li>
+<li><p>NS：域名服务器记录，如果需要把子域名交给其他DNS服务商解析，就需要添加NS记录。</p>
+</li>
+<li><p>AAA：用来指定主机名（或域名）对应的IPv6地址（例如：ff06:0:0:0:0:0:0:c3）记录。</p>
+</li>
+<li><p>MX：如果需要设置邮箱，让邮箱能收到邮件，就需要添加MX记录</p>
+</li>
 </ul>
 <ol start="2">
 <li>修改nginx配置文件，添加用户域名，见搭建nginx服务章。</li>
