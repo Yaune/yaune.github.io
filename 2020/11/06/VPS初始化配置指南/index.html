@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="路漫漫其修远兮">
 <meta property="og:description" content="在购买的vps上经常遇到ssh爆破登陆问题，所以有必要将ssh的22登陆端口修改为其他端口。同时教程还介绍了一些VPS常用的初始化软件安装以及配置操作。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-11-08T09:29:49.570Z">
+<meta property="og:updated_time" content="2020-11-09T01:22:08.169Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -301,7 +301,7 @@
 <h1 id="防火墙添加端口"><a href="#防火墙添加端口" class="headerlink" title="防火墙添加端口"></a>防火墙添加端口</h1><p>向防火墙添加端口命令为：<code>firewall-cmd --zone=public --add-port=12354/tcp --permanent</code></p>
 <p><code>reload</code>防火墙规则：<code>firewall-cmd --reload</code></p>
 <p>查看端口是否添加成功<code>firewall-cmd --zone=public --query-port=123454/tcp</code></p>
-<h1 id="向SELinux中添加修改的ssh端口"><a href="#向SELinux中添加修改的ssh端口" class="headerlink" title="向SELinux中添加修改的ssh端口"></a>向SELinux中添加修改的ssh端口</h1><p>在向SELinux中添加端口之前需要先安装SELinux的管理工具 <code>semanage</code>：<code>yum provides semanage</code></p>
+<h1 id="向SELinux中添加修改的ssh端口"><a href="#向SELinux中添加修改的ssh端口" class="headerlink" title="向SELinux中添加修改的ssh端口"></a>向SELinux中添加修改的ssh端口</h1><p>添加端口之前需要先安装SELinux的管理工具 semanage：<code>yum provides semanage</code></p>
 <p>并安装其依赖工具包：<code>yum install policycoreutils-python</code></p>
 <p>安装好之后，查询当前ssh服务端口：<code>semanage port -l | grep ssh</code></p>
 <p>向SELinux中添加ssh端口：<code>semanage prot -a -t ssh_port_t -p port tcp 12354</code></p>
@@ -443,7 +443,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
