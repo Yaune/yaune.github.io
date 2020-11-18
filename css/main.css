@@ -1824,7 +1824,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #fce9c4;
+  background: #df0dde;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2682,7 +2682,7 @@ embed {
   display: inline-block;
 }
 .header {
-  background: url("https://www.yaune.site/images/background.png");
+  background: url("http://www.yaune.site/images/background.png");
   background-repeat: no-repeat;
   background-attachment: fixed;
 }

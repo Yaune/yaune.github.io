@@ -81,14 +81,14 @@
 
 
 
-<meta name="description" content="本文为《C和指针》的阅读笔记，主要针对知识盲点进行分析与记录。">
+<meta name="description" content="本文为《C和指针》的阅读笔记，主要针对知识盲点进行记录与分析。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《C和指针》阅读笔记">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;01&#x2F;10&#x2F;C%E5%92%8C%E6%8C%87%E9%92%88&#x2F;index.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;11&#x2F;12&#x2F;C%E5%92%8C%E6%8C%87%E9%92%88&#x2F;index.html">
 <meta property="og:site_name" content="路漫漫其修远兮">
-<meta property="og:description" content="本文为《C和指针》的阅读笔记，主要针对知识盲点进行分析与记录。">
+<meta property="og:description" content="本文为《C和指针》的阅读笔记，主要针对知识盲点进行记录与分析。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-11-17T14:24:13.270Z">
+<meta property="og:updated_time" content="2020-11-18T02:45:04.418Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -119,7 +119,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/01/10/C和指针/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/11/12/C和指针/"/>
 
 
 
@@ -222,7 +222,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/10/C%E5%92%8C%E6%8C%87%E9%92%88/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/12/C%E5%92%8C%E6%8C%87%E9%92%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yue">
@@ -251,8 +251,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-10T19:05:26+08:00">
-                2020-01-10
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-12T09:05:26+08:00">
+                2020-11-12
               </time>
             
 
@@ -294,7 +294,7 @@
       
 
       
-        <p>本文为《C和指针》的阅读笔记，主要针对知识盲点进行分析与记录。<a id="more"></a></p>
+        <p>本文为《C和指针》的阅读笔记，主要针对知识盲点进行记录与分析。<a id="more"></a></p>
 <h3 id="一章"><a href="#一章" class="headerlink" title="一章"></a>一章</h3><ol>
 <li><p>形参中被声明为<code>const</code>， 表示函数将不会修改调用者所传递的参数。</p>
 </li>
@@ -443,13 +443,12 @@
 <li><p>由于自动变量的初始化在程序运行时执行，所以任何表达式都可作为其初始化的值，而静态变量没有这一优点。</p>
 </li>
 </ol>
-<p>–20.11.13–</p>
+<p>–20.11.16–</p>
 <ol start="46">
-<li><strong>作用域、存储类型示例</strong></li>
-</ol>
+<li><p><strong>作用域、存储类型示例</strong></p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>	a = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">extern</span>	<span class="keyword">int</span> b;</span><br><span class="line"><span class="keyword">static</span> 	<span class="keyword">int</span> c;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">d</span><span class="params">( <span class="keyword">int</span> e )</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>	f = <span class="number">15</span>;</span><br><span class="line">    <span class="keyword">register</span> 	<span class="keyword">int</span>	b;</span><br><span class="line">    <span class="keyword">static</span>		<span class="keyword">int</span>	g = <span class="number">20</span>;</span><br><span class="line">    <span class="keyword">extern</span>		<span class="keyword">int</span>	a;</span><br><span class="line">    ...</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span>	e;</span><br><span class="line">        <span class="keyword">int</span>	a;</span><br><span class="line">        <span class="keyword">extern</span>	<span class="keyword">int</span>	h;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span>	x;</span><br><span class="line">        <span class="keyword">int</span>	e;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span>	<span class="keyword">int</span>	<span class="title">i</span><span class="params">()</span>	</span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 
-<p>​    以上例子程序阐明了作用域和存储类型。属于文件作用域的声明在缺省情况下为external链接属性，所以第1行的a的链接属性为external。如果b的定义在其他地方，第2行的extern关键字在技术上井非必需,但在风格上却是加上这个关键字为好。第3行的static关键字修改了c的缺省链接属性，把他改成了internal。声明了变量a和b（具有external链接属性）的其他源文件在使用这两个变量时实际所访问的声明于此处的这两个变量。但是，变量c只能由这个源文件访问，因为它具有internal链接属性。</p>
+<p>以上例子程序阐明了作用域和存储类型。属于文件作用域的声明在缺省情况下为external链接属性，所以第1行的a的链接属性为external。如果b的定义在其他地方，第2行的extern关键字在技术上井非必需,但在风格上却是加上这个关键字为好。第3行的static关键字修改了c的缺省链接属性，把他改成了internal。声明了变量a和b（具有external链接属性）的其他源文件在使用这两个变量时实际所访问的声明于此处的这两个变量。但是，变量c只能由这个源文件访问，因为它具有internal链接属性。</p>
 <p>​    变量a、b、c的存储类型为静态，表示它们并不是存储于堆栈中。因此，这些变量在程序执行之前创建，并一直保持它们的值，直到程序结束。当程序开始执行时，变量a将初始化为5。</p>
 <p>​    这些变量的作用域一直延伸到这个源文件结束为止，但第7行和第13行声明的局部变量a和b在那部分程序中将隐藏同名的静态变量。因此这3个变量的作用域为：</p>
 <p>a    第1至12行，第17至29行</p>
@@ -461,8 +460,8 @@
 <p>​    第9行的声明并不需要。这个代码块位于第1行声明的作用域之内。  第12和13行为代码块声明局部变量。它们都具有自动存储类型,不具有链接属性,它们的作用域延伸至第16行。这些变量和先前声明的a和e不同，而且由于名字冲突，在这个代码块中，以 前声明的同名变量是不能被访问的。</p>
 <p>​    第14行使全局变量h在这个代码块内可以被访问。它具有external链接属性，存储于静态内存中。这是唯一一个必须使用extern关键字的声明，如果没有它，h将变成另一个局部变量。</p>
 <p>​    第19行和20行用于创建局部变量（自动、无链接属性、作用域限于本代码块）。这个e和参数e是不同的变量，它和第12行声明的e也不相同。在这个代码块中，从第11行到第18行并无嵌套 ，所以编译器可以使用相同的内存来存储两个代码块中不同的变量e。如果你想让这两个代码块中的e表示同一个变量，那么你就不应该把它声明为局部变量。</p>
-<p>​    最后，第25行声明了函数i，它具有静态链接属性。静态链接属性可以防止它被这个源文件之外的任何函数调用。事实上，其他的源文件也可能声明它自己的函数i，它与这个源文件的i是不同的函数。i的作用域从它声明的位置直到这个源文件结束。函数d不可以调用函数i，因为在d之前不存在i的原型。</p>
-<ol start="47">
+<p>​    最后，第25行声明了函数 i，它具有静态链接属性。静态链接属性可以防止它被这个源文件之外的任何函数调用。事实上，其他的源文件也可能声明它自己的函数 i，它与这个源文件的 i 是不同的函数。i 的作用域从它声明的位置直到这个源文件结束。函数d不可以调用函数 i，因为在d之前不存在 i 的原型。</p>
+</li>
 <li><p>具有external链接属性的实体在其他语言的术语里成为全局(global)实体。</p>
 </li>
 <li><p>只要变量并非声明于代码块内部，它在缺省情况下的链接属性即为external。如果一个变量声明于代码块内部，在它前面添加extern关键字将使它所引用的是全局变量而非局部变量。</p>
@@ -605,9 +604,10 @@
 <p>上面尽管左边的加法运算必须在右边的加法运算之前执行，但对于各个函数的调用顺序并没有规则加以限制，如果这些函数执行同一个I/O任务或修改同一个全局变量，那么顺序将会导致结果有区别，所以最好使用临时变量让函数调用单独运行。</p>
 </li>
 <li><p>条件操作符在运行时较if语句是更快还是更慢？</p>
-<p>if方案看上去更臃肿一些，因为它具有两条存储到i的指令，但是它们之间只有一条指令会执行，所以条件操作符和if语句二者速度并无区别。</p>
+<p>if方案看上去更臃肿一些，因为它具有两条存储到 i 的指令，但是它们之间只有一条指令会执行，所以条件操作符和if语句二者速度并无区别。</p>
 </li>
 </ol>
+<p>–20.11.17–</p>
 
       
     </div>
@@ -632,8 +632,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/01/10/hexo%E9%83%A8%E7%BD%B2%E5%88%B0vps/" rel="next" title="hexo部署到私有云服务器">
-                <i class="fa fa-chevron-left"></i> hexo部署到私有云服务器
+              <a href="/2020/11/06/VPS%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" rel="next" title="VPS初始化配置指南">
+                <i class="fa fa-chevron-left"></i> VPS初始化配置指南
               </a>
             
           </div>
@@ -641,10 +641,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/01/13/padavan%E9%83%A8%E7%BD%B2ftp%E5%AE%9E%E7%8E%B0frp%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98/" rel="prev" title="frp结合nginx实现内网穿透">
-                frp结合nginx实现内网穿透 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
