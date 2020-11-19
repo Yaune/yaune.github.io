@@ -294,7 +294,8 @@
       
 
       
-        <p>在购买的vps上经常遇到ssh爆破登陆问题，所以有必要将ssh的22登陆端口修改为其他端口。同时教程还介绍了一些VPS常用的初始化软件安装以及配置操作。<a id="more"></a></p>
+        <center>在购买的vps上经常遇到ssh爆破登陆问题，所以有必要将ssh的22登陆端口修改为其他端口。同时教程还介绍了一些VPS常用的初始化软件安装以及配置操作。</center><a id="more"></a>
+
 <h1 id="修改SSH端口"><a href="#修改SSH端口" class="headerlink" title="修改SSH端口"></a>修改SSH端口</h1><p>使用 root 用户进入 <code>/etc/ssh/</code> 目录: <code>cd /etc/ssh/</code></p>
 <p>使用 vim 打开 <code>sshd_config</code> 文件: <code>vim sshd_config</code></p>
 <p>在修改端口之前,先添加一个端口，找到 <code># Port 22</code> ，将 <code>#</code> 去掉，并在其下面加一行 <code>Port 12354</code>，然后保存并退出vim。</p>
