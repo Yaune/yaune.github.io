@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="路漫漫其修远兮">
 <meta property="og:description" content="本教程旨在通过在私有云服务器上部署git仓库，使其作为hexo的服务器，并实现deploy博客的同时vps服务器与github仓库同步更新。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-11-19T08:37:28.882Z">
+<meta property="og:updated_time" content="2021-03-09T13:50:10.595Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -309,7 +309,7 @@
 <p>使用n更新到最新版nodejs</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g n    #安装n工具</span><br><span class="line">n latest            #安装最新版本node.js</span><br></pre></td></tr></table></figure>
 
-<p>可使用n查看并切换node.js版本号，切换完后用<code>node -v</code>命令查看当前的版本。<br>如果安装最新版本后且n切换版本后仍然不成功的，使用<code>which node</code>查看node的目录是否是系统默认使用的/bin，n是在/usr/local/bin下安装node，在安装node.js时同时安装node与npm，故npm出现的现象也与node类似。</p>
+<p>可使用<code>n</code>查看并切换node.js版本号，切换完后用<code>node -v</code>命令查看当前的版本。<br>如果安装最新版本后且n切换版本后仍然不成功的，使用<code>which node</code>查看node的目录是否是系统默认使用的/bin，n是在/usr/local/bin下安装node，在安装node.js时同时安装node与npm，故npm出现的现象也与node类似。</p>
 <p>需要将/bin目录中的node和npm备份后将/usr/local/bin/软连接到/bin目录中</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/local/bin/npm /bin/npm</span><br><span class="line">ln -s /usr/local/bin/node /bin/node</span><br></pre></td></tr></table></figure>
 
@@ -361,7 +361,9 @@
 <p>找到<code>root    ALL=(ALL)    ALL</code>并在其下面添加</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git     ALL=(ALL)       ALL</span><br></pre></td></tr></table></figure>
 
-<p>保存后改回sudoer权限：<code>chmod 400 /etc/sudoers</code></p>
+<p>保存后改回sudoer权限：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
+
 <h2 id="创建免密登陆证书"><a href="#创建免密登陆证书" class="headerlink" title="创建免密登陆证书"></a>创建免密登陆证书</h2><p>在服务器中打开RSA认证</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
 
@@ -398,10 +400,10 @@
 
 <h2 id="使用chsh命令修改任意系统用户的shell权限"><a href="#使用chsh命令修改任意系统用户的shell权限" class="headerlink" title="使用chsh命令修改任意系统用户的shell权限"></a>使用chsh命令修改任意系统用户的shell权限</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chsh git</span><br></pre></td></tr></table></figure>
 
-<p>在 <code>Login  Shell [/bin/bash]</code>后输入:/usr/bin/git-shell<br>修改完后验证<code>cat /etc/passwd</code>是否以git-shell结尾</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">it:x:1003:1003:,,,:/home/git:/usr/bin/git-shell</span><br></pre></td></tr></table></figure>
+<p>在 <code>Login  Shell [/bin/bash]</code>后输入:/usr/bin/git-shell<br>修改完后验证<code>cat /etc/passwd</code>是否以git-shell结尾，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git:x:1003:1003:,,,:/home/git:/usr/bin/git-shell</span><br></pre></td></tr></table></figure>
 
-<p>修改后，使用<code>ssh git@服务器ip</code>登陆将被拒绝：</p>
+<p>修改后，在本地客户端使用<code>ssh git@服务器ip</code>登陆将被拒绝(第一次登陆该网址会提示continue connecting，输入yes)：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh git@gitserver</span></span><br><span class="line">fatal: Interactive git shell is not enabled.</span><br><span class="line">hint: ~/git-shell-commands should exist and have read and execute access.</span><br><span class="line">Connection to gitserver closed.</span><br></pre></td></tr></table></figure>
 
 <h2 id="git测试"><a href="#git测试" class="headerlink" title="git测试"></a>git测试</h2><p>完成上述步骤后，通过测试判断git服务器是否部署成功,在本地客户端执行</p>
@@ -410,7 +412,7 @@
 <p>如果远程服务器禁用22端口登陆，则可以使用如下语句：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone ssh://git@serverip:port/var/repo/blog.git</span><br></pre></td></tr></table></figure>
 
-<p>输入密码(如果秘钥配置成功则不用输入密码)后若blog.git中没有内容将会提示:</p>
+<p>输入密码后(如果秘钥配置成功则不用输入密码)若blog.git中没有内容将会提示:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">···</span><br><span class="line">git@服务器ip`s password:</span><br><span class="line">warning: You appear to have cloned an empty repository</span><br></pre></td></tr></table></figure>
 
 <h1 id="搭建nginx服务"><a href="#搭建nginx服务" class="headerlink" title="搭建nginx服务"></a>搭建nginx服务</h1><h2 id="创建根目录"><a href="#创建根目录" class="headerlink" title="创建根目录"></a>创建根目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir /var/www</span><br><span class="line">mkdir /var/www/hexo</span><br><span class="line">chown -R git:git /var/www/hexo</span><br><span class="line">chmod -R 755 /var/www/hexo</span><br></pre></td></tr></table></figure>

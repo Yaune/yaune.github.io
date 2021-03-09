@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="路漫漫其修远兮">
 <meta property="og:description" content="在购买的vps上经常遇到ssh爆破登陆问题，所以有必要将ssh的22登陆端口修改为其他端口并且使用fail2ban进行非法ip封禁。同时教程还介绍了一些VPS常用的初始化软件安装以及配置操作。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-01-13T08:57:42.011Z">
+<meta property="og:updated_time" content="2021-01-13T09:14:16.814Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -310,7 +310,7 @@
 <p>添加成功之后重启ssh服务：<code>systemctl restart sshd.service</code></p>
 <p>使用新的端口验证登陆情况，验证成功后，使用vim删除<code>/etc/ssh/sshd_config</code>中的22端口即可。</p>
 <p>注：SSR在安装SELinux之后会出现无法访问的情况，需要将在SELinux以及Firewall中添加ssr的端口，然后重启服务才可。</p>
-<h1 id="安装并配置fail2ban"><a href="#安装并配置fail2ban" class="headerlink" title="安装并配置fail2ban"></a>安装并配置fail2ban</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install epel-release    #epel库里就有fail2ban 直接安装epel库就可以使用</span><br><span class="line">yum -y install fail2ban		  #安装fail2ban</span><br></pre></td></tr></table></figure>
+<h1 id="安装并配置fail2ban"><a href="#安装并配置fail2ban" class="headerlink" title="安装并配置fail2ban"></a>安装并配置fail2ban</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install epel-release	#epel库里就有fail2ban 直接安装epel库就可以使用</span><br><span class="line">yum -y install fail2ban	#安装fail2ban</span><br></pre></td></tr></table></figure>
 
 <p>具体配置文件：</p>
 <p>/etc/fail2ban/fail2ban.conf 日志设定文档<br>/etc/fail2ban/jail.conf 阻挡设定文档<br>/etc/fail2ban/filter.d 具体阻挡内容设定目录</p>
