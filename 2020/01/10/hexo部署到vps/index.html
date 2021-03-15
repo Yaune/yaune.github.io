@@ -441,7 +441,7 @@
 <p><code>ssh://git@serverip:port/var/repo/blog.git</code> 替代<code>git@服务器ip:/var/repo/blog.git</code></p>
 <p>之后使用<code>hexo d</code>命令便可判断部署完成情况，该命令没有问题后即可部署至服务器。</p>
 <p>本地部署命令提示(需要在hexo服务文件夹下操作(~/blog):</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">清理</span></span><br><span class="line">a@a:~/blog$ sudo hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">生成</span></span><br><span class="line">a@a:~/blog$ sudo hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">本地预览（预览需要CTRL+C才能结束预览）</span></span><br><span class="line">a@a:~/blog$ sudo hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署（针对hexo服务没有安装在root用户下，具体看 遇到的问题 章节）</span></span><br><span class="line">a@a:~/blog$ sudo chmod 777 -R ~/blog</span><br><span class="line">a@a:~/blog$ hexo d</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">清理</span></span><br><span class="line">a@a:~/blog$ sudo hexo clean</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">生成</span></span><br><span class="line">a@a:~/blog$ sudo hexo g</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">本地预览（预览需要CTRL+C才能结束预览）</span></span><br><span class="line">a@a:~/blog$ sudo hexo s</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">部署（针对hexo服务没有安装在root用户下，具体看 遇到的问题 章节）</span></span><br><span class="line">a@a:~/blog$ sudo chmod 777 -R ~/blog</span><br><span class="line">a@a:~/blog$ hexo d</span><br></pre></td></tr></table></figure>
 
 <p>至此配置以及部署完成，用户只需输入服务器ip即可访问博客，下面是域名解析至ip的方法</p>
 <h1 id="域名解析至hexo博客的服务器"><a href="#域名解析至hexo博客的服务器" class="headerlink" title="域名解析至hexo博客的服务器"></a>域名解析至hexo博客的服务器</h1><ol>
@@ -558,8 +558,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/01/10/C%E5%92%8C%E6%8C%87%E9%92%88/" rel="next" title="《C和指针》阅读笔记">
-                <i class="fa fa-chevron-left"></i> 《C和指针》阅读笔记
+              <a href="/2019/11/20/%E5%B0%86hexo%E9%83%A8%E7%BD%B2%E5%88%B0github%E4%B8%8A%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" rel="next" title="将hexo部署到github上遇到的一些问题">
+                <i class="fa fa-chevron-left"></i> 将hexo部署到github上遇到的一些问题
               </a>
             
           </div>
@@ -568,8 +568,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/01/13/padavan%E9%83%A8%E7%BD%B2ftp%E5%AE%9E%E7%8E%B0frp%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98/" rel="prev" title="frp结合nginx实现内网穿透">
-                frp结合nginx实现内网穿透 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/01/10/C%E5%92%8C%E6%8C%87%E9%92%88/" rel="prev" title="《C和指针》阅读笔记">
+                《C和指针》阅读笔记 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
