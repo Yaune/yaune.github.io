@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] IO流操作基础数据传输的核心在于传输数据源产生的数据，Java IO 分别为输入流和输出流，输入流完成外部数据向计算机内存写入，输出流则反之。而针对输入流和输出流，根据字节和字符的不同，又分为字节流和字符流。   字符流与字节流的关系：Java 中最小的计算单元是字节，没有字符流基于字节流就能进行 IO 操作，只是因为现实中大量的数据都是文本字符数据，基于此单独设计了字符流，使操作更简">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;A Java&#x2F;D-2 IO流操作">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] IO流操作基础数据传输的核心在于传输数据源产生的数据，Java IO 分别为输入流和输出流，输入流完成外部数据向计算机内存写入，输出流则反之。而针对输入流和输出流，根据字节和字符的不同，又分为字节流和字符流。   字符流与字节流的关系：Java 中最小的计算单元是字节，没有字符流基于字节流就能进行 IO 操作，只是因为现实中大量的数据都是文本字符数据，基于此单独设计了字符流，使操作更简">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C&#x2F;assets&#x2F;image-20200507222950746.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C&#x2F;assets&#x2F;image-20200507223108852.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C&#x2F;assets&#x2F;image-20200629200405055.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C&#x2F;assets&#x2F;DP-Decorator-java.io.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C&#x2F;assets&#x2F;1563439368833.png">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C&#x2F;assets&#x2F;image-20200507222950746.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/A Java/D-2 IO流操作/"/>
+
+
+
+
+
+  <title>ShiftJava/A Java/D-2 IO流操作 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/A%20Java/D-2%20IO%E6%B5%81%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/A Java/D-2 IO流操作</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:14+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="IO流操作"><a href="#IO流操作" class="headerlink" title="IO流操作"></a>IO流操作</h3><h4 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h4><p>数据传输的核心在于传输数据源产生的数据，Java IO 分别为<strong>输入流和输出流</strong>，输入流完成外部数据向计算机内存写入，输出流则反之。而针对输入流和输出流，根据<strong>字节和字符</strong>的不同，又分为<strong>字节流和字符流</strong>。</p>
+<img src="assets/image-20200507222950746.png" alt="image-20200507222950746" style="zoom:49%;" />
+
+<p>字符流与字节流的关系：Java 中最小的计算单元是<strong>字节</strong>，没有字符流基于<strong>字节流</strong>就能进行 IO 操作，只是因为现实中<strong>大量的数据都是文本字符</strong>数据，基于此单独设计了<strong>字符流</strong>，使操作更简便。</p>
+<p>上图就是 IO 中的 4 个<strong>顶层接口</strong>，接下来 Java IO 又从多种<strong>应用场景</strong>（包括了基础数据类型、文件、数组、管道、打印、序列化）和传输效率（缓冲操作）进行了考虑，提供了种类众多的 Java IO <strong>流的实现类</strong>，看下图：</p>
+<p><img src="assets/image-20200507223108852.png" alt="image-20200507223108852"></p>
+<p>实际使用过程中用的最多的还是文件类操作、转换类操作、序列化操作，在此基础上可以使用 <strong>Buffered</strong> 来提高效率（Java IO 使用了<strong>装饰器模式</strong>）。下面的体系图是自己理解画的，错了不负责。</p>
+<p><img src="assets/image-20200629200405055.png" alt="image-20200629200405055"></p>
+<p>流操作类大致分为两大类，一类是针对二进制文件的==<strong>字节流</strong>==，另一类是针对文本文件的==<strong>字符流</strong>==。下面分述。</p>
+<h4 id="字节流"><a href="#字节流" class="headerlink" title="字节流"></a>字节流</h4><p>File 对象仅仅用于<strong>抽象</strong>化描述一个<strong>磁盘文件或目录</strong>，却<strong>不具备</strong>访问和修改一个文件<strong>内容</strong>的能力。对文件的读写需要依靠<strong>IO 流</strong>，这是用于<strong>读写文件内容</strong>的一种设计，它能完成将磁盘文件内容输出到<strong>内存</strong>或者是将内存数据输出到<strong>磁盘</strong>文件的数据传输工作。</p>
+<p><strong>字节流</strong>的体系大致如下：</p>
+<img src="assets/DP-Decorator-java.io.png" style="zoom:67%;" />
+
+<h5 id="1-基类字节流InputStream-OutputStream"><a href="#1-基类字节流InputStream-OutputStream" class="headerlink" title="1. 基类字节流InputStream/OutputStream"></a>1. 基类字节流InputStream/OutputStream</h5><p>InputStream 和 OutputStream 分别作为读字节流和写字节流的==<strong>基类</strong>==，都是抽象类，且定义了最基本的<strong>读写</strong>操作，所有字节相关的流都必然<strong>继承</strong>自它们中任意一个。</p>
+<h6 id="1-基本API"><a href="#1-基本API" class="headerlink" title="(1) 基本API"></a>(1) 基本API</h6><p>以 InputStream 为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>read 方法用于返回当前文件的==下一个==字节</strong>。这是一个<strong>抽象</strong>的方法，并没有提供默认实现，要求<strong>子类</strong>必须实现。</p>
+<blockquote>
+<p>这个方法返回的是 ==<strong>int 类型</strong>==，<strong>为什么不用「byte」</strong>？</p>
+</blockquote>
+<p>read 方法返回的值是一个二进制数，一个八位的二进制可以取值的值区间为：<strong>「0000 0000，1111 1111」</strong>，也就是范围 <strong>[-128, 127]</strong>。<strong>read 方法</strong>规定当读取到文件的<strong>末尾</strong>，即文件没有下一个字节供读取时返回 ==<strong>-1</strong>== 。所以如果使用 byte 作为返回值类型，那么当方法返回一个 -1 时，就<strong>无法判定</strong>这是文件中数据内容，还是流的末尾。</p>
+<p>而 <strong>int 类型</strong>占四个字节，高位的三个字节全部为 <strong>0</strong>，我们只使用它的最低位字节，当遇到流<strong>结尾标志</strong>时，返回<strong>四个字节表示的 -1</strong>（<strong>32 个 1</strong>），这就与普通数值 -1（<strong>24 个 0 + 8 个 1</strong>）<strong>区别</strong>开来了。</p>
+<p>看另一个 read 方法，但是 InputStream 提供<strong>默认</strong>实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">byte</span> b[])</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> read(b, <span class="number">0</span>, b.length);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">byte</span> b[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    <span class="comment">// 方法体可查看 jdk 源码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两个方法本质上是一样的，第一个方法是第二个方法的特殊形态，它允许传入一个<strong>字节数组</strong>，并要求程序将文件中读到的字节从数组索引位置 0 开始填充，供填充数组长度个字节数。而第二个方法更加宽泛一点，它允许你指定起始位置和字节总数。</p>
+<p>InputStream 中还有其他几个方法，基本都没怎么具体实现，留待<strong>子类实现</strong>，如下：</p>
+<ul>
+<li>public long <strong>skip</strong>(long n)：跳过 n 个字节，返回实际跳过的字节数。</li>
+<li>public void <strong>close</strong>()：关闭流并释放对应的资源。</li>
+<li>public synchronized void <strong>mark</strong>(int readlimit)。</li>
+<li>public synchronized void <strong>reset</strong>()。</li>
+<li>public boolean <strong>markSupported</strong>()。</li>
+</ul>
+<p>mark 方法会在当前流读取位置打上一个标志，reset 方法即<strong>重置</strong>读取指针到该标志处。</p>
+<p>事实上，文件读取是<strong>不可能重置回头读取</strong>的，而一般都是将标志位置到重置点之间所有的字节临时保存了，当调用 reset 方法时，其实是从保存的临时字节集合进行重复读取，所以 readlimit 用于限制最大缓存容量。而 markSupported 方法则用于确定当前流<strong>是否支持这种「回退式」</strong>读取操作。</p>
+<p>OutputStream 和 InputStream 是类似的，只不过一个是写一个是读，不再赘述。</p>
+<h6 id="2-实现文件复制"><a href="#2-实现文件复制" class="headerlink" title="(2) 实现文件复制"></a>(2) 实现文件复制</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">copyFile</span><span class="params">(String src, String dist)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FileInputStream in = <span class="keyword">new</span> FileInputStream(src);</span><br><span class="line">    FileOutputStream out = <span class="keyword">new</span> FileOutputStream(dist);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">20</span> * <span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> cnt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// read() 最多读取 buffer.length 个字节</span></span><br><span class="line">    <span class="comment">// 返回的是实际读取的个数</span></span><br><span class="line">    <span class="comment">// 返回 -1 的时候表示读到 eof，即文件尾</span></span><br><span class="line">    <span class="keyword">while</span> ((cnt = in.read(buffer, <span class="number">0</span>, buffer.length)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        out.write(buffer, <span class="number">0</span>, cnt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    in.close();</span><br><span class="line">    out.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-文件字节流FileInput-OutputStream"><a href="#2-文件字节流FileInput-OutputStream" class="headerlink" title="2. 文件字节流FileInput/OutputStream"></a>2. 文件字节流FileInput/OutputStream</h5><p>依然着重点于 FileInputStream，而 FileOutputStream 是类似的。首先 FileInputStream 有以下几种构造器实例化一个对象，此外还有参数 <strong>append</strong> 指明了此流的写入操作是<strong>覆盖还是追加</strong>，true 表示追加，false 表示覆盖。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传入文件路径</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileInputStream</span><span class="params">(String name)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(name != <span class="keyword">null</span> ? <span class="keyword">new</span> File(name) : <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 传入File对象</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileInputStream</span><span class="params">(File file)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">    String name = (file != <span class="keyword">null</span> ? file.getPath() : <span class="keyword">null</span>);</span><br><span class="line">    SecurityManager security = System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (security != <span class="keyword">null</span>) &#123;</span><br><span class="line">        security.checkRead(name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (name == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (file.isInvalid()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> FileNotFoundException(<span class="string">"Invalid file path"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fd = <span class="keyword">new</span> FileDescriptor();</span><br><span class="line">    fd.attach(<span class="keyword">this</span>);</span><br><span class="line">    path = name;</span><br><span class="line">    open(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两个构造器本质上也是一样的，前者是后者的特殊形态。后者的方法体大部分都只是在做<strong>安全校验</strong>，核心的就是一个 open 方法，用于<strong>打开一个文件</strong>。如果文件不存在或者文件路径和名称不合法，都将抛出 FileNotFoundException 异常。</p>
+<p>FileInputStream 使用<strong>本地方法 read0()</strong>进行了实现了基类 InputStream 中的 <strong>read 方法</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> read0();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">read0</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+
+<p>它用于返回流中下一个字节，返回 <strong>-1</strong> 说明读取到文件末尾，已无字节可读。</p>
+<p>除此之外，FileInputStream 中还有一些其他的读取相关方法，但大多采用了<strong>本地方法</strong>进行了实现，比如：</p>
+<ul>
+<li>public int <strong>read</strong>(byte b[])：读取 b.length() 个长度的字节到数组中。</li>
+<li>public int <strong>read</strong>(byte b[], int off, int len)：读取指定长度的字节数到数组中。</li>
+<li>public native long <strong>skip</strong>(long n)：跳过 n 的字节进行读取。</li>
+<li>public void <strong>close</strong>()：释放流资源。</li>
+</ul>
+<p>看一个文件读取的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FileInputStream input = <span class="keyword">new</span> ileInputStream(<span class="string">"C:\\test.txt"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> len = input.read(buffer);</span><br><span class="line">    String str = <span class="keyword">new</span> String(buffer);</span><br><span class="line">    System.out.println(str);</span><br><span class="line">    System.out.println(len);</span><br><span class="line">    input.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这会打印出 test 文件中的内容和实际读出的字节数，如何保证 test 文件中内容不会超过 1024 个字节呢？为了能够完整的读出文件中的内容，一种解决办法是：将 <strong>buffer</strong> 定义的足够大，以期望尽可能的能够存储下文件中的所有内容。这种方法显然是不可取的，因为我们根本不可能实现知道待读文件的实际大小。第二种方式就是使用的<strong>动态字节数组流</strong>(下一节)，它<strong>可以动态调整内部字节数组的大小</strong>，保证适当的容量。</p>
+<h5 id="3-字节数组流ByteArrayInput-OutputStream"><a href="#3-字节数组流ByteArrayInput-OutputStream" class="headerlink" title="3. 字节数组流ByteArrayInput/OutputStream"></a>3. 字节数组流ByteArrayInput/OutputStream</h5><p>所谓的「字节数组流」就是围绕一个<strong>字节数组</strong>运作的流。字节数组流虽然并不是基于文件的流，但依然是很重要的流，因为它内部封装的<strong>字节数组并不是固定</strong>的，而是<strong>动态可扩容</strong>的，在某些场景下使用非常合适。</p>
+<p>ByteArrayInputStream 是<strong>读字节数组流</strong>，可以通过以下构造函数被实例化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">byte</span>[] buf;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> pos;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> count;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ByteArrayInputStream</span><span class="params">(<span class="keyword">byte</span>[] buf)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.buf = buf;</span><br><span class="line">    <span class="keyword">this</span>.pos = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">this</span>.count = buf.length;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ByteArrayInputStream</span><span class="params">(<span class="keyword">byte</span> buf[], <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span></span></span><br></pre></td></tr></table></figure>
+
+<p><strong>buf</strong> 就是被封装在 ByteArrayInputStream 内部的一个<strong>字节数组</strong>，ByteArrayInputStream 的所有读操作都是<strong>围绕</strong>着它进行的。所以实例化一个 ByteArrayInputStream 对象的时候，至少需要<strong>传入</strong>一个<strong>目标字节数组</strong>。</p>
+<p>pos 属性用于记录当前流读取的位置，count 记录了目标字节数组最后一个有效字节索引的后一个位置。理解了这一点，有关它各种的 read 方法就不难了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读取下一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (pos &lt; count) ? (buf[pos++] &amp; <span class="number">0xff</span>) : -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 读取 len 个字节放到字节数组 b 中</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">byte</span> b[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span></span>&#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为 ByteArrayInputStream 是基于字节数组的，所有<strong>重复读取操作</strong>的实现就比较容易了，<strong>基于索引实现</strong>就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">mark</span><span class="params">(<span class="keyword">int</span> readAheadLimit)</span> </span>&#123;</span><br><span class="line">    mark = pos;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    pos = mark;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看看输出流 <strong>ByteArrayOutputStream</strong> 是<strong>写的字节数组流</strong>。</p>
+<p>首先，这两个属性是必须的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">byte</span> buf[];</span><br><span class="line"><span class="comment">// 这里的 count 表示的是 buf 中有效字节个个数</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> count;</span><br></pre></td></tr></table></figure>
+
+<p>构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ByteArrayOutputStream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(<span class="number">32</span>);</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ByteArrayOutputStream</span><span class="params">(<span class="keyword">int</span> size)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (size &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Negative initial size: "</span>+ size);</span><br><span class="line">    &#125;</span><br><span class="line">    buf = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构造器的核心任务是，初始化内部的字节数组 buf，允许你传入 size 显式限制初始化的字节数组大小，否则将默认长度 32 。</p>
+<p>从外部向 ByteArrayOutputStream <strong>写内容</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    ensureCapacity(count + <span class="number">1</span>);</span><br><span class="line">    buf[count] = (<span class="keyword">byte</span>) b;</span><br><span class="line">    count += <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">byte</span> b[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ((off &lt; <span class="number">0</span>) || (off &gt; b.length) || (len &lt; <span class="number">0</span>) ||</span><br><span class="line">            ((off + len) - b.length &gt; <span class="number">0</span>)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException();</span><br><span class="line">        &#125;</span><br><span class="line">        ensureCapacity(count + len);</span><br><span class="line">        System.arraycopy(b, off, buf, count, len);</span><br><span class="line">        count += len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所有写操作的第一步都是 <strong>ensureCapacity</strong> 方法的调用，目的是为了<strong>确保当前流内的字节数组能容纳</strong>本次写操作。如果计算后发现，内部的 buf 不能够支持本次写操作，则会调用 grow 方法做一次<strong>扩容</strong>。扩容的原理和 ArrayList 的实现是类似的，扩大为原来的<strong>两倍</strong>容量。</p>
+<p>除此之外，ByteArrayOutputStream 还有一个 <strong>writeTo</strong> 方法将内部封装的字节数组写到某个<strong>输出流</strong>当中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">writeTo</span><span class="params">(OutputStream out)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    out.write(buf, <span class="number">0</span>, count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>剩余的一些方法也很常用：</p>
+<ul>
+<li>public synchronized byte <strong>toByteArray</strong>()[]：返回内部封装的字节数组。</li>
+<li>public synchronized int <strong>size</strong>()：返回 buf 的有效字节数。</li>
+<li>public synchronized String <strong>toString</strong>()：返回该数组对应的字符串形式。</li>
+</ul>
+<p>这两个流虽然被称作「流」，但它们本质上<strong>并没有像真正的流一样去分配一些资源</strong>，所以无需调用它的 close 方法，调了也没用。</p>
+<h5 id="5-装饰者缓冲流BufferedInput-OutputStream"><a href="#5-装饰者缓冲流BufferedInput-OutputStream" class="headerlink" title="5. 装饰者缓冲流BufferedInput/OutputStream"></a>5. 装饰者缓冲流BufferedInput/OutputStream</h5><h6 id="1-装饰者模式"><a href="#1-装饰者模式" class="headerlink" title="(1) 装饰者模式"></a>(1) 装饰者模式</h6><p>Java I/O 使用了==<strong>装饰者模式</strong>==来实现。以 InputStream 为例，</p>
+<ul>
+<li><strong>InputStream</strong> 是最基本的<strong>抽象组件</strong>；</li>
+<li>FileInputStream 是 InputStream 的子类，属于<strong>具体组件</strong>，提供了字节流的<strong>输入</strong>操作；</li>
+<li>FilterInputStream 属于<strong>装饰者</strong>，用于<strong>装饰具体组件</strong>，为组件提供<strong>额外</strong>的功能。例如 BufferedInputStream 为 FileInputStream 提供<strong>缓存</strong>的功能。</li>
+</ul>
+<img src="assets/1563439368833.png" alt="1563439368833" style="zoom:77%;" />
+
+<p>需要<strong>实例化</strong>一个具有<strong>缓存</strong>功能的<strong>字节流对象</strong>时，只需要在 FileInputStream 对象上再<strong>套一层</strong> <strong>BufferedInputStream</strong> 对象即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 具体组件fileInputStream对象</span></span><br><span class="line">FileInputStream fileInputStream = <span class="keyword">new</span> FileInputStream(filePath);</span><br><span class="line"><span class="comment">// 利用BufferedInputStream装饰fileInputStream对象</span></span><br><span class="line">BufferedInputStream bufferedInputStream = <span class="keyword">new</span> BufferedInputStream(fileInputStream);</span><br></pre></td></tr></table></figure>
+
+<p>装饰者 <strong>DataInputStream</strong> 类提供了对更多<strong>数据类型进行输入</strong>的操作，比如 int、double 等基本类型。</p>
+<h6 id="2-缓冲流BufferedInput-OutputStream"><a href="#2-缓冲流BufferedInput-OutputStream" class="headerlink" title="(2) 缓冲流BufferedInput/OutputStream"></a>(2) 缓冲流BufferedInput/OutputStream</h6><p><strong>装饰者流</strong>其实是基于一种设计模式「<strong>装饰者模式</strong>」而实现的一种文件 IO 流，<strong>缓冲流</strong>只是其中的一种。使用文件读写流 FileInputStream 和 FileOutputStream 都是<strong>一个字节一个字节</strong>从磁盘读取或写入，非常耗时。而的<strong>缓冲流</strong>可以预先从磁盘一次性读出<strong>指定容量</strong>的<strong>字节数</strong>到内存中，之后的读取操作将直接从<strong>内存</strong>中读取，通过它能够<strong>减少磁盘访问次数</strong>，提升程序执行效率。</p>
+<p>依然先以 BufferedInputStream 为例，它的几个<strong>核心属性</strong>有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> DEFAULT_BUFFER_SIZE = <span class="number">8192</span>;</span><br><span class="line"><span class="comment">// 缓冲数组</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">volatile</span> <span class="keyword">byte</span> buf[];</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> MAX_BUFFER_SIZE = Integer.MAX_VALUE - <span class="number">8</span>;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> count;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> pos;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> markpos = -<span class="number">1</span>;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> marklimit;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>buf 就是用于<strong>缓冲读</strong>的<strong>字节数组</strong>，它的值将随着流的读取而不停的被填充，继而后续的读操作可以直接<strong>基于这个缓冲数组</strong>。</li>
+<li>DEFAULT_BUFFER_SIZE 规定了<strong>默认缓冲区</strong>的大小，即 buf 的数组长度。MAX_BUFFER_SIZE 指明了缓冲区的上限。</li>
+<li>count 指向缓冲数组中最后一个<strong>有效字节索引后一位</strong>。pos 指向下一个<strong>待读取</strong>的字节索引位置。</li>
+<li>markpos 和 marklimit 用于<strong>重复读</strong>操作。</li>
+</ul>
+<p>接着看看 BufferedInputStream 的几个构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedInputStream</span><span class="params">(InputStream in)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(in, DEFAULT_BUFFER_SIZE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedInputStream</span><span class="params">(InputStream in, <span class="keyword">int</span> size)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(in);</span><br><span class="line">    <span class="keyword">if</span> (size &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Buffer size &lt;= 0"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    buf = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>前者只需要传入一个「<strong>被装饰</strong>」的 InputStream <strong>实例</strong>，并使用默认大小的缓冲区。后者则可以显式指明缓冲区的大小。</p>
+<p>此外 super(in) 会将这个 InputStream 实例保存进<strong>父类 FilterInputStream</strong> 的 <strong>in 属性</strong>字段中，并且所有实际的磁盘读操作都由这个 InputStream 实例发出。</p>
+<p>下面看最重要的<strong>读操作以及缓冲区是如何被填充</strong>的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pos &gt;= count) &#123;</span><br><span class="line">        fill();</span><br><span class="line">        <span class="keyword">if</span> (pos &gt;= count)</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> getBufIfOpen()[pos++] &amp; <span class="number">0xff</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>即从<strong>流</strong>中读取下一个字节并返回，但细节上的实现还是稍稍有些不同。count 指向了缓冲数组中有效字节索引后一位置处，pos 指向下一个待读取的字节索引位置。理论上 pos 是不可能大于 count 的，最多等于。如果 pos 等于 count，那说明缓冲数组中所有有效字节都已经被读取过了，此时即需要<strong>丢弃</strong>缓冲区中那些「无用」的数据，<strong>从磁盘重新加载一批新数据填充缓冲区</strong>。事实上 fill 方法就是做的这个事情。</p>
+<p>如果<strong>成功填充了缓冲区</strong>，那么 read 方法将<strong>==直接从缓冲区取出一个字节==</strong>返回给调用者。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">byte</span> b[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span></span>&#123;</span><br><span class="line">    <span class="comment">// .....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看看 close 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] buffer;</span><br><span class="line">    <span class="keyword">while</span> ( (buffer = buf) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (bufUpdater.compareAndSet(<span class="keyword">this</span>, buffer, <span class="keyword">null</span>)) &#123;</span><br><span class="line">            InputStream input = in;</span><br><span class="line">            in = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">if</span> (input != <span class="keyword">null</span>)</span><br><span class="line">                input.close();</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Else retry in case a new buf was CASed in fill()</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>close 方法将赋空「<strong>被装饰者</strong>」流，并调用它的 close 方法<strong>释放</strong>相关资源，最终也会清空缓冲数组所占用的<strong>内存空间</strong>。</p>
+<p>BufferedInputStream 提供了<strong>读缓冲</strong>能力，而 BufferedOutputStream 则提供了<strong>写缓冲</strong>能力，即内存的写操作并不会立马更新到磁盘，<strong>暂时保存在缓冲区</strong>，待缓冲区<strong>满时一并写</strong>入。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">byte</span> buf[];</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">int</span> count;</span><br></pre></td></tr></table></figure>
+
+<p>buf 代表了<strong>内部缓冲区</strong>，count 表示缓冲区中<strong>实际数据容量</strong>，即 buf 中<strong>有效</strong>字节数，而不是 buf 数组长度。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedOutputStream</span><span class="params">(OutputStream out)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(out, <span class="number">8192</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedOutputStream</span><span class="params">(OutputStream out, <span class="keyword">int</span> size)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(out);</span><br><span class="line">    <span class="keyword">if</span> (size &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Buffer size &lt;= 0"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    buf = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>必须提供的是一个 OutputStream 输出流<strong>实例</strong>，也可以选择性指明缓冲区大小。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> b)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (count &gt;= buf.length) &#123;</span><br><span class="line">        flushBuffer();</span><br><span class="line">    &#125;</span><br><span class="line">    buf[count++] = (<span class="keyword">byte</span>)b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>写方法</strong>将首先检查缓冲区是否还能容纳本次写操作，如果不能将发起一次磁盘写操作，将缓冲区数据全部写入磁盘文件，否则将<strong>优先写入缓冲区</strong>。</p>
+<p>BufferedOutputStream 也提供了 <strong>flush 方法</strong>向外提供接口，也即不一定非要等到缓冲区满了才向磁盘写数据，也可以显式的调用该方法让它<strong>清空缓冲区并更新磁盘文件</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">flush</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    flushBuffer();</span><br><span class="line">    out.flush();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="字符流"><a href="#字符流" class="headerlink" title="字符流"></a>字符流</h4><h5 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h5><p>字节流处理文件的时候是<strong>基于字节</strong>的，而字符流处理文件则是基于一个个<strong>字符</strong>为基本单元的。字符流操作的本质就是==<strong>字节流操作 + 编解码</strong>==两个过程的<strong>封装</strong>，写一个字符到文件时需要将字符<strong>编码</strong>成二进制，然后以字节为基本单位写入文件，当读一个字符到内存时需要以字节为基本单位读出，然后<strong>解码</strong>成字符。</p>
+<h5 id="2-编码与解码"><a href="#2-编码与解码" class="headerlink" title="2. 编码与解码"></a>2. 编码与解码</h5><p><strong>编码</strong>就是把<strong>字符</strong>转换为<strong>字节</strong>，而<strong>解码</strong>是把<strong>字节</strong>重新组合成<strong>字符</strong>。如果编码和解码过程使用不同的编码方式那么就出现了<strong>乱码</strong>。</p>
+<p>字符集(character set)是一个系统支持的所有抽象字符的集合。字符(character)就是各种文字和符号，包括国家文字、标点符号、图形符号、数字等。字符编码(character encoding)，是编码字符集的字符和实际的存储值之间的转换关系。切换查看编码的方式并没有改变数据的二进制本身，只是切换了<strong>解析数据</strong>的方式。</p>
+<ul>
+<li><p>Unicode：也叫<strong>统一字符集</strong>，它包含了几乎世界上所有的已经发现且需要使用的字符（如中文、日文、英文等）。</p>
+</li>
+<li><p>ASCII：早期的计算机系统只能处理英文，包含了<strong>英文</strong>所需要的所有字符。</p>
+</li>
+<li><p>GBK 编码中，<strong>中文字符占 2 个字节</strong>，英文字符占 1 个字节。</p>
+</li>
+<li><p>UTF-8 编码中，不同字符字节数可能不同，中文字符占 <strong>3</strong> <strong>个字节</strong>，英文字符占 <strong>1 个</strong>字节。</p>
+</li>
+<li><p>UTF-16be 编码中，中文字符和英文字符都占 2 个字节。</p>
+</li>
+</ul>
+<p>Java 的<strong>内存编码</strong>使用<strong>双字节</strong>编码 UTF-16be，这不是指 Java 只支持这一种编码方式，而是说 char 这种类型使用 UTF-16be 进行编码。char 类型占 16 位，也就是两个字节，Java 使用这种<strong>双字节编码</strong>是为了让一个中文或者一个英文都能使用<strong>一个 char</strong> 来存储。</p>
+<h5 id="3-String的编码方式"><a href="#3-String的编码方式" class="headerlink" title="3. String的编码方式"></a>3. String的编码方式</h5><p>String 可以看成一个<strong>字符序列</strong>，可以指定一个编码方式将它<strong>编码</strong>为<strong>字节序列</strong>，也可以指定一个编码方式将一个字节序列<strong>解码</strong>为 String。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String str1 = <span class="string">"中文"</span>;</span><br><span class="line"><span class="comment">// 指定编码方式并编码为字节数组</span></span><br><span class="line"><span class="keyword">byte</span>[] bytes = str1.getBytes(<span class="string">"UTF-8"</span>);	</span><br><span class="line"><span class="comment">// 指定解码方式并解码为字符串</span></span><br><span class="line">String str2 = <span class="keyword">new</span> String(bytes, <span class="string">"UTF-8"</span>);</span><br><span class="line">System.out.println(str2);</span><br></pre></td></tr></table></figure>
+
+<p><strong>双字节编码</strong>的好处是可以使用一个 char 存储中文和英文，而将 String <strong>转为 bytes[] 字节数组</strong>就不需要这个好处，因此也就不需要双字节编码。getBytes() 的默认编码方式与<strong>平台有关</strong>，<strong>一般为 UTF-8</strong>。</p>
+<h5 id="4-基类Reader与Writer"><a href="#4-基类Reader与Writer" class="headerlink" title="4. 基类Reader与Writer"></a>4. 基类Reader与Writer</h5><p>不管是磁盘还是网络传输，<strong>最小的存储单元都是==字节==，而不是字符</strong>。但是在程序中操作的通常是<strong>字符</strong>形式的数据，因此需要提供对字符进行操作的方法。Reader 是读取<strong>字符流</strong>的<strong>基类</strong>，它提供了最基本的字符读取操作，Reader 是一个<strong>抽象类</strong>。</p>
+<p>先看看它的构造器，这些构造器是给<strong>子类</strong>调用的，用于初始化 lock 锁对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object lock;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="title">Reader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.lock = <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="title">Reader</span><span class="params">(Object lock)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (lock == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.lock = lock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>读操作就是 read 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> cb[] = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">if</span> (read(cb, <span class="number">0</span>, <span class="number">1</span>) == -<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> cb[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">char</span> cbuf[])</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> read(cbuf, <span class="number">0</span>, cbuf.length);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">char</span> cbuf[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>第一个方法用于读取一个<strong>字符</strong>出来，如果已经读到了文件末尾，将返回 <strong>-1</strong>，同样的以 ==<strong>int</strong>== 作为<strong>返回值类型接收</strong>，为什么不用 char？原因与字节流是一样的，都是因为 <strong>-1</strong> 这个值的<strong>解释不确定性</strong>。第二个方法和第三个方法是类似的，从文件中读取指定长度的字符放置到目标数组当中。</p>
+<p>还有一些方法也是类似的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">skip</span><span class="params">(<span class="keyword">long</span> n)</span></span>;	<span class="comment">// 跳过 n 个字符</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">ready</span><span class="params">()</span></span>;		<span class="comment">// 下一个字符是否可读</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">markSupported</span><span class="params">()</span></span>;	<span class="comment">// 见 reset 方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">mark</span><span class="params">(<span class="keyword">int</span> readAheadLimit)</span></span>; 	<span class="comment">// 见 reset 方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span></span>;	<span class="comment">// 用于实现重复读操作</span></span><br><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>;	<span class="comment">// 关闭流</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Writer</strong> 是<strong>写的字符流</strong>，是一个<strong>抽象基类</strong>，它用于将一个或多个字符写入到文件中，其 <strong>write 方法</strong>依然是一个<strong>抽象</strong>的方法，待子类来实现。</p>
+<h5 id="5-适配器InpustStramReader-OutputStreamWriter"><a href="#5-适配器InpustStramReader-OutputStreamWriter" class="headerlink" title="5. 适配器InpustStramReader/OutputStreamWriter"></a>5. 适配器InpustStramReader/OutputStreamWriter</h5><p>适配器类，能将 InputStream/OutputSteam <strong>转换</strong>为 Reader/Writer。</p>
+<ul>
+<li><strong>InputStreamReader</strong> 实现从字节流<strong>解码</strong>成<strong>字符流</strong>；</li>
+<li><strong>OutputStreamWriter</strong> 实现字符流<strong>编码</strong>成为<strong>字节流</strong>。</li>
+</ul>
+<p>理论上来说，所有的<strong>字符流</strong>都应当以<strong>适配器为基类</strong>，因为只有它提供了字符到字节之间的<strong>转换</strong>，无论你是写或是读都离不开它。</p>
+<p>适配器字符流<strong>继承自基类</strong> Reader 或 Writer。主要的作用就是将一个<strong>字节流转换成一个字符流</strong>，以读适配器为例。它最核心的<strong>成员</strong>如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> StreamDecoder sd;</span><br></pre></td></tr></table></figure>
+
+<p>StreamDecoder 是一个<strong>解码器</strong>，用于将<strong>字节的各种操作转换成字符</strong>的相应操作。</p>
+<p>然后就是构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">InputStreamReader</span><span class="params">(InputStream in)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(in);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        sd = StreamDecoder.forInputStreamReader(in, <span class="keyword">this</span>, (String)<span class="keyword">null</span>); </span><br><span class="line">    &#125; <span class="keyword">catch</span> (UnsupportedEncodingException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> Error(e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">InputStreamReader</span><span class="params">(InputStream in, String charsetName)</span> </span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> UnsupportedEncodingException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(in);</span><br><span class="line">    <span class="keyword">if</span> (charsetName == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"charsetName"</span>);</span><br><span class="line">    sd = StreamDecoder.forInputStreamReader(in, <span class="keyword">this</span>, charsetName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两个构造器的目的都是为了<strong>初始化这个解码器</strong>，都调用的方法 forInputStreamReader，只是参数不同而已。我们不妨看看这个方法的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> StreamDecoder <span class="title">forInputStreamReader</span><span class="params">(InputStream in, Object lock, String charsetName)</span> <span class="keyword">throws</span> UnsupportedEncodingException </span>&#123;</span><br><span class="line">    String csn = charsetName;</span><br><span class="line">    <span class="keyword">if</span> (csn == <span class="keyword">null</span>)</span><br><span class="line">        csn = Charset.defaultCharset().name();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (Charset.isSupported(csn))</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> StreamDecoder(in, lock, Charset.forName(csn));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalCharsetNameException x) &#123; &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedEncodingException (csn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是一个典型的==<strong>静态工厂模式</strong>==，参数 charsetName 其实代表的是一种<strong>字符编码的名称</strong>，如果为 null，那么将使用系统<strong>默认</strong>的字符编码：UTF-8 。<strong>工厂产生解码器实例</strong>。最终就能够得到一个<strong>解码器实例</strong>。</p>
+<p>很多方法都依赖于这个<strong>解码器</strong>实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getEncoding</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sd.getEncoding();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sd.read();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">char</span> cbuf[], <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sd.read(cbuf, offset, length);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    sd.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解码器中相关的方法的实现代码还是相对复杂的，但大体过程就是：<strong>「字节流读取 + 解码」</strong>。</p>
+<p>当然，OutputStreamWriter 中必然也存在一个<strong>相反的 StreamEncoder 实例</strong>用于<strong>编码字符</strong>。除了这一点外，其余的操作并都比较类似。</p>
+<h5 id="6-文件字符流FileReader-Writer"><a href="#6-文件字符流FileReader-Writer" class="headerlink" title="6. 文件字符流FileReader/Writer"></a>6. 文件字符流FileReader/Writer</h5><p>FileReader/Writer 不能指定编码类型，只能使用<strong>默认</strong>编码，如果<strong>需要指定编码类型</strong>需要使用适配器I<strong>npustStramReader/OutputStreamWriter</strong>。</p>
+<p>FileReader/Writer <strong>没有缓冲</strong>，也<strong>不能按行读写</strong>，一般<strong>应该</strong>在它们的外面<strong>包装</strong>上对应的==<strong>缓冲类</strong>==。文件的字符流非常简单，除了构造器，就没有其他方法了，<strong>完全依赖文件字节流</strong>。</p>
+<p>以 FileReader 为例，FileReader <strong>继承</strong>自 <strong>InputStreamReader</strong>，<strong>有且仅有</strong>以下三个构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileReader</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(<span class="keyword">new</span> FileInputStream(fileName));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileReader</span><span class="params">(File file)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(<span class="keyword">new</span> FileInputStream(file));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileReader</span><span class="params">(FileDescriptor fd)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(<span class="keyword">new</span> FileInputStream(fd));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而我们的 FileReader 并没有扩展任何一个自己的方法，父类 InputStreamReader 中预实现的字符操作方法对它来说已经足够，只需要传入一个对应的字节流实例即可。FileWriter 也是类似。</p>
+<h5 id="7-字符数组流CharArrayReader-Writer"><a href="#7-字符数组流CharArrayReader-Writer" class="headerlink" title="7. 字符数组流CharArrayReader/Writer"></a>7. 字符数组流CharArrayReader/Writer</h5><p><strong>字符数组流和字节数组流</strong>是类似的，都是用于解决那种<strong>不确定文件大小</strong>，而需要读取其中<strong>大量内容</strong>的情况。由于它们内部提供<strong>动态扩容机制</strong>，所以既可以完全容纳目标文件，也可以控制数组大小，不至于分配过大内存而浪费了大量内存空间。</p>
+<p>先以 CharArrayReader 为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">char</span> buf[];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CharArrayReader</span><span class="params">(<span class="keyword">char</span> buf[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.buf = buf;</span><br><span class="line">    <span class="keyword">this</span>.pos = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">this</span>.count = buf.length;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CharArrayReader</span><span class="params">(<span class="keyword">char</span> buf[], <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span></span>&#123;</span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构造器核心任务就是初始化一个字符数组到内部的 buf 属性中，以后所有对该字符数组流实例的读操作都<strong>基于 buf</strong> 这个字符数组。关于 CharArrayReader 的其他方法以及 CharArrayWriter 和上篇的字节数组流基本类似。</p>
+<p>除此之外，还涉及一个 StringReader 和 StringWriter，其实本质上和字符数组流是一样的，毕竟 String 的本质就是 char 数组。</p>
+<h5 id="8-缓冲流BufferedReader-Writer"><a href="#8-缓冲流BufferedReader-Writer" class="headerlink" title="8. 缓冲流BufferedReader/Writer"></a>8. 缓冲流BufferedReader/Writer</h5><h6 id="1-概述-1"><a href="#1-概述-1" class="headerlink" title="(1) 概述"></a>(1) 概述</h6><p>BufferedReader/Writer 作为一种<strong>缓冲流</strong>，也是==<strong>装饰者流</strong>==，用于提供<strong>缓冲功能</strong>。大体上类似于字节缓冲流。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Reader in;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">char</span> cb[];</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> defaultCharBufferSize = <span class="number">8192</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedReader</span><span class="params">(Reader in, <span class="keyword">int</span> sz)</span></span>&#123;..&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedReader</span><span class="params">(Reader in)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(in, defaultCharBufferSize);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>cb 是一个<strong>字符数组</strong>，用于<strong>缓存</strong>从文件流中读取的<strong>部分字符</strong>，可以在构造器中初始化数组长度，否则使用默认值 <strong>8192</strong> 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;..&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">char</span> cbuf[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span></span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
+
+<p>read 依赖成员属性 <strong>in 的读方法</strong>，而 in 作为一个 <strong>Reader</strong> 类型，内部往往又依赖的某个 InputStream 实例的读方法。</p>
+<p><strong>所以说，==几乎所有的字符流都离不开某个字节流实例。==</strong></p>
+<p>BufferedWriter 大体上都是类似的，只不过一个是读一个是写而已，都围绕着内部的<strong>字符数组</strong>进行。</p>
+<h6 id="2-实现逐行输出文本文件的内容"><a href="#2-实现逐行输出文本文件的内容" class="headerlink" title="(2) 实现逐行输出文本文件的内容"></a>(2) 实现逐行输出文本文件的内容</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">readFileContent</span><span class="params">(String filePath)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	<span class="comment">// 构造一个文件字符流</span></span><br><span class="line">    FileReader fileReader = <span class="keyword">new</span> FileReader(filePath);</span><br><span class="line">    <span class="comment">// 此处也用字符缓冲流装饰文件字符流</span></span><br><span class="line">    BufferedReader bufferedReader = <span class="keyword">new</span> BufferedReader(fileReader);</span><br><span class="line"></span><br><span class="line">    String line;</span><br><span class="line">    <span class="keyword">while</span> ((line = bufferedReader.readLine()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        System.out.println(line);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 装饰者模式使得BufferedReader组合了一个Reader对象</span></span><br><span class="line">    <span class="comment">// 在调用BufferedReader的close()方法时会去调用Reader的close()方法</span></span><br><span class="line">    <span class="comment">// 因此只要一个close()调用即可</span></span><br><span class="line">    bufferedReader.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h4><h5 id="1-概述-2"><a href="#1-概述-2" class="headerlink" title="1. 概述"></a>1. 概述</h5><p>序列化就是将一个<strong>对象</strong>转换成<strong>字节序列</strong>，方便存储和传输。</p>
+<ul>
+<li>序列化：ObjectOutputStream.<strong>writeObject</strong>()</li>
+<li>反序列化：ObjectInputStream.<strong>readObject</strong>()</li>
+</ul>
+<p>==<strong>不会</strong>对<strong>静态变量</strong>进行序列化==，因为序列化只是保存<strong>对象的状态</strong>，静态变量是表示<strong>类</strong>的状态。<strong>==transient==</strong> 代表对象的<strong>临时数据</strong>，也不会被序列化。</p>
+<p>当一个对象的实例变量引用其它对象，序列化该对象时也会把引用对象进行序列化。这是能<strong>用序列化解决深拷贝</strong>问题的重要原因。</p>
+<h5 id="2-Serializable"><a href="#2-Serializable" class="headerlink" title="2. Serializable"></a>2. Serializable</h5><p>序列化的类需要实现 <strong>Serializable</strong> 接口，它只是一个标记接口，<strong>没有任何方法</strong>需要实现。Java 有很多基础类已经实现了 serializable 接口，比如 String , Vector 等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException </span>&#123;</span><br><span class="line"></span><br><span class="line">    A a1 = <span class="keyword">new</span> A(<span class="number">123</span>, <span class="string">"abc"</span>);</span><br><span class="line">    String objectFile = <span class="string">"file/a1"</span>;</span><br><span class="line"></span><br><span class="line">    ObjectOutputStream objectOutputStream = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(objectFile));</span><br><span class="line">    <span class="comment">// 序列化</span></span><br><span class="line">    objectOutputStream.writeObject(a1);</span><br><span class="line">    objectOutputStream.close();</span><br><span class="line"></span><br><span class="line">    ObjectInputStream objectInputStream = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(objectFile));</span><br><span class="line">    <span class="comment">// 反序列化</span></span><br><span class="line">    A a2 = (A) objectInputStream.readObject();</span><br><span class="line">    objectInputStream.close();</span><br><span class="line">    System.out.println(a2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现Serializable接口的类</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> c = <span class="number">0</span>; 	<span class="comment">// 静态变量不会被序列化</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">private</span> String y;</span><br><span class="line"></span><br><span class="line">    A(<span class="keyword">int</span> x, String y) &#123;</span><br><span class="line">        <span class="keyword">this</span>.x = x;</span><br><span class="line">        <span class="keyword">this</span>.y = y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"x = "</span> + x + <span class="string">"  "</span> + <span class="string">"y = "</span> + y;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-JDK序列化与反序列化步骤"><a href="#3-JDK序列化与反序列化步骤" class="headerlink" title="3. JDK序列化与反序列化步骤"></a>3. JDK序列化与反序列化步骤</h5><p>假定一个 User 类的对象需要<strong>序列化</strong>，序列化流程如下：</p>
+<ul>
+<li><p>若 User 类<strong>仅仅实现了 Serializable 接口</strong>，则 ObjectOutputStream 采用<strong>默认</strong>的序列化方式，对 User 对象的<strong>非 transient</strong> 的实例变量进行序列化。ObjcetInputStream 采用<strong>默认</strong>的反序列化方式，对 User 对象的<strong>非 transient</strong> 的实例变量进行反序列化。</p>
+</li>
+<li><p>若 User 类<strong>实现了 Serializable 接口</strong>，并且还实现了 <strong>readObject</strong>(ObjectInputStream in) 和<strong>writeObject</strong>(ObjectOutputSteam out)，则 ObjectOutputStream 和 ObjectInputStream 会分别调用 writeObject 与 readObject 方法进行序列化与反序列化。参考 ArrayList 源码。</p>
+</li>
+<li><p>若 User 类实现了 <strong>Externalnalizable 接口</strong>，则它必须实现 <strong>readExternal</strong> 和 <strong>writeExternal</strong> 方法，则 ObjectOutputStream 和 ObjectInputStream 会分别调用 readExternal与 writeExternal方法进行序列化与反序列化。</p>
+</li>
+</ul>
+<p><strong>JDK类库中序列化的步骤</strong>：</p>
+<p>步骤一：创建一个<strong>对象输出流</strong>，它可以包装一个其它类型的目标输出流，如文件输出流：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">"D:\\object.out"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>步骤二：通过对象输出流的 <strong>writeObject</strong>() 方法写对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oos.writeObject(<span class="keyword">new</span> User(<span class="string">"nano"</span>, <span class="string">"12345656"</span>, <span class="string">"male"</span>));</span><br></pre></td></tr></table></figure>
+
+<p><strong>JDK类库中反序列化的步骤</strong>：</p>
+<p>步骤一：创建一个<strong>对象输入流</strong>，它可以包装一个其它类型输入流，如文件输入流：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ObjectInputStream ois= <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"object.out"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>步骤二：通过对象输出流的 <strong>readObject</strong>() 方法读取对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User user = (User) ois.readObject();</span><br></pre></td></tr></table></figure>
+
+<p>说明：为了正确读取数据完成反序列化，必须保证向对象输出流写对象的顺序与从对象输入流中读对象的顺序一致。</p>
+<h5 id="4-transient关键字"><a href="#4-transient关键字" class="headerlink" title="4. transient关键字"></a>4. transient关键字</h5><p>transient 关键字可以使一些属性<strong>不会</strong>被序列化。</p>
+<p>ArrayList 中存储数据的数组 <strong>elementData</strong> 是用 <strong>transient</strong> 修饰的，因为这个数组是<strong>动态扩展</strong>的，并不是所有的空间都被使用，因此就<strong>不需要</strong>所有的内容都被序列化。通过==<strong>重写</strong>==序列化和反序列化方法，使得可以只序列化数组中<strong>有内容</strong>的那部分数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> Object[] elementData;</span><br></pre></td></tr></table></figure>
+
+<p>不止 ArrayList，还有好几个使用动态数组的集合类都是如此。</p>
+<h5 id="5-serialVersionUID"><a href="#5-serialVersionUID" class="headerlink" title="5. serialVersionUID"></a>5. serialVersionUID</h5><p>序列化运行时使用一个称为 <strong>serialVersionUID</strong> 的<strong>版本号</strong>与每个可序列化类相<strong>关联</strong>，该序列号在反序列化过程中用于<strong>验证</strong>序列化对象的发送者和接收者是否为该对象加载了与序列化兼容的类。为它赋予明确的值。</p>
+<p>显式地定义 serialVersionUID 有两种用途：</p>
+<ul>
+<li>在某些场合，<strong>希望类</strong>的不同版本对序列化兼容，因此需要确保类的不同版本具有<strong>相同</strong>的 serialVersionUID；</li>
+<li>在某些场合，<strong>不希望类</strong>的不同版本对序列化兼容，因此需要确保类的不同版本具有<strong>不同</strong>的 serialVersionUID。</li>
+</ul>
+<h5 id="5-注意事项"><a href="#5-注意事项" class="headerlink" title="5. 注意事项"></a>5. 注意事项</h5><ul>
+<li>当一个父类实现序列化，子类<strong>自动实现序列化</strong>，不需要显式实现 Serializable 接口。</li>
+<li><strong>并非所有的对象都可以序列化</strong>：<strong>资源分配方面</strong>，比如 socket，thread 类，即使可以序列化，进行传输或者保存，也无法对他们<strong>重新进行资源分配</strong>。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/A%20Java/E-1%20Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="next" title="ShiftJava/A Java/E-1 Lambda表达式">
+                <i class="fa fa-chevron-left"></i> ShiftJava/A Java/E-1 Lambda表达式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/A%20Java/D-1%20%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/" rel="prev" title="ShiftJava/A Java/D-1 文件操作">
+                ShiftJava/A Java/D-1 文件操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#IO流操作"><span class="nav-number">1.</span> <span class="nav-text">IO流操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基础"><span class="nav-number">1.1.</span> <span class="nav-text">基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字节流"><span class="nav-number">1.2.</span> <span class="nav-text">字节流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-基类字节流InputStream-OutputStream"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 基类字节流InputStream/OutputStream</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-基本API"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">(1) 基本API</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-实现文件复制"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">(2) 实现文件复制</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-文件字节流FileInput-OutputStream"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 文件字节流FileInput/OutputStream</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-字节数组流ByteArrayInput-OutputStream"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 字节数组流ByteArrayInput/OutputStream</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-装饰者缓冲流BufferedInput-OutputStream"><span class="nav-number">1.2.4.</span> <span class="nav-text">5. 装饰者缓冲流BufferedInput/OutputStream</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-装饰者模式"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">(1) 装饰者模式</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-缓冲流BufferedInput-OutputStream"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">(2) 缓冲流BufferedInput/OutputStream</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符流"><span class="nav-number">1.3.</span> <span class="nav-text">字符流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-概述"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-编码与解码"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 编码与解码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-String的编码方式"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. String的编码方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-基类Reader与Writer"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. 基类Reader与Writer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-适配器InpustStramReader-OutputStreamWriter"><span class="nav-number">1.3.5.</span> <span class="nav-text">5. 适配器InpustStramReader/OutputStreamWriter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-文件字符流FileReader-Writer"><span class="nav-number">1.3.6.</span> <span class="nav-text">6. 文件字符流FileReader/Writer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-字符数组流CharArrayReader-Writer"><span class="nav-number">1.3.7.</span> <span class="nav-text">7. 字符数组流CharArrayReader/Writer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-缓冲流BufferedReader-Writer"><span class="nav-number">1.3.8.</span> <span class="nav-text">8. 缓冲流BufferedReader/Writer</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-概述-1"><span class="nav-number">1.3.8.1.</span> <span class="nav-text">(1) 概述</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-实现逐行输出文本文件的内容"><span class="nav-number">1.3.8.2.</span> <span class="nav-text">(2) 实现逐行输出文本文件的内容</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#序列化"><span class="nav-number">1.4.</span> <span class="nav-text">序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-概述-2"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Serializable"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. Serializable</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-JDK序列化与反序列化步骤"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. JDK序列化与反序列化步骤</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-transient关键字"><span class="nav-number">1.4.4.</span> <span class="nav-text">4. transient关键字</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-serialVersionUID"><span class="nav-number">1.4.5.</span> <span class="nav-text">5. serialVersionUID</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-注意事项"><span class="nav-number">1.4.6.</span> <span class="nav-text">5. 注意事项</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

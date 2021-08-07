@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] Redis哨兵Redis Sentinel架构基础1. 普通主从复制的问题主从复制带来了以下问题：  一旦主节点出现故障，需要手动将一个从节点晋升为主节点，同时需要修改应用方的主节点地址，还需要命令其他从节点去复制新的主节点，整个过程都需要人工干预。  主节点的写能力受到单机的限制。  主节点的存储能力受到单机的限制。   这一点也不高可用。 2. Redis Sentinel架构主节">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;I 缓存&#x2F;E Redis哨兵">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] Redis哨兵Redis Sentinel架构基础1. 普通主从复制的问题主从复制带来了以下问题：  一旦主节点出现故障，需要手动将一个从节点晋升为主节点，同时需要修改应用方的主节点地址，还需要命令其他从节点去复制新的主节点，整个过程都需要人工干预。  主节点的写能力受到单机的限制。  主节点的存储能力受到单机的限制。   这一点也不高可用。 2. Redis Sentinel架构主节">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200527211003270.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725144102826.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;7896890-a1c935f094240cac.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725144200824.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725144611456.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725144820021.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725145110165.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725154950511.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725150625390.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725150819406.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725151015975.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725151100774.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725151431673.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725151754450.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725152105272.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200725152403380.png">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;I%20%E7%BC%93%E5%AD%98&#x2F;E%20Redis%E5%93%A8%E5%85%B5&#x2F;assets&#x2F;image-20200527211003270.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/I 缓存/E Redis哨兵/"/>
+
+
+
+
+
+  <title>ShiftJava/I 缓存/E Redis哨兵 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/I%20%E7%BC%93%E5%AD%98/E%20Redis%E5%93%A8%E5%85%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/I 缓存/E Redis哨兵</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:17+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="Redis哨兵"><a href="#Redis哨兵" class="headerlink" title="Redis哨兵"></a>Redis哨兵</h3><h4 id="Redis-Sentinel架构基础"><a href="#Redis-Sentinel架构基础" class="headerlink" title="Redis Sentinel架构基础"></a>Redis Sentinel架构基础</h4><h5 id="1-普通主从复制的问题"><a href="#1-普通主从复制的问题" class="headerlink" title="1. 普通主从复制的问题"></a>1. 普通主从复制的问题</h5><p><strong>主从复制</strong>带来了以下问题：</p>
+<ul>
+<li><p>一旦主节点<strong>出现故障</strong>，需要手动将一个从节点晋升为主节点，同时需要修改应用方的主节点地址，还需要命令其他从节点去复制新的主节点，整个过程都需要<strong>人工干预</strong>。</p>
+</li>
+<li><p>主节点的<strong>写能力</strong>受到单机的限制。</p>
+</li>
+<li><p>主节点的<strong>存储能力</strong>受到单机的限制。</p>
+</li>
+</ul>
+<p>这一点也<strong>不高可用</strong>。</p>
+<h5 id="2-Redis-Sentinel架构"><a href="#2-Redis-Sentinel架构" class="headerlink" title="2. Redis Sentinel架构"></a>2. Redis Sentinel架构</h5><p>主节点出现故障时，<strong>Redis Sentinel</strong> 能<strong>自动完成故障发现和故障转移</strong>，并<strong>通知应用方</strong>，从而实现真正的<strong>高可用</strong> 。</p>
+<p>Redis Sentinel 是一个<strong>分布式架构</strong>，其中包含<strong>若干个 Sentinel 节点</strong>和 Redis 数据节点，每个 Sentinel 节点会对数据节点和<strong>其余</strong> Sentinel 节点进行监控，当它发现节点不可达时，会对节点做<strong>下线标识</strong>。如果被标识的是<strong>主节点</strong>，它还会和其他Sentinel 节点进行“<strong>协商</strong>”，当大多数 Sentinel 节点<strong>都认为主节点不可达</strong>时，它们会<strong>选举出一个 Sentinel 节点</strong>来完成<strong>自动故障转移</strong>的工作，同时会将这个变化<strong>实时通知</strong>给 Redis 应用方。</p>
+<p>整个过程完全是<strong>自动</strong>的，不需要人工来介入，实现了<strong>高可用</strong>。</p>
+<p>Redis Sentinel 与 Redis 主从复制的架构相比较<strong>只是多了若干 Sentinel 节点</strong>，所以 Redis Sentinel <strong>并没有</strong>针对 Redis 节点做特殊处理。</p>
+<img src="assets/image-20200527211003270.png" alt="image-20200527211003270" style="zoom:67%;" />
+
+<p><strong>Sentinel 节点本身就是独立的 Redis 节点，只不过它们有一些特殊，它们不存储数据，只支持部分命令。</strong> Sentinel 节点<strong>集合</strong>会定期对<strong>所有节点</strong>进行监控，特别是对主节点的<strong>故障实现自动转移</strong>。</p>
+<p>Redis Sentinel 同时包含了<strong>若个 Sentinel 节点</strong>，这样做也带来了两个好处：</p>
+<ol>
+<li>对于节点的<strong>故障判断</strong>是由多个 Sentinel 节点<strong>共同完成</strong>，这样可以有效地<strong>防止误判</strong>。</li>
+<li>Sentinel 节点集合是由若干个 Sentinel 节点组成的，这样即使个别 Sentinel 节点不可用，整个 Sentinel 节点集合依然是健壮的，防止 Sentinel 出现单点故障。</li>
+</ol>
+<h5 id="3-Sentinel的功能"><a href="#3-Sentinel的功能" class="headerlink" title="3. Sentinel的功能"></a>3. Sentinel的功能</h5><p>Redis Sentinel 具有以下几个功能:</p>
+<ul>
+<li><strong>监控</strong>：Sentinel 节点会定期检测 Redis 数据节点、其余 Sentinel 节点是否可达。</li>
+<li><strong>通知</strong>：Sentinel 节点会将故障转移的结果通知给应用方。</li>
+<li><strong>主节点故障转移</strong>：实现从节点晋升为主节点并维护后续正确的主从关系。</li>
+<li><strong>配置提供者</strong>：在 Redis Sentinel 结构中，客户端在初始化的时候连接的是 Sentinel 节点<strong>集合</strong>，从中获取主节点信息。</li>
+</ul>
+<h5 id="4-Sentinel部署与配置"><a href="#4-Sentinel部署与配置" class="headerlink" title="4. Sentinel部署与配置"></a>4. Sentinel部署与配置</h5><p>部署实操可以看看 Sentinel 架构的部署过程：<a href="https://blog.csdn.net/cuiwjava/article/details/98844949" target="_blank" rel="noopener">https://blog.csdn.net/cuiwjava/article/details/98844949</a></p>
+<h6 id="1-配置参数及优化"><a href="#1-配置参数及优化" class="headerlink" title="(1) 配置参数及优化"></a>(1) 配置参数及优化</h6><p>Redis 安装目录下有一个 <strong>sentinel.conf</strong>，是默认的 Sentinel 节点<strong>配置文件</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">port 26379	<span class="comment"># 端口</span></span><br><span class="line">dir /opt/soft/redis/data  <span class="comment"># 工作目录</span></span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2	<span class="comment"># 配置主节点地址端口，不可达票数为2</span></span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line"><span class="comment">#sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</span></span><br><span class="line"><span class="comment">#sentinel notification-script &lt;master-name&gt; &lt;script-path&gt;</span></span><br><span class="line"><span class="comment">#sentinel client-reconfig-script &lt;master-name&gt; &lt;script-path&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>① sentinel monitor</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</span><br></pre></td></tr></table></figure>
+
+<p>Sentinel 节点会定期监控<strong>主节点</strong>，所以从配置上必然也会有所体现，Sentinel 节点要监控的是一个名字叫做 &lt;master-name&gt;，ip 地址和端口为 &lt;ip&gt;&lt;port&gt; 的<strong>主节点</strong>。</p>
+<p><strong>&lt;quorum&gt;</strong> 代表要判定<strong>==主节点最终不可达所需要的票数==</strong>。&lt;quorum&gt;参数用于故障发现和判定，例如将 quorum 配置为2，代表至少有 2 个 Sentinel 节点<strong>认为</strong>主节点不可达，那么这个不可达的判定才是客观的。一般建议将其<strong>设置为 Sentinel 节点数量的一半加 1</strong>。</p>
+<p>同时 <strong>&lt;quorum&gt;</strong> 还与 Sentinel 节点的<strong>领导者选举</strong>有关，至少要有 <strong>max（quorum，num（sentinels）/2+1）</strong>个 Sentinel 节点参与选举，才能选出领导者 Sentinel，从而完成故障转移。</p>
+<p>但实际上 Sentinel 节点会对<strong>所有节点</strong>进行监控，但是在 Sentinel 节点配置中没有看到有关从节点和其余 Sentinel 节点的配置，那是因为 Sentinel 节点会<strong>自动</strong>从<strong>主节点</strong>中获取有关<strong>从节点以及其余 Sentinel 节点</strong>的相关信息。 </p>
+<p>例如某个 Sentinel <strong>初始节点配置</strong>如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"26379.log"</span></span><br><span class="line">dir /opt/soft/redis/data</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2	<span class="comment"># 只有主节点的配置</span></span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br></pre></td></tr></table></figure>
+
+<p> 当所有节点启动后，配置文件中的内容发生了<strong>变化</strong>，原来的配置文件中会<strong>自动加入从节点和其他 Sentinel 结点的信息</strong>，并且会去掉一些默认配置参数。如下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"26379.log"</span></span><br><span class="line">dir <span class="string">"/opt/soft/redis/data"</span></span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line">sentinel config-epoch mymaster 0</span><br><span class="line">sentinel leader-epoch mymaster 0</span><br><span class="line"><span class="comment">#发现两个slave节点</span></span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6380</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6381</span><br><span class="line"><span class="comment">#发现两个sentinel节点</span></span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26380 282a70ff56c36ed56e8f7ee6ada741</span><br><span class="line">24140d6f53</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26381 f714470d30a61a8e39ae031192f1fe</span><br><span class="line">ae7eb5b2be</span><br><span class="line">sentinel current-epoch 0</span><br></pre></td></tr></table></figure>
+
+<p>Redis Sentine l可以<strong>同时监控多个主节点</strong>。配置时只需要指定<strong>多个 masterName</strong> 来区分<strong>不同的主节点</strong>即可。</p>
+<img src="assets/image-20200725144102826.png" alt="image-20200725144102826" style="zoom:53%;" />
+
+<p><strong>② sentinel down-after-milliseconds</strong></p>
+<p>配置结点间不可达<strong>超时时间</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sentinel down-after-milliseconds &lt;master-name&gt; &lt;<span class="built_in">times</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>每个 Sentinel 节点都要通过<strong>定期发送 ping 命令</strong>来判断 Redis 数据节点和其余 Sentinel 节点<strong>是否可达</strong>，如果超过了 down-after-milliseconds 配置的<strong>时间</strong>且没有有效的回复，则判定节点不可达，&lt;times&gt;（单位为毫秒）就是超时时间。</p>
+<p>*<em>③ sentinel parallel-syncs *</em></p>
+<p>用来限制在一次<strong>故障转移</strong>之后，<strong>每次向新的主节点发起复制操作</strong>的从节点个数。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sentinel parallel-syncs &lt;master-name&gt; &lt;nums&gt;</span><br></pre></td></tr></table></figure>
+
+<p>*<em>④ sentinel failover-timeout *</em></p>
+<p>failover-timeout 通常被解释成<strong>故障转移超时时间</strong>，但实际上它作用于故障转移的各个阶段。</p>
+<h6 id="2-部署技巧"><a href="#2-部署技巧" class="headerlink" title="(2) 部署技巧"></a>(2) 部署技巧</h6><ul>
+<li>Sentinel 节点不应该部署在一台物理“机器”上。</li>
+<li>部署<strong>三个以上且奇数个</strong>的 Sentinel 节点。3 个以上是通过增加 Sentinel 节点的个数提高对于故障判定的<strong>准确性</strong>，因为领导者选举需要至少一半加 1 个节点，奇数个节点可以在满足该条件的基础上节省一个节点。</li>
+</ul>
+<h5 id="5-哨兵部署与故障转移Demo"><a href="#5-哨兵部署与故障转移Demo" class="headerlink" title="5. 哨兵部署与故障转移Demo"></a>5. 哨兵部署与故障转移Demo</h5><h6 id="1-第一步：创建主从节点配置文件并启动"><a href="#1-第一步：创建主从节点配置文件并启动" class="headerlink" title="(1) 第一步：创建主从节点配置文件并启动"></a>(1) 第一步：创建主从节点配置文件并启动</h6><p>安装目录下找到 redis.conf 文件复制三份分别命名为 redis-master.conf/redis-slave1.conf/redis-slave2.conf，分别作为 1 个主节点和 2 个从节点的配置文件。</p>
+<p>打开可以看到这个 <strong>.conf 后缀文件</strong>里面有很多说明的内容，全部删除然后分别改成下面的样子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#redis-master.conf</span></span><br><span class="line">port 6379</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"6379.log"</span></span><br><span class="line">dbfilename <span class="string">"dump-6379.rdb"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#redis-slave1.conf</span></span><br><span class="line">port 6380</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"6380.log"</span></span><br><span class="line">dbfilename <span class="string">"dump-6380.rdb"</span></span><br><span class="line">slaveof 127.0.0.1 6379</span><br><span class="line"></span><br><span class="line"><span class="comment">#redis-slave2.conf</span></span><br><span class="line">port 6381</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"6381.log"</span></span><br><span class="line">dbfilename <span class="string">"dump-6381.rdb"</span></span><br><span class="line">slaveof 127.0.0.1 6379</span><br></pre></td></tr></table></figure>
+
+<p>然后执行 <strong>redis-server &lt;config file path&gt;</strong> 来<strong>根据配置文件启动不同的 Redis 实例</strong>，依次启动主从节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis-server /usr/<span class="built_in">local</span>/redis-5.0.3/redis-master.conf</span><br><span class="line">redis-server /usr/<span class="built_in">local</span>/redis-5.0.3/redis-slave1.conf</span><br><span class="line">redis-server /usr/<span class="built_in">local</span>/redis-5.0.3/redis-slave2.conf</span><br></pre></td></tr></table></figure>
+
+<p>节点启动后执行 redis-cli 默认连接到端口为 <strong>6379 的主节点</strong>执行 <strong>info Replication</strong> 检查一下<strong>主从状态</strong>是否正常：(可以看到下方正确地显示了两个从节点)</p>
+<img src="assets/7896890-a1c935f094240cac.png" style="zoom:50%;" />
+
+<h6 id="2-第二步：创建哨兵节点配置文件并启动"><a href="#2-第二步：创建哨兵节点配置文件并启动" class="headerlink" title="(2) 第二步：创建哨兵节点配置文件并启动"></a>(2) 第二步：创建哨兵节点配置文件并启动</h6><p>按照上面同样的方法，给<strong>哨兵节点</strong>也创建<strong>三个配置文件</strong>。哨兵节点本质上是特殊的 Redis 节点，所以配置几乎没什么差别，只是在端口上做区分就好。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># redis-sentinel-1.conf</span></span><br><span class="line">port 26379</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"26379.log"</span></span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line"></span><br><span class="line"><span class="comment"># redis-sentinel-2.conf</span></span><br><span class="line">port 26380</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"26380.log"</span></span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line"></span><br><span class="line"><span class="comment"># redis-sentinel-3.conf</span></span><br><span class="line">port 26381</span><br><span class="line">daemonize yes</span><br><span class="line">logfile <span class="string">"26381.log"</span></span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br></pre></td></tr></table></figure>
+
+<p>其中 <strong>sentinel monitor mymaster 127.0.0.1 6379 2</strong> 配置的含义是：该哨兵节点监控 127.0.0.1:6379 这个主节点，该主节点的名称是 mymaster，最后的 2 的含义与主节点的故障判定有关：<strong>至少需要 2 个哨兵节点同意</strong>，才能判定主节点故障并进行故障转移。</p>
+<p>执行下方命令将<strong>哨兵节点启动</strong>起来：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis-server /usr/<span class="built_in">local</span>/redis-5.0.3/redis-sentinel-1.conf --sentinel</span><br><span class="line">redis-server /usr/<span class="built_in">local</span>/redis-5.0.3/redis-sentinel-2.conf --sentinel</span><br><span class="line">redis-server /usr/<span class="built_in">local</span>/redis-5.0.3/redis-sentinel-3.conf --sentinel</span><br></pre></td></tr></table></figure>
+
+<p>使用 redis-cil 工具连接哨兵节点，并执行 <strong>info Sentinel 命令</strong>来查看是否已经在监视主节点了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 连接端口为 26379 的 Redis 节点</span></span><br><span class="line">➜  ~ redis-cli -p 26379</span><br><span class="line">127.0.0.1:26379&gt; info Sentinel</span><br><span class="line"><span class="comment"># Sentinel</span></span><br><span class="line">sentinel_masters:1</span><br><span class="line">sentinel_tilt:0</span><br><span class="line">sentinel_running_scripts:0</span><br><span class="line">sentinel_scripts_queue_length:0</span><br><span class="line">sentinel_simulate_failure_flags:0</span><br><span class="line">master0:name=mymaster,status=ok,address=127.0.0.1:6379,slaves=2,sentinels=3</span><br></pre></td></tr></table></figure>
+
+<p>此时打开刚才写好的哨兵配置文件，会自动写入一些信息。</p>
+<h6 id="3-第三步：模拟故障转移"><a href="#3-第三步：模拟故障转移" class="headerlink" title="(3) 第三步：模拟故障转移"></a>(3) 第三步：模拟故障转移</h6><p>首先，使用 <strong>kill -9</strong> 命令来<strong>杀掉主节点</strong>，同时 在哨兵节点中执行 <strong>info Sentinel 命令</strong>来观察故障节点的过程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ ps aux | grep 6379</span><br><span class="line">longtao          74529   0.3  0.0  4346936   2132   ??  Ss   10:30上午   0:03.09 redis-server *:26379 [sentinel]</span><br><span class="line">longtao          73541   0.2  0.0  4348072   2292   ??  Ss   10:18上午   0:04.79 redis-server *:6379</span><br><span class="line">longtao          75521   0.0  0.0  4286728    728 s008  S+   10:39上午   0:00.00 grep --color=auto --exclude-dir=.bzr --exclude-dir=CVS --exclude-dir=.git --exclude-dir=.hg --exclude-dir=.svn 6379</span><br><span class="line">longtao          74836   0.0  0.0  4289844    944 s006  S+   10:32上午   0:00.01 redis-cli -p 26379</span><br><span class="line">➜  ~ <span class="built_in">kill</span> -9 73541</span><br></pre></td></tr></table></figure>
+
+<p>如果 <strong>刚杀掉瞬间</strong> 在哨兵节点中执行 <code>info</code> 命令来查看，会发现主节点还没有切换过来，因为哨兵发现主节点故障并转移需要一段时间：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一时间查看哨兵节点发现并未转移，还在 6379 端口</span></span><br><span class="line">127.0.0.1:26379&gt; info Sentinel</span><br><span class="line"><span class="comment"># Sentinel</span></span><br><span class="line">sentinel_masters:1</span><br><span class="line">sentinel_tilt:0</span><br><span class="line">sentinel_running_scripts:0</span><br><span class="line">sentinel_scripts_queue_length:0</span><br><span class="line">sentinel_simulate_failure_flags:0</span><br><span class="line">master0:name=mymaster,status=ok,address=127.0.0.1:6379,slaves=2,sentinels=3</span><br></pre></td></tr></table></figure>
+
+<p>一段时间之后再执行 <strong>info 命令</strong>，就会发现<strong>主节点已经切换成了 6381 端口的从节点</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 过一段时间之后在执行，发现已经切换了 6381 端口</span></span><br><span class="line">127.0.0.1:26379&gt; info Sentinel</span><br><span class="line"><span class="comment"># Sentinel</span></span><br><span class="line">sentinel_masters:1</span><br><span class="line">sentinel_tilt:0</span><br><span class="line">sentinel_running_scripts:0</span><br><span class="line">sentinel_scripts_queue_length:0</span><br><span class="line">sentinel_simulate_failure_flags:0</span><br><span class="line">master0:name=mymaster,status=ok,address=127.0.0.1:6381,slaves=2,sentinels=3</span><br></pre></td></tr></table></figure>
+
+<p>但同时还可以发现，<strong>哨兵节点认为新的主节点仍然有两个从节点</strong> (上方 slaves=2)，这是因为哨兵在将 <code>6381</code> 切换成主节点的同时，将 <code>6379</code> 节点置为其从节点。虽然 <code>6379</code> 从节点已经挂掉，但是由于 <strong>哨兵并不会对从节点进行客观下线</strong>，因此认为该从节点一直存在。当 <code>6379</code> 节点重新启动后，会自动变成 <code>6381</code> 节点的从节点。</p>
+<p>另外，在故障转移的阶段，哨兵和主从节点的配置文件都会被改写：</p>
+<ul>
+<li><strong>对于主从节点：</strong> 主要是 <code>slaveof</code> 配置的变化，新的主节点没有了 <code>slaveof</code> 配置，其从节点则 <code>slaveof</code> 新的主节点。</li>
+<li><strong>对于哨兵节点：</strong> 除了主从节点信息的变化，纪元(epoch) <em>(记录当前集群状态的参数)</em> 也会变化，纪元相关的参数都 +1 了。</li>
+</ul>
+<h4 id="Redis-Sentinel-API与客户端"><a href="#Redis-Sentinel-API与客户端" class="headerlink" title="Redis Sentinel API与客户端"></a>Redis Sentinel API与客户端</h4><h5 id="1-Sentinel-API"><a href="#1-Sentinel-API" class="headerlink" title="1. Sentinel API"></a>1. Sentinel API</h5><p>Sentinel 节点是一个<strong>特殊的 Redis 节点</strong>，它有自己<strong>专属的 API</strong>。</p>
+<p><strong>① sentinel masters</strong>：展示所有被监控的<strong>主节点</strong>状态以及相关的统计信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:26379&gt; sentinel masters</span><br><span class="line">1) 1) <span class="string">"name"</span></span><br><span class="line">2) <span class="string">"mymaster-2"</span></span><br><span class="line">3) <span class="string">"ip"</span></span><br><span class="line">4) <span class="string">"127.0.0.1"</span></span><br><span class="line">5) <span class="string">"port"</span></span><br><span class="line">6) <span class="string">"6382"</span></span><br><span class="line">.........忽略............</span><br><span class="line">2) 1) <span class="string">"name"</span></span><br><span class="line">2) <span class="string">"mymaster-1"</span></span><br><span class="line">3) <span class="string">"ip"</span></span><br><span class="line">4) <span class="string">"127.0.0.1"</span></span><br><span class="line">5) <span class="string">"port"</span></span><br><span class="line">6) <span class="string">"6379"</span></span><br><span class="line">.........忽略............</span><br></pre></td></tr></table></figure>
+
+<p><strong>② sentinel master &lt;master name&gt;</strong>：展示指定 &lt;master name&gt; 的<strong>主节点</strong>状态以及相关的统计信息。</p>
+<p><strong>③ sentinel slaves &lt;master name&gt;</strong>：展示指定 &lt;master name&gt; 的<strong>从节点</strong>状态以及相关的统计信息。</p>
+<p><strong>④ sentinel sentinels &lt;master name&gt;</strong>：展示指定 &lt;master name&gt; 的 <strong>Sentinel 节点集合</strong>（不包含当前 Sentinel节点)。</p>
+<p><strong>⑤ sentinel failover &lt;master name&gt;</strong>：对指定 &lt;master name&gt; <strong>主节点进行强制故障转移</strong>（没有和其他 Sentinel 节点“协商”），当故障转移完成后，其他 Sentinel 节点按照故障转移的结果<strong>更新自身配置</strong>，这个命令在 Redis Sentinel 的<strong>日常运维中非常有用</strong>.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:26379&gt; sentinel failover mymaster-2</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<p><strong>⑥ sentinel remove &lt;master name&gt;</strong>：取消对某个主节点的监控。</p>
+<h5 id="2-客户端连接"><a href="#2-客户端连接" class="headerlink" title="2. 客户端连接"></a>2. 客户端连接</h5><h6 id="1-概述"><a href="#1-概述" class="headerlink" title="(1) 概述"></a>(1) 概述</h6><p><strong>客户端初始化时连接</strong>的是 Sentinel <strong>节点集合</strong>，<strong>不再是</strong>具体的 Redis 节点，但 Sentinel 只是配置中心不是代理。</p>
+<p>Sentinel 节点集合具备了<strong>监控、通知、自动故障转移、配置提供者若干功能</strong>，也就是说实际上最了解主节点信息的就是 Sentinel 节点集合，而各个主节点可以通过 &lt;master-name&gt; 进行标识的，所以无论哪种编程语言的客户端，如果需要正确地连接 Redis Sentinel，必须有 <strong>Sentinel 节点集合和 masterName 两个参数</strong>。</p>
+<p>客户端基本操作：</p>
+<ul>
+<li><p>遍历 Sentinel 节点集合获取一个可用的 Sentinel 节点，Sentinel 节点之间可以<strong>共享数据</strong>，所以从<strong>任意</strong>一个 Sentinel 节点获取<strong>主节点</strong>信息都是可以的。</p>
+</li>
+<li><p>需要<strong>验证</strong>当前获取的“主节点”是真正的主节点，这样做的目的是为了防止<strong>故障转移期间</strong>主节点的变化。</p>
+</li>
+<li><p>保持和 Sentinel 节点集合的“联系”，时刻获取关于主节点的相关“信息”。</p>
+</li>
+</ul>
+<h6 id="2-Jedis"><a href="#2-Jedis" class="headerlink" title="(2) Jedis"></a>(2) Jedis</h6><p>Jedis 也提供了 <strong>Sentinel</strong> 连接池。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">JedisSentinelPool</span><span class="params">(String masterName, // 主节点名</span></span></span><br><span class="line"><span class="function"><span class="params">       Set&lt;String&gt; sentinels,	// Sentinel节点集合</span></span></span><br><span class="line"><span class="function"><span class="params">       <span class="keyword">final</span> GenericObjectPoolConfig poolConfig,    // common-pool连接池配置</span></span></span><br><span class="line"><span class="function"><span class="params">       <span class="keyword">final</span> <span class="keyword">int</span> connectionTimeout,		// 连接超时</span></span></span><br><span class="line"><span class="function"><span class="params">       <span class="keyword">final</span> <span class="keyword">int</span> soTimeout,			// 读写超时</span></span></span><br><span class="line"><span class="function"><span class="params">       <span class="keyword">final</span> String password, 	// 主节点密码</span></span></span><br><span class="line"><span class="function"><span class="params">       <span class="keyword">final</span> <span class="keyword">int</span> database,		// 当前数据库索引</span></span></span><br><span class="line"><span class="function"><span class="params">       <span class="keyword">final</span> String clientName)</span>	<span class="comment">// 客户端名</span></span></span><br></pre></td></tr></table></figure>
+
+<p>连接时<strong>遍历</strong> Sentinel 结点集合，找到<strong>一个</strong>可用的 Sentinel 结点，然后从中得到<strong>主节点信息</strong>。</p>
+<h4 id="哨兵实现原理"><a href="#哨兵实现原理" class="headerlink" title="哨兵实现原理"></a>哨兵实现原理</h4><p>详细介绍一下哨兵机制是如何实现的。</p>
+<h5 id="1-三个定时监控任务"><a href="#1-三个定时监控任务" class="headerlink" title="1. 三个定时监控任务"></a>1. 三个定时监控任务</h5><p>一套合理的监控机制是 Sentinel 节点判定节点<strong>不可达</strong>的重要保证，Redis Sentinel 通过<strong>三个定时监控任务</strong>完成对各个节点发现和监控。</p>
+<h6 id="1-Sentinel与数据结点的定时任务"><a href="#1-Sentinel与数据结点的定时任务" class="headerlink" title="(1) Sentinel与数据结点的定时任务"></a>(1) Sentinel与数据结点的定时任务</h6><p>每隔 <strong>10 秒</strong>，每个 <strong>Sentinel 节点</strong>会向<strong>主节点和从节点</strong>发送 <strong>info 命令</strong>获取最新的拓扑结构。</p>
+<img src="assets/image-20200725144200824.png" alt="image-20200725144200824" style="zoom:50%;" />
+
+<p>如在一个主节点执行 <strong>info replication</strong> 命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6380,state=online,offset=4917,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6381,state=online,offset=4917,lag=1</span><br></pre></td></tr></table></figure>
+
+<p>Sentinel 节点通过对上述结果进行<strong>解析</strong>就可以找到相应的<strong>从节点</strong>。</p>
+<p>这个定时任务的作用具体可以表现在三个方面：</p>
+<ul>
+<li><p>通过向主节点执行 info 命令，获取从节点的信息，这也是为什么 Sentinel 节点不需要显式配置监控从节点。</p>
+</li>
+<li><p>当有新的从节点加入时都可以<strong>立刻感知</strong>出来。</p>
+</li>
+<li><p>节点不可达或者故障转移后，可以通过 info 命令实时<strong>更新</strong>节点拓扑信息。</p>
+</li>
+</ul>
+<h6 id="2-Sentinel之间的定时任务"><a href="#2-Sentinel之间的定时任务" class="headerlink" title="(2) Sentinel之间的定时任务"></a>(2) Sentinel之间的定时任务</h6><p>每隔 <strong>2 秒</strong>，<strong>每个 Sentinel 节点</strong>会向 Redis <strong>数据节点</strong>的  <strong>__sentinel__：hello</strong> 频道上发送该 Sentinel 节点对于<strong>主节点的判断</strong>以及当前 Sentinel <strong>节点的信息</strong>，同时每个 Sentinel 节点也会<strong>订阅该频道</strong>，来了解其他 Sentinel 节点以及它们对主节点的判断。</p>
+<img src="assets/image-20200725144611456.png" alt="image-20200725144611456" style="zoom:50%;" />
+
+<p>所以这个定时任务可以完成以下两个工作:</p>
+<ul>
+<li><p>发现<strong>新的 Sentinel 节点</strong>：通过订阅主节点的 __sentinel__：hello 了解其他的 Sentinel 节点信息，如果是新加入的 Sentinel 节点，将该 Sentinel 节点信息保存起来，并与该 Sentinel 节点创建连接。</p>
+</li>
+<li><p>Sentinel 节点之间<strong>交换主节点的状态</strong>，作为后面<strong>客观下线</strong>以及<strong>领导者选举</strong>的依据。</p>
+</li>
+</ul>
+<h6 id="3-心跳定时任务"><a href="#3-心跳定时任务" class="headerlink" title="(3) 心跳定时任务"></a>(3) 心跳定时任务</h6><p>每隔 <strong>1 秒</strong>，每个 Sentinel 节点会向<strong>主节点、从节点、其余 Sentinel 节点</strong>发送一条 <strong>ping 命令做一次心跳检测</strong>，来确认这些节点当前<strong>是否可达</strong>。通过上面的定时任务，Sentinel 节点对主节点、从节点、其余 Sentinel 节点<strong>都建立起连接</strong>，实现了对<strong>每个节点</strong>的监控，这个定时任务是节点失败判定的重要依据。</p>
+<img src="assets/image-20200725144820021.png" alt="image-20200725144820021" style="zoom:50%;" />
+
+<h5 id="2-主观下线与客观下线"><a href="#2-主观下线与客观下线" class="headerlink" title="2. 主观下线与客观下线"></a>2. 主观下线与客观下线</h5><h6 id="1-主观下线"><a href="#1-主观下线" class="headerlink" title="(1) 主观下线"></a>(1) 主观下线</h6><p><strong>每个 Sentinel 节点</strong>会每隔 1 秒对主节点、从节点、其他 Sentinel 节点发送 ping 命令做<strong>心跳检测</strong>，当这些节点超过 down-after-milliseconds <strong>没有进行有效回复</strong>，这个 Sentinel 节点就会对<strong>该节点做失败判定</strong>，这个行为叫做<strong>主观下线</strong>。</p>
+<img src="assets/image-20200725145110165.png" alt="image-20200725145110165" style="zoom:57%;" />
+
+<p>从字面意思也可以很容易看出主观下线是<strong>当前 Sentinel 节点的一家之言</strong>，存在<strong>误判</strong>的可能。也就是可能就这一个 Sentinel 认为一个结点是下线了。</p>
+<h6 id="2-客观下线"><a href="#2-客观下线" class="headerlink" title="(2) 客观下线"></a>(2) 客观下线</h6><p>当 Sentinel 主观下线的节点是<strong>主节点</strong>时，该 Sentinel 节点会通过 <strong>sentinel ismaster-down-by-addr</strong> 命令向其他 Sentinel 节点<strong>询问对主节点的判断</strong>，当<strong>超过 &lt;quorum&gt; 个数</strong>，Sentinel 节点认为主节点<strong>确实有问题</strong>，这时该 Sentinel 节点会<strong>做出客观下线</strong>的决定，也就是大部分 Sentinel 节点都对主节点的下线做了同意的判定，那么这个判定就是<strong>客观</strong>的。</p>
+<img src="assets/image-20200725154950511.png" alt="image-20200725154950511" style="zoom:50%;" />
+
+<p>注意：<strong>从节点、Sentinel 节点在主观下线后，没有后续的故障转移操作</strong>。<strong>只对主节点做故障转移</strong>。</p>
+<h5 id="3-领导者Sentinel选举"><a href="#3-领导者Sentinel选举" class="headerlink" title="3. 领导者Sentinel选举"></a>3. 领导者Sentinel选举</h5><p>假如 Sentinel 节点对于<strong>主节点</strong>已经做了<strong>客观下线</strong>，并不是马上进行故障转移。实际上<strong>故障转移的工作</strong>只需要<strong>一个 Sentinel 节点来完成</strong>即可，所以 Sentinel 节点之间会做一个<strong>领导者选举</strong>的工作，选出一个 Sentinel 节点<strong>作为领导者进行故障转移</strong>的工作。Redis 使用了 <strong>Raft 算法</strong>实现领导者选举。大致思路：</p>
+<p>(1) 每个在线的 Sentinel 节点都有资格成为领导者，当它确认主节点主观下线时候，会向其他 Sentinel 节点发送 sentinel is-master-down-by-addr 命令，要求<strong>将自己</strong>设置为领导者。</p>
+<p>(2) 收到命令的 Sentinel 节点，如果没有同意过其他 Sentinel 节点的 sentinel is-master-down-by-addr 命令，将<strong>同意</strong>该请求，否则拒绝。 </p>
+<p>(3) 如果该 Sentinel 节点发现<strong>自己的票数已经大于等于 max（quorum，num（sentinels）/2 + 1）</strong>，那么它将成为<strong>领导者</strong>。每个 Sentinel 节点只有<strong>一票</strong>。</p>
+<p>(4) 如果此过程没有选举出领导者，将进入<strong>下一次</strong>选举。</p>
+<p><img src="assets/image-20200725150625390.png" alt="image-20200725150625390"></p>
+<p>选举的过程非常快，基本上谁先完成客观下线，谁就是领导者。</p>
+<h5 id="4-故障转移过程"><a href="#4-故障转移过程" class="headerlink" title="4. 故障转移过程"></a>4. 故障转移过程</h5><p>故障转移过程如下。故障转移每一步都可以通过<strong>发布订阅</strong>来获取。</p>
+<p>(1) 加入主节点出现<strong>故障</strong>，此时两个从节点与主节点<strong>失去连接</strong>，<strong>主从复制失败</strong>。</p>
+<img src="assets/image-20200725150819406.png" alt="image-20200725150819406" style="zoom:40%;" />
+
+<p>(2) 每个 Sentinel 节点通过<strong>定期监控</strong>发现主节点出现了故障。 </p>
+<img src="assets/image-20200725151015975.png" alt="image-20200725151015975" style="zoom:50%;" />
+
+<p>(3) 多个 Sentinel 节点对主节点的故障<strong>达成一致</strong>，<strong>选举出 sentinel-3 节点作为领导者负责故障转移</strong>。</p>
+<img src="assets/image-20200725151100774.png" alt="image-20200725151100774" style="zoom:50%;" />
+
+<p>(4) Sentinel 领导者节点执行了<strong>故障转移</strong>。流程如下。</p>
+<img src="assets/image-20200725151431673.png" alt="image-20200725151431673" style="zoom:50%;" />
+
+<p>需要在<strong>从节点列表</strong>中选出一个节点作为<strong>新的主节点</strong>，选择方法有：① 过滤“不健康”的节点；② 选择 <strong>salve-priority</strong> 最高的从节点列表；③ 选择<strong>复制偏移量最大（复制数据最完整）</strong>的节点；④ 选择 runid 最小的从节点。</p>
+<ul>
+<li><p>假设这里从节点 1 变成主节点。</p>
+</li>
+<li><p>Sentinel 领导者节点会对选出来的从节点执行 slaveof no one 命令让其成为<strong>主节点</strong>，此时原来的从节点 1 变成新的主节点。</p>
+</li>
+<li><p>Sentinel 领导者节点会向<strong>剩余的从节点</strong>发送命令，让它们成为新主节点的从节点，<strong>复制规则</strong>和 parallel-syncs 参数有关。</p>
+</li>
+<li><p>然后 Sentinel 领导者节点<strong>通知</strong>客户端。</p>
+</li>
+<li><p>最后原来的故障主节点<strong>重启</strong>成为一个<strong>从节点</strong>。</p>
+</li>
+</ul>
+<p><strong>故障转移后</strong>整个 Redis Sentinel 的<strong>拓扑结构图</strong>如下。</p>
+<img src="assets/image-20200725151754450.png" alt="image-20200725151754450" style="zoom: 50%;" />
+
+<p>整个故障转移过程会产生大量的<strong>日志</strong>，如有需要再看看。</p>
+<h5 id="5-节点上下线"><a href="#5-节点上下线" class="headerlink" title="5. 节点上下线"></a>5. 节点上下线</h5><h6 id="1-节点下线"><a href="#1-节点下线" class="headerlink" title="(1) 节点下线"></a>(1) 节点下线</h6><p>对<strong>主节点</strong>进行下线，比较合理的做法是选出一个“合适”（例如性能更高的机器）的<strong>从节点</strong>，使用 <strong>sentinel failover</strong> 功能将从节点晋升主节点，只需要在任意可用的 Sentinel 节点。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentinel failover &lt;master name&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在<strong>任意</strong>一个 Sentinel 节点上（例如26379端口节点）执行 sentinel failover 即可。如果需要对<strong>从节点或者 Sentinel 节点</strong>进行下线，只需要确定好是临时还是永久下线后执行相应操作即可。</p>
+<h6 id="2-节点上线"><a href="#2-节点上线" class="headerlink" title="(2) 节点上线"></a>(2) 节点上线</h6><p><strong>从节点上线</strong>：添加 <strong>slaveof {masterIp} {masterPort}</strong> 的配置，使用 redis-server 启动即可，它将被 Sentinel 节点<strong>自动发现</strong>。</p>
+<p><strong>Sentinel 节点上线</strong>：添加 <strong>sentinel monitor</strong> 主节点的配置，使用 redis-sentinel 启动即可，它将被其余 Sentinel 节点<strong>自动发现</strong>。</p>
+<h4 id="高可用读写分离"><a href="#高可用读写分离" class="headerlink" title="高可用读写分离"></a>高可用读写分离</h4><p>Redis Sentinel 实现<strong>读写分离高可用</strong>可以依赖 Sentinel 节点的<strong>消息通知</strong>，获取 Redis 数据节点的<strong>状态变化</strong>。</p>
+<p><strong>从节点</strong>一般可以起到两个作用：第一，当主节点出现故障时，作为主节点的后备“顶”上来实现<strong>故障转移</strong>，Redis Sentinel 已经实现了该功能的自动化，实现了真正的高可用。第二，扩展主节点的<strong>读能力</strong>，尤其是在<strong>读多写少的场景</strong>非常适用。</p>
+<img src="assets/image-20200725152105272.png" alt="image-20200725152105272" style="zoom:50%;" />
+
+<p>但上述模型中，从节点<strong>不是高可用</strong>的，如果 slave-1 节点<strong>出现故障</strong>，首先客户端 client-1 将与其<strong>失联</strong>，其次 Sentinel 节点只会对该节点做<strong>主观下线</strong>，因为 Redis Sentinel 的<strong>故障转移是针对主节点</strong>的。</p>
+<p>所以很多时候 Redis Sentinel 中的<strong>从节点仅仅是作为主节点一个热备</strong>，不让它参与客户端的读操作，就是为了保证整体高可用性，但实际上这种使用方法还是有一些浪费，尤其是在有很多从节点或者确实需要读写分离的场景，所以<strong>如何实现从节点的高可用</strong>是非常有必要的。</p>
+<p><strong>Redis Sentinel 读写分离设计思路</strong>：Redis Sentinel 在对各个节点的监控中，如果有对应<strong>事件</strong>的发生，都会发出相应的<strong>事件消息</strong>。在设计 Redis Sentinel 的<strong>从节点高可用</strong>时，只要能够实时掌握<strong>所有从节点的状态</strong>，把所有从节点看做一个<strong>==资源池==</strong>，无论是上线还是下线从节点，客户端都能<strong>及时感知</strong>到（将其从资源池中添加或者删除），这样从节点的高可用目标就达到了。</p>
+<img src="assets/image-20200725152403380.png" alt="image-20200725152403380" style="zoom:50%;" />
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/I%20%E7%BC%93%E5%AD%98/A%20%E7%BC%93%E5%AD%98%E7%90%86%E8%AE%BA/" rel="next" title="ShiftJava/I 缓存/A 缓存理论">
+                <i class="fa fa-chevron-left"></i> ShiftJava/I 缓存/A 缓存理论
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/I%20%E7%BC%93%E5%AD%98/D%20Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="prev" title="ShiftJava/I 缓存/D Redis主从复制">
+                ShiftJava/I 缓存/D Redis主从复制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis哨兵"><span class="nav-number">1.</span> <span class="nav-text">Redis哨兵</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-Sentinel架构基础"><span class="nav-number">1.1.</span> <span class="nav-text">Redis Sentinel架构基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-普通主从复制的问题"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 普通主从复制的问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Redis-Sentinel架构"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. Redis Sentinel架构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Sentinel的功能"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. Sentinel的功能</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-Sentinel部署与配置"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. Sentinel部署与配置</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-配置参数及优化"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">(1) 配置参数及优化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-部署技巧"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">(2) 部署技巧</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-哨兵部署与故障转移Demo"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. 哨兵部署与故障转移Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-第一步：创建主从节点配置文件并启动"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">(1) 第一步：创建主从节点配置文件并启动</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-第二步：创建哨兵节点配置文件并启动"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">(2) 第二步：创建哨兵节点配置文件并启动</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-第三步：模拟故障转移"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">(3) 第三步：模拟故障转移</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-Sentinel-API与客户端"><span class="nav-number">1.2.</span> <span class="nav-text">Redis Sentinel API与客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Sentinel-API"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. Sentinel API</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-客户端连接"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 客户端连接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-概述"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">(1) 概述</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-Jedis"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">(2) Jedis</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哨兵实现原理"><span class="nav-number">1.3.</span> <span class="nav-text">哨兵实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-三个定时监控任务"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 三个定时监控任务</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-Sentinel与数据结点的定时任务"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">(1) Sentinel与数据结点的定时任务</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-Sentinel之间的定时任务"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">(2) Sentinel之间的定时任务</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-心跳定时任务"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">(3) 心跳定时任务</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-主观下线与客观下线"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 主观下线与客观下线</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-主观下线"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">(1) 主观下线</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-客观下线"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">(2) 客观下线</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-领导者Sentinel选举"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 领导者Sentinel选举</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-故障转移过程"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. 故障转移过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-节点上下线"><span class="nav-number">1.3.5.</span> <span class="nav-text">5. 节点上下线</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-节点下线"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">(1) 节点下线</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-节点上线"><span class="nav-number">1.3.5.2.</span> <span class="nav-text">(2) 节点上线</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高可用读写分离"><span class="nav-number">1.4.</span> <span class="nav-text">高可用读写分离</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

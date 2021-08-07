@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] MySQL面试题一条SQL语句执行得很慢的原因有哪些？分以下两种情况来讨论。1. 大多数情况是正常的，只是偶尔会出现很慢的情况。2. 在数据量不变的情况下，这条 SQL 语句一直都执行的很慢。 1. 偶尔很慢的情况一条 SQL 大多数情况正常，偶尔才能出现很慢的情况，针对这种情况，这条 SQL 语句本身应该是没什么问题的，可能是其他原因导致慢查询的。 (1) 等待数据库刷新脏页当需要往">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;E 数据库&#x2F;Z MySQL面试题">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;E%20%E6%95%B0%E6%8D%AE%E5%BA%93&#x2F;Z%20MySQL%E9%9D%A2%E8%AF%95%E9%A2%98&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] MySQL面试题一条SQL语句执行得很慢的原因有哪些？分以下两种情况来讨论。1. 大多数情况是正常的，只是偶尔会出现很慢的情况。2. 在数据量不变的情况下，这条 SQL 语句一直都执行的很慢。 1. 偶尔很慢的情况一条 SQL 大多数情况正常，偶尔才能出现很慢的情况，针对这种情况，这条 SQL 语句本身应该是没什么问题的，可能是其他原因导致慢查询的。 (1) 等待数据库刷新脏页当需要往">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/E 数据库/Z MySQL面试题/"/>
+
+
+
+
+
+  <title>ShiftJava/E 数据库/Z MySQL面试题 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/E%20%E6%95%B0%E6%8D%AE%E5%BA%93/Z%20MySQL%E9%9D%A2%E8%AF%95%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/E 数据库/Z MySQL面试题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:14+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="MySQL面试题"><a href="#MySQL面试题" class="headerlink" title="MySQL面试题"></a>MySQL面试题</h3><h4 id="一条SQL语句执行得很慢的原因有哪些？"><a href="#一条SQL语句执行得很慢的原因有哪些？" class="headerlink" title="一条SQL语句执行得很慢的原因有哪些？"></a>一条SQL语句执行得很慢的原因有哪些？</h4><p>分以下两种情况来讨论。<strong>1. 大多数情况是正常的，只是偶尔会出现很慢的情况。2. 在数据量不变的情况下，这条 SQL 语句一直都执行的很慢。</strong></p>
+<h5 id="1-偶尔很慢的情况"><a href="#1-偶尔很慢的情况" class="headerlink" title="1. 偶尔很慢的情况"></a>1. 偶尔很慢的情况</h5><p>一条 SQL 大多数情况正常，偶尔才能出现很慢的情况，针对这种情况，这条 SQL 语句本身应该是没什么问题的，可能是其他原因导致慢查询的。</p>
+<h6 id="1-等待数据库刷新脏页"><a href="#1-等待数据库刷新脏页" class="headerlink" title="(1) 等待数据库刷新脏页"></a>(1) 等待数据库刷新脏页</h6><p>当需要往数据库插入或者更新一条数据的时候，数据库会在<strong>内存</strong>中把对应字段的数据更新了，但是更新之后，这些更新的字段并不会马上同步持久化到<strong>磁盘</strong>中去，而是把这些<strong>更新的记录写入到 redo log 日志</strong>中去，等到<strong>空闲</strong>的时候，再通过 redo log 里的日志把最新的数据同步到<strong>磁盘</strong>中去。</p>
+<p>当<strong>内存数据页</strong>跟<strong>磁盘数据页</strong>内容不一致的时候，可以称这个内存页为“<strong>脏页</strong>”。内存数据写入到磁盘后，内存和磁盘上的数据页的内容就一致了，称为“<strong>干净页</strong>”。偶尔执行很慢可能是数据库在<strong>刷脏页</strong>。刷脏页有下面 4 种场景（后两种一般不会导致查询变慢）：</p>
+<ul>
+<li><strong>redo log 写满：</strong>redo log 里的容量是有限的，如果数据库一直很忙，更新又很频繁，这个时候 redo log 很快就会被写满，这个时候只能暂停其他操作来把<strong>数据同步到磁盘中</strong>去的，而这个时候，<strong>就可能导致平时正常的 SQL 语句突然执行的很慢</strong>。</li>
+<li><strong>内存不够用了：</strong>如果一次查询较多的数据，恰好碰到所查<strong>数据页不在内存中</strong>时，需要申请内存，而此时恰好内存不足的时候就需要<strong>淘汰一部分内存数据页</strong>，如果是干净页，就直接释放，如果恰好是脏页就需要刷脏页。</li>
+<li>此外还有<strong>MySQL 认为系统“空闲”的时候：</strong>这时系统没什么压力。以及 <strong>MySQL 正常关闭的时候：</strong>这时候，MySQL 会把内存的脏页都 flush 到磁盘上，这样下次 MySQL 启动的时候，就可以直接从磁盘上读数据，启动速度会很快。</li>
+</ul>
+<h6 id="2-等待锁"><a href="#2-等待锁" class="headerlink" title="(2) 等待锁"></a>(2) 等待锁</h6><p>如果要执行的语句所涉及到的<strong>表</strong>别人在用，并且<strong>加锁</strong>了，拿不到锁的时候就只能慢慢等待锁的释放。如果要判断是否真的在等待锁，可以用 <strong>show processlist</strong> 这个命令来查看当前的状态。</p>
+<h5 id="2-一直都很慢的情况"><a href="#2-一直都很慢的情况" class="headerlink" title="2. 一直都很慢的情况"></a>2. 一直都很慢的情况</h5><h6 id="1-索引失效"><a href="#1-索引失效" class="headerlink" title="(1) 索引失效"></a>(1) 索引失效</h6><p>SQL 操作的字段<strong>没有建立索引</strong>，只能走全表扫描。或者建立了索引但是因为一些原因导致<strong>索引失效</strong>。</p>
+<h4 id="如何解决秒杀的性能问题和超卖？"><a href="#如何解决秒杀的性能问题和超卖？" class="headerlink" title="如何解决秒杀的性能问题和超卖？"></a>如何解决秒杀的性能问题和超卖？</h4><p>抢订单环节一般会带来高并发与超卖的问题。</p>
+<h5 id="1-使用Redis"><a href="#1-使用Redis" class="headerlink" title="1. 使用Redis"></a>1. 使用Redis</h5><p>将存库 MySQL 前移到 Redis 中，所有的<strong>写操作放到内存</strong>中，由于 Redis 中<strong>不存在锁</strong>故不会出现互相等待，并且由于 Redis 的写性能和读性能都远高于 MySQL，这就解决了<strong>高并发</strong>下的性能问题。然后通过<strong>队列等异步手段</strong>，将<strong>变化的数据异步写入到 DB 中。</strong></p>
+<p>优点：解决性能问题。缺点：没有解决超卖问题，同时由于异步写入 DB，存在某一时刻 DB 和 Redis 中<strong>数据不一致</strong>的风险。</p>
+<h5 id="2-使用队列"><a href="#2-使用队列" class="headerlink" title="2. 使用队列"></a>2. 使用队列</h5><p><strong>引入队列，然后将所有写 DB 操作在单队列中排队，完全串行处理。当达到库存阀值的时候就不在消费队列，并关闭购买功能。这就解决了超卖问题。</strong></p>
+<p>优点：解决超卖问题，略微提升性能。缺点：性能受限于队列处理机处理性能和 DB 的写入性能中最短的那个，另外多商品同时抢购的时候需要准备<strong>多条队列</strong>。</p>
+<h5 id="3-两段式提交"><a href="#3-两段式提交" class="headerlink" title="3. 两段式提交"></a>3. 两段式提交</h5><p>将<strong>提交操作变成两段式</strong>，<strong>先申请后确认</strong>。然后利用 Redis 的<strong>原子自增操作</strong>（相比较 MySQL 的自增来说没有空洞），同时利用 Redis 的事务特性来发号，<strong>保证拿到小于等于库存阀值的号的人都可以成功提交订单</strong>。然后数据<strong>异步</strong>更新到 DB 中。</p>
+<p>优点：解决超卖问题，库存读写都在内存中，故同时解决性能问题。缺点：由于异步写入DB，可能存在数据不一致。另可能存在少买，也就是如果拿到号的人不真正下订单，可能库存减为 0，但是订单数并没有达到库存阀值。</p>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><ul>
+<li><a href="https://mp.weixin.qq.com/s/waGRvyhab2z8b-BIw9bJeA" target="_blank" rel="noopener">库存扣多了，到底怎么整 | 架构师之路</a></li>
+<li><a href="https://blog.csdn.net/zhoudaxia/article/details/38067003" target="_blank" rel="noopener">如何解决秒杀的性能问题和超卖的讨论 - CSDN博客</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/E%20%E6%95%B0%E6%8D%AE%E5%BA%93/C%20MySQL%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7/" rel="next" title="ShiftJava/E 数据库/C MySQL高级特性">
+                <i class="fa fa-chevron-left"></i> ShiftJava/E 数据库/C MySQL高级特性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/E%20%E6%95%B0%E6%8D%AE%E5%BA%93/K%20LeetCode%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A2%98%E8%A7%A3/" rel="prev" title="ShiftJava/E 数据库/K LeetCode数据库题解">
+                ShiftJava/E 数据库/K LeetCode数据库题解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL面试题"><span class="nav-number">1.</span> <span class="nav-text">MySQL面试题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一条SQL语句执行得很慢的原因有哪些？"><span class="nav-number">1.1.</span> <span class="nav-text">一条SQL语句执行得很慢的原因有哪些？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-偶尔很慢的情况"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 偶尔很慢的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-等待数据库刷新脏页"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">(1) 等待数据库刷新脏页</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-等待锁"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">(2) 等待锁</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-一直都很慢的情况"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 一直都很慢的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-索引失效"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">(1) 索引失效</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何解决秒杀的性能问题和超卖？"><span class="nav-number">1.2.</span> <span class="nav-text">如何解决秒杀的性能问题和超卖？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-使用Redis"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 使用Redis</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-使用队列"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 使用队列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-两段式提交"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 两段式提交</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

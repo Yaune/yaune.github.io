@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] Linux系统管理Linux启动1. Linux启动流程分析大体过程如下。  1、主机加电自检，加载 BIOS 硬件信息。 2、读取 MBR 的引导文件(GRUB、LILO)。 3、引导加载 Linux 内核。 4、运行第一个进程 init (进程号永远为 1)。 5、进入相应的运行级别。 6、运行终端，输入用户名和密码。  (1) 内核引导当计算机打开电源后，首先是 BIOS 开机自">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;D 操作系统&#x2F;R Linux系统管理">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;D%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F&#x2F;R%20Linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] Linux系统管理Linux启动1. Linux启动流程分析大体过程如下。  1、主机加电自检，加载 BIOS 硬件信息。 2、读取 MBR 的引导文件(GRUB、LILO)。 3、引导加载 Linux 内核。 4、运行第一个进程 init (进程号永远为 1)。 5、进入相应的运行级别。 6、运行终端，输入用户名和密码。  (1) 内核引导当计算机打开电源后，首先是 BIOS 开机自">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;D%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F&#x2F;R%20Linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86&#x2F;assets&#x2F;1563425817881.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;D%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F&#x2F;R%20Linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86&#x2F;assets&#x2F;1563425864165.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;D%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F&#x2F;R%20Linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86&#x2F;assets&#x2F;crontab_cheatsheet.png">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;D%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F&#x2F;R%20Linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86&#x2F;assets&#x2F;1563425817881.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/D 操作系统/R Linux系统管理/"/>
+
+
+
+
+
+  <title>ShiftJava/D 操作系统/R Linux系统管理 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/D%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/R%20Linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/D 操作系统/R Linux系统管理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:14+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="Linux系统管理"><a href="#Linux系统管理" class="headerlink" title="Linux系统管理"></a>Linux系统管理</h3><h4 id="Linux启动"><a href="#Linux启动" class="headerlink" title="Linux启动"></a>Linux启动</h4><h5 id="1-Linux启动流程分析"><a href="#1-Linux启动流程分析" class="headerlink" title="1. Linux启动流程分析"></a>1. Linux启动流程分析</h5><p>大体过程如下。</p>
+<ul>
+<li>1、主机加电<strong>自检</strong>，<strong>加载 BIOS 硬件信息</strong>。</li>
+<li>2、读取 <strong>MBR</strong> 的<strong>引导文件</strong>(GRUB、LILO)。</li>
+<li>3、<strong>引导加载 Linux 内核</strong>。</li>
+<li>4、运行<strong>第一个进程 init</strong> (进程号永远<strong>为 1</strong>)。</li>
+<li>5、进入相应的<strong>运行级别</strong>。</li>
+<li>6、运行终端，输入用户名和密码。</li>
+</ul>
+<h6 id="1-内核引导"><a href="#1-内核引导" class="headerlink" title="(1) 内核引导"></a>(1) 内核引导</h6><p>当计算机打开电源后，首先是 <strong>BIOS 开机自检</strong>，按照 BIOS 中设置的启动设备（通常是硬盘）来启动。自检完成后从 <strong>MBR（主引导记录）</strong> 中读取 <strong>BootLoader</strong>（启动引导程序），Linux 中最常见的 BootLoader 就是 <strong>GRUB</strong>。</p>
+<p>之后 BootLoader 会<strong>加载操作系统内核</strong>。操作系统接管硬件以后，首先<strong>读入 /boot 目录下的内核文件</strong>。</p>
+<h6 id="2-运行init"><a href="#2-运行init" class="headerlink" title="(2) 运行init"></a>(2) 运行init</h6><p>内核加载完毕，会完成<strong>硬件检测和驱动程序加载</strong>。完成之后则会运行<strong>第一个进程</strong>，也就是 <strong>/sbin/init</strong> 进程。<strong>init 进程</strong>是系统所有进程的<strong>起点</strong>，可以把它比拟成系统所有进程的老祖宗，没有这个进程系统中任何进程都不会启动。</p>
+<p>init 进程首先是需要<strong>读取配置文件 /etc/inittab</strong>。配置文件就各种调用进行设置。</p>
+<h6 id="3-系统初始化"><a href="#3-系统初始化" class="headerlink" title="(3) 系统初始化"></a>(3) 系统初始化</h6><p>许多程序需要<strong>开机启动</strong>。它们在 Windows 叫做”<strong>服务</strong>“（service），在 Linux 就叫做”<strong>守护进程</strong>“（daemon）。init 进程的一大任务，就是去运行这些<strong>开机启动的进程</strong>。</p>
+<p>Linux 允许为<strong>不同的场合</strong>，分配不同的开机启动程序，这就叫做”<strong>运行级别</strong>“（runlevel）。也就是说，启动时根据”运行级别” 确定要运行哪些程序。比如 Apache 用作服务器时需要启动 ，用作桌面就不需要。</p>
+<p>Linux 系统有 7 个运行级别(runlevel)：</p>
+<ul>
+<li>运行级别 0：系统停机状态，系统默认运行级别不能设为 0，否则不能正常启动。</li>
+<li>运行级别 1：单用户工作状态，root 权限，用于系统维护，禁止远程登陆。</li>
+<li>运行级别 2：多用户状态(没有 NFS)。</li>
+<li>运行级别 3：完全的多用户状态(有 NFS)，登陆后进入控制台命令行模式。</li>
+<li>运行级别 4：系统未使用，保留。</li>
+<li>运行级别 5：X11 控制台，登陆后进入图形 GUI 模式。</li>
+<li>运行级别 6：系统正常关闭并重启，默认运行级别不能设为 6，否则不能正常启动。</li>
+</ul>
+<p>在 <strong>init 的配置文件</strong>中有这么一行： <strong>si::sysinit:/etc/rc.d/rc.sysinit</strong>，也就是调用执行了 <strong>/etc/rc.d/rc.sysinit</strong>，而 <strong>rc.sysinit</strong> 是一个 bash shell 的脚本，它主要是<strong>完成一些系统初始化</strong>的工作， rc.sysinit 是每一个运行级别都要首先运行的重要脚本。它主要完成的工作有：激活交换分区，检查磁盘，加载硬件模块以及其它一些需要优先执行任务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l5:5:wait:/etc/rc.d/rc 5</span><br></pre></td></tr></table></figure>
+
+<p>这一行表示以 <strong>5 为</strong>参数运行 <strong>/etc/rc.d/rc</strong>，/etc/rc.d/rc 是一个 Shell 脚本，它接受 5 作为参数，去执行 /etc/rc.d/rc5.d/ 目录下的<strong>所有的 rc 启动脚本</strong>，/etc/rc.d/rc5.d/ 目录中的这些启动脚本实际上都是一些<strong>连接文件</strong>，而不是真正的 rc 启动脚本，真正的 rc 启动脚本实际上都是放在 <strong>/etc/rc.d/init.d/</strong> 目录下。</p>
+<p>而这些 rc 启动脚本有着类似的用法，它们一般能接受 start、stop、restart、status 等参数。/etc/rc.d/rc5.d/ 中的 rc 启动脚本通常是 K 或 S 开头的连接文件，对于以 S 开头的启动脚本，将以 start 参数来运行。而如果发现存在相应的脚本也存在 K 打头的连接，而且已经处于运行态了(以 /var/lock/subsys/ 下的文件作为标志)，则将首先以 stop 为参数停止这些已经启动了的守护进程，然后再重新运行。</p>
+<p>这样做是为了保证是当 <strong>init</strong> 改变运行级别时，所有相关的<strong>守护进程都将重启</strong>。</p>
+<p>至于在每个运行级中将运行哪些守护进程，用户可以通过 chkconfig 或 setup 中的 “System Services” 来自行设定。</p>
+<h6 id="4-建立终端"><a href="#4-建立终端" class="headerlink" title="(4) 建立终端"></a>(4) 建立终端</h6><p><strong>rc</strong> 执行完毕后，<strong>返回 init</strong>，这时<strong>基本系统环境已经设置好了</strong>，各种<strong>守护进程也已经启动</strong>了。</p>
+<p>init 接下来会打开 <strong>6 个终端</strong>，以便用户登录系统。在 inittab 中的以下 6 行就是定义了 6 个终端：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>:<span class="number">2345</span>:respawn:/sbin/mingetty tty1</span><br><span class="line"><span class="number">2</span>:<span class="number">2345</span>:respawn:/sbin/mingetty tty2</span><br><span class="line"><span class="number">3</span>:<span class="number">2345</span>:respawn:/sbin/mingetty tty3</span><br><span class="line"><span class="number">4</span>:<span class="number">2345</span>:respawn:/sbin/mingetty tty4</span><br><span class="line"><span class="number">5</span>:<span class="number">2345</span>:respawn:/sbin/mingetty tty5</span><br><span class="line"><span class="number">6</span>:<span class="number">2345</span>:respawn:/sbin/mingetty tty6</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-应用开机自启"><a href="#2-应用开机自启" class="headerlink" title="2. 应用开机自启"></a>2. 应用开机自启</h5><p>比如开机自启 Zookeeper：</p>
+<ol>
+<li>新建一个<strong>脚本</strong> zookeeper。</li>
+<li>为新建的脚本 zookeeper 添加<strong>可执行权限</strong>，命令是：<strong>chmod +x zookeeper</strong>。</li>
+<li>把 zookeeper 这个<strong>脚本添加到开机启动项里面</strong>，命令是：<strong>chkconfig –add  zookeeper</strong>。</li>
+<li>查看是否添加成功，命令是：<strong>chkconfig –list</strong>。</li>
+</ol>
+<h4 id="Linux进程管理"><a href="#Linux进程管理" class="headerlink" title="Linux进程管理"></a>Linux进程管理</h4><h5 id="1-查看进程"><a href="#1-查看进程" class="headerlink" title="1. 查看进程"></a>1. 查看进程</h5><h6 id="1-ps"><a href="#1-ps" class="headerlink" title="(1) ps"></a>(1) ps</h6><p>查看某个时间点的<strong>进程信息</strong>。</p>
+<p>示例一：查看自己的进程：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ps -l</span></span><br></pre></td></tr></table></figure>
+
+<p>示例二：查看系统所有进程：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[nano@localhost ~]$ ps -aux</span><br><span class="line">USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root          1  0.0  0.0 128116  6664 ?        Ss   May14   0:08 /usr/lib/systemd/systemd --system --deserialize 18</span><br><span class="line">root          2  0.0  0.0      0     0 ?        S    May14   0:00 [kthreadd]</span><br><span class="line">root          3  0.0  0.0      0     0 ?        S    May14   0:00 [ksoftirqd/0]</span><br><span class="line">root          5  0.0  0.0      0     0 ?        S&lt;   May14   0:00 [kworker/0:0H]</span><br><span class="line">root          7  0.0  0.0      0     0 ?        S    May14   0:03 [migration/0]</span><br><span class="line">root          8  0.0  0.0      0     0 ?        S    May14   0:00 [rcu_bh]</span><br><span class="line">root          9  0.0  0.0      0     0 ?        S    May14   5:05 [rcu_sched]</span><br><span class="line">root         10  0.0  0.0      0     0 ?        S&lt;   May14   0:00 [lru-add-drain]</span><br><span class="line">root         11  0.0  0.0      0     0 ?        S    May14   0:03 [watchdog/0]</span><br><span class="line">root         12  0.0  0.0      0     0 ?        S    May14   0:03 [watchdog/1]</span><br><span class="line">root         13  0.0  0.0      0     0 ?        S    May14   0:02 [migration/1]</span><br><span class="line">root         14  0.0  0.0      0     0 ?        S    May14   0:04 [ksoftirqd/1]</span><br><span class="line">root         16  0.0  0.0      0     0 ?        S&lt;   May14   0:00 [kworker/1:0H]</span><br><span class="line">root         18  0.0  0.0      0     0 ?        S    May14   0:00 [kdevtmpfs]</span><br><span class="line">root         19  0.0  0.0      0     0 ?        S&lt;   May14   0:00 [netns]</span><br></pre></td></tr></table></figure>
+
+<p>示例三：查看<strong>特定的进程</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ps aux | grep threadx</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="2-pstree"><a href="#2-pstree" class="headerlink" title="(2) pstree"></a>(2) pstree</h6><p>查看<strong>进程树</strong>。</p>
+<p>示例：查看所有进程树。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pstree -A</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="3-top"><a href="#3-top" class="headerlink" title="(3) top"></a>(3) top</h6><p><strong>实时显示进程信息</strong>。包含任务队列信息、进程信息、CPU 信息、物理内存信息、交换分区信息。</p>
+<p>示例：两秒钟刷新一次</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ top -d 2</span><br></pre></td></tr></table></figure>
+
+<p>指定查看某个进程：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ top -p 14253</span><br></pre></td></tr></table></figure>
+
+<h6 id="4-netstat"><a href="#4-netstat" class="headerlink" title="(4) netstat"></a>(4) netstat</h6><p>查看<strong>占用端口的进程</strong>。</p>
+<p>示例：查看特定端口的进程，比如查看 MySQL 开没有。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># netstat -anp | grep 3306</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2-进程状态"><a href="#2-进程状态" class="headerlink" title="2. 进程状态"></a>2. 进程状态</h5><p><img src="assets/1563425817881.png" alt="1563425817881"></p>
+<table>
+<thead>
+<tr>
+<th align="center">状态</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">R</td>
+<td align="center">running or runnable (on run queue)</td>
+</tr>
+<tr>
+<td align="center">D</td>
+<td align="center">uninterruptible sleep (usually I/O)</td>
+</tr>
+<tr>
+<td align="center">S</td>
+<td align="center">interruptible sleep (waiting for an event to complete)</td>
+</tr>
+<tr>
+<td align="center">Z</td>
+<td align="center">zombie (terminated but not reaped by its parent)</td>
+</tr>
+<tr>
+<td align="center">T</td>
+<td align="center">stopped (either by a job control signal or because it is being traced)</td>
+</tr>
+</tbody></table>
+<h5 id="3-关闭进程"><a href="#3-关闭进程" class="headerlink" title="3. 关闭进程"></a>3. 关闭进程</h5><h6 id="1-kill命令"><a href="#1-kill命令" class="headerlink" title="(1) kill命令"></a>(1) kill命令</h6><p>关掉进程。命令格式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">kill</span> [信号] PID</span><br></pre></td></tr></table></figure>
+
+<p>进程信息常用 1, 9，15。只能识别<strong>进程号</strong>。</p>
+<h6 id="2-killall命令"><a href="#2-killall命令" class="headerlink" title="(2) killall命令"></a>(2) killall命令</h6><p>关掉进程。使用<strong>进程名</strong>杀死进程。</p>
+<h5 id="4-进程优先级"><a href="#4-进程优先级" class="headerlink" title="4. 进程优先级"></a>4. 进程优先级</h5><p>表示进程优先级的参数有 <strong>Priority 和 Nice</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[nano@localhost ~]$ ps -el</span><br><span class="line">F S   UID    PID   PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD</span><br><span class="line">4 S     0      1      0  0  80   0 - 32029 ep_pol ?        00:00:08 systemd</span><br><span class="line">1 S     0      2      0  0  80   0 -     0 kthrea ?        00:00:00 kthreadd</span><br><span class="line">1 S     0      3      2  0  80   0 -     0 smpboo ?        00:00:00 ksoftirqd/0</span><br><span class="line">1 S     0      5      2  0  60 -20 -     0 worker ?        00:00:00 kworker/0:0H</span><br></pre></td></tr></table></figure>
+
+<p>这里 <strong>PRI</strong> 和 <strong>NI</strong> 就是这两个参数。数值越小优先级越高，PRI 是内核动态调整的，普通用户只能调整 NI 值，且只能增大。仅 root 用户可以将 NI 值设为<strong>负值</strong>。</p>
+<p>nice 命令可以给新执行的命令直接赋予 NI 值，但是不能修改已经存在进程的 NI 值。</p>
+<p>关闭 Apache 服务并重启设置优先级为 5。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ service http stop</span><br><span class="line">$ nice -n -5 service httpd start</span><br></pre></td></tr></table></figure>
+
+<p><strong>renice</strong> 命令可以给已经存在的进程设置优先级。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">renice -10 12345</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-父进程与子进程"><a href="#5-父进程与子进程" class="headerlink" title="5. 父进程与子进程"></a>5. 父进程与子进程</h5><h6 id="1-SIGCHLD"><a href="#1-SIGCHLD" class="headerlink" title="(1) SIGCHLD"></a>(1) SIGCHLD</h6><p>当一个<strong>子进程</strong>改变了它的状态时（停止运行，继续运行或者退出），有两件事会发生在<strong>父进程</strong>中：</p>
+<ul>
+<li>得到 <strong>SIGCHLD</strong> 信号。</li>
+<li><strong>waitpid</strong>() 或者 <strong>wait</strong>() 调用会<strong>返回</strong>。</li>
+</ul>
+<p>其中<strong>子进程发送的 SIGCHLD 信号</strong>包含了子进程的信息，比如进程 ID、进程状态、进程使用 CPU 的时间等。</p>
+<p>在子进程退出时，它的<strong>进程描述符不会立即释放</strong>，这是为了让父进程得到子进程信息，父进程通过 <strong>wait() 和 waitpid()</strong> 来获得一个<strong>已经退出</strong>的子进程的<strong>信息</strong>。</p>
+<img src="assets/1563425864165.png" alt="1563425864165" style="zoom:77%;" />
+
+<h6 id="2-wait"><a href="#2-wait" class="headerlink" title="(2) wait()"></a>(2) wait()</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pid_t</span> wait(<span class="keyword">int</span> *status)</span><br></pre></td></tr></table></figure>
+
+<p>父进程调用 <strong>wait() 会一直阻塞</strong>，直到收到一个子进程<strong>退出的 SIGCHLD 信号</strong>，之后 <strong>wait</strong>() 函数会<strong>销毁子进程</strong>并返回。</p>
+<p>如果成功，返回被收集的子进程的<strong>进程 ID</strong>；如果调用进程没有子进程，调用就会失败，此时<strong>返回 -1</strong>，同时 errno 被置为 ECHILD。</p>
+<p>参数 status 用来保存被收集的子进程退出时的一些状态，如果对这个子进程是如何死掉的毫不在意，只想把这个子进程消灭掉，可以设置这个参数为 NULL。</p>
+<h6 id="3-waitpid"><a href="#3-waitpid" class="headerlink" title="(3) waitpid()"></a>(3) waitpid()</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pid_t</span> waitpid(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> *status, <span class="keyword">int</span> options)</span><br></pre></td></tr></table></figure>
+
+<p>作用和 wait() 完全相同，但是多了两个<strong>可由用户控制的参数 pid 和 options</strong>。</p>
+<p>pid 参数指示一个<strong>子进程的 ID</strong>，表示只关心这个子进程退出的 SIGCHLD 信号。如果 <strong>pid=-1</strong> 时，那么和 wait() 作用相同，都是关心所有子进程退出的 SIGCHLD 信号。</p>
+<p>options 参数主要有 WNOHANG 和 WUNTRACED 两个选项，WNOHANG 可以使 waitpid() 调用变成非阻塞的，也就是说它会立即返回，父进程可以继续执行其它任务。</p>
+<h6 id="4-孤儿进程"><a href="#4-孤儿进程" class="headerlink" title="(4) 孤儿进程"></a>(4) 孤儿进程</h6><p>一个<strong>父进程</strong>退出，而它的一个或多个子进程还在运行，那么这些<strong>子进程将成为孤儿进程</strong>。孤儿进程将被 <strong>init 进程</strong>（进程号为 1）所<strong>收养</strong>，并由 <strong>init 进程对它们完成状态收集工作</strong>。由于<strong>孤儿进程会被 init 进程收养</strong>，所以孤儿进程不会对系统造成危害。</p>
+<h6 id="5-僵尸进程"><a href="#5-僵尸进程" class="headerlink" title="(5) 僵尸进程"></a>(5) 僵尸进程</h6><p>一个<strong>子进程</strong>的进程描述符在<strong>子进程退出时不会释放</strong>，只有当<strong>父进程通过 wait() 或 waitpid() 获取了子进程信息后才会释放</strong>。如果子进程<strong>退出</strong>，而父进程并<strong>没有调用 wait() 或 waitpid()</strong>，那么子进程的<strong>进程描述符</strong>仍然保存在系统中，这种进程称之为僵尸进程。</p>
+<p>僵尸进程通过 <strong>ps 命令</strong>显示出来的状态为 <strong>Z（zombie）</strong>。系统所能使用的<strong>进程号</strong>是有限的，如果产生大量僵尸进程，将因为没有可用的进程号而导致系统不能产生新的进程。</p>
+<p>要<strong>消灭</strong>系统中大量的僵尸进程，只需要将其<strong>父进程</strong>杀死，此时僵尸进程就会变成<strong>孤儿进程</strong>，从而被 <strong>init 进程所收养</strong>，这样 init 进程就会释放所有的僵尸进程所占有的资源，从而结束僵尸进程。</p>
+<h4 id="Linux系统资源管理"><a href="#Linux系统资源管理" class="headerlink" title="Linux系统资源管理"></a>Linux系统资源管理</h4><h5 id="1-资源查看"><a href="#1-资源查看" class="headerlink" title="1. 资源查看"></a>1. 资源查看</h5><h6 id="1-vmstat命令"><a href="#1-vmstat命令" class="headerlink" title="(1) vmstat命令"></a>(1) vmstat命令</h6><p>用于<strong>监控系统资源</strong>，可以监控 <strong>CPU 使用、进程状态、内存使用</strong>等信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[nano@localhost ~]$ vmstat</span><br><span class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----</span><br><span class="line"> r  b   swpd   free   buff  cache   si   so    bi    bo   <span class="keyword">in</span>   cs us sy id wa st</span><br><span class="line"> 1  0      0 4216980   4172 1987016    0    0     0     1    2    4  0  0 100  0  0</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-free命令"><a href="#2-free命令" class="headerlink" title="(2) free命令"></a>(2) free命令</h6><p>查看<strong>内存使用</strong>状态。free 命令是一个快速查看<strong>内存使用情况</strong>的方法，它是对 <strong>/proc/meminfo</strong> 收集到的信息的一个概述。这个命令用于显示系统<strong>当前内存的使用情况，包括已用内存、可用内存和交换内存的情况</strong>。</p>
+<p>默认情况下 free 会以字节为单位输出内存的使用量。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[nano@localhost ~]$ free</span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:        7990076     1781780     4217136      192428     1991160     5730212</span><br><span class="line">Swap:       2519036           0     2519036</span><br></pre></td></tr></table></figure>
+
+<p>如果想以其他<strong>单位</strong>输出内存的使用量，需要加一个选项，<strong>-g</strong> 为GB，<strong>-m</strong> 为MB，<strong>-k</strong> 为KB，<strong>-b</strong> 为字节。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> free -g</span></span><br><span class="line">             total       used       free     shared    buffers     cached</span><br><span class="line">Mem:             3          1          1          0          0          0</span><br><span class="line">-/+ buffers/cache:          0          2</span><br><span class="line">Swap:            3          0          3</span><br></pre></td></tr></table></figure>
+
+<p>使用 <strong>-t</strong> 选项查看所有<strong>内存的汇总</strong>，使用这个选项会在输出中加一个汇总行。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[nano@localhost ~]$ free -t</span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:        7990076     1782028     4216824      192428     1991224     5729960</span><br><span class="line">Swap:       2519036           0     2519036</span><br><span class="line">Total:     10509112     1782028     6735860</span><br></pre></td></tr></table></figure>
+
+<h6 id="3-查看CPU信息"><a href="#3-查看CPU信息" class="headerlink" title="(3) 查看CPU信息"></a>(3) 查看CPU信息</h6><p><strong>CPU</strong> 主要信息保存在 <strong>/proc/cpuinfo</strong> 这个文件中。查看就行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">[nano@localhost ~]$ cat /proc/cpuinfo </span><br><span class="line">processor	: 0</span><br><span class="line">vendor_id	: GenuineIntel</span><br><span class="line">cpu family	: 6</span><br><span class="line">model		: 85</span><br><span class="line">model name	: Intel(R) Xeon(R) Gold 6136 CPU @ 3.00GHz</span><br><span class="line">stepping	: 4</span><br><span class="line">microcode	: 0x2000069</span><br><span class="line">cpu MHz		: 2992.968</span><br><span class="line">cache size	: 25344 KB</span><br><span class="line">physical id	: 0</span><br><span class="line">siblings	: 2</span><br><span class="line">core id		: 0</span><br><span class="line">cpu cores	: 2</span><br><span class="line">apicid		: 0</span><br><span class="line">initial apicid	: 0</span><br><span class="line">fpu		: yes</span><br><span class="line">fpu_exception	: yes</span><br><span class="line">cpuid level	: 22</span><br><span class="line">wp		: yes</span><br><span class="line">flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology tsc_reliable nonstop_tsc eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 avx2 smep bmi2 invpcid rdseed adx smap xsaveopt arat md_clear spec_ctrl intel_stibp flush_l1d arch_capabilities</span><br><span class="line">bogomips	: 5985.93</span><br><span class="line">clflush size	: 64</span><br><span class="line">cache_alignment	: 64</span><br><span class="line">address sizes	: 42 bits physical, 48 bits virtual</span><br><span class="line">power management:</span><br><span class="line"></span><br><span class="line">processor	: 1</span><br><span class="line">vendor_id	: GenuineIntel</span><br><span class="line">cpu family	: 6</span><br><span class="line">model		: 85</span><br><span class="line">model name	: Intel(R) Xeon(R) Gold 6136 CPU @ 3.00GHz</span><br><span class="line">stepping	: 4</span><br><span class="line">microcode	: 0x2000069</span><br><span class="line">cpu MHz		: 2992.968</span><br><span class="line">cache size	: 25344 KB</span><br><span class="line">physical id	: 0</span><br><span class="line">siblings	: 2</span><br><span class="line">core id		: 1</span><br><span class="line">cpu cores	: 2</span><br><span class="line">apicid		: 1</span><br><span class="line">initial apicid	: 1</span><br><span class="line">fpu		: yes</span><br><span class="line">fpu_exception	: yes</span><br><span class="line">cpuid level	: 22</span><br><span class="line">wp		: yes</span><br><span class="line">flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology tsc_reliable nonstop_tsc eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 avx2 smep bmi2 invpcid rdseed adx smap xsaveopt arat md_clear spec_ctrl intel_stibp flush_l1d arch_capabilities</span><br><span class="line">bogomips	: 5985.93</span><br><span class="line">clflush size	: 64</span><br><span class="line">cache_alignment	: 64</span><br><span class="line">address sizes	: 42 bits physical, 48 bits virtual</span><br><span class="line">power management:</span><br></pre></td></tr></table></figure>
+
+<p><strong>top 命令</strong>也可以看 CPU 状态信息。</p>
+<p><strong>dstat 命令</strong>每秒 CPU 使用率情况获取，一秒刷新一次。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nano]<span class="comment"># dstat</span></span><br><span class="line">You did not select any stats, using -cdngy by default.</span><br><span class="line">----total-cpu-usage---- -dsk/total- -net/total- ---paging-- ---system--</span><br><span class="line">usr sys idl wai hiq siq| <span class="built_in">read</span>  writ| recv  send|  <span class="keyword">in</span>   out | int   csw </span><br><span class="line">  0   0 100   0   0   0| 195B 1626B|   0     0 |   0     0 | 310   457 </span><br><span class="line">  0   0 100   0   0   0|   0     0 | 540B  842B|   0     0 | 312   472 </span><br><span class="line">  0   1  99   0   0   0|   0     0 |2020B  362B|   0     0 | 330   465 </span><br><span class="line">  1   0 100   0   0   0|   0     0 |2986B  822B|   0     0 | 346   529 </span><br><span class="line">  1   1  99   0   0   0|   0     0 |1880B  362B|   0     0 | 401   594 </span><br><span class="line">  0   1 100   0   0   0|   0     0 |1564B  362B|   0     0 | 323   446 </span><br><span class="line">  1   0  99   0   0   0|   0     0 | 628B  362B|   0     0 | 305   438 </span><br><span class="line">  0   1 100   0   0   0|   0     0 | 658B  494B|   0     0 | 302   456 </span><br><span class="line">  1   1  99   0   0   0|   0     0 | 556B  362B|   0     0 | 304   449 </span><br><span class="line">  0   0 100   0   0   0|   0     0 |1910B  822B|   0     0 | 357   566 </span><br><span class="line">  0   0  99   0   0   0|   0     0 |1844B  362B|   0     0 | 327   463 </span><br><span class="line">  0   1  99   0   0   0|   0     0 |2127B  362B|   0     0 | 334   474 </span><br><span class="line">  0   0 100   0   0   0|   0     0 |1036B  362B|   0     0 | 286   426 </span><br><span class="line">  1   1  99   0   0   0|   0     0 |1752B  362B|   0     0 | 325   460 </span><br><span class="line">  0   1  99   0   0   0|   0     0 | 956B  362B|   0     0 | 365   560 </span><br><span class="line">  0   0  99   0   0   0|   0     0 |1950B  822B|   0     0 | 311   481 </span><br><span class="line">  0   0 100   0   0   0|   0     0 | 780B  362B|   0     0 | 291   440</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Linux网络管理"><a href="#Linux网络管理" class="headerlink" title="Linux网络管理"></a>Linux网络管理</h4><h5 id="1-基础命令"><a href="#1-基础命令" class="headerlink" title="1. 基础命令"></a>1. 基础命令</h5><ul>
+<li>查看当前系统的<strong>网卡</strong>信息：<strong>ifconfig</strong>。</li>
+<li>查看与某台机器的连接情况：ping。</li>
+<li>查看当前系统的<strong>端口</strong>使用：<strong>netstat -an</strong>。</li>
+</ul>
+<h5 id="2-限制IP访问"><a href="#2-限制IP访问" class="headerlink" title="2. 限制IP访问"></a>2. 限制IP访问</h5><p>Linux 下最直接限制 IP 访问的方式有两种：</p>
+<h6 id="1-hosts-allow和hosts-deny"><a href="#1-hosts-allow和hosts-deny" class="headerlink" title="(1) hosts.allow和hosts.deny"></a>(1) hosts.allow和hosts.deny</h6><p><strong>使用 hosts.allow 和 hosts.deny 来设置 IP 白名单和黑名单，/etc/ 目录下</strong>。优先级为先检查 hosts.deny，再检查hosts.allow，后者设定可越过前者限制。<strong>冒号前面</strong>是<strong>服务进程名称</strong>，通常系统进程在 <strong>/etc/inetd.conf</strong> 中指定，比如in.ftpd，in.telnetd，in.sshd。</p>
+<p>其中 IP <strong>地址范围</strong>的写法有若干中，主要的三种是：   </p>
+<ul>
+<li>网络地址-子网掩码方式：216.64.87.0/255.255.255.0。</li>
+<li>设置地址范围：216.64.（即以 216.64 打头的 IP 地址）。</li>
+<li>缩略子网掩码方式：216.64.87.0/255.255.255.0 – 216.64.87.0/24。</li>
+</ul>
+<p>设置好后，要重新启动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ /etc/rc.d/init.d/xinetd restart  </span><br><span class="line">$ /etc/rc.d/init.d/network restart</span><br></pre></td></tr></table></figure>
+
+<p>下面是设置例子：</p>
+<ul>
+<li>限制所有的 ssh，除非从 216.64.87.0 - 127 上来。   </li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hosts.deny:   </span><br><span class="line">in.sshd:ALL   </span><br><span class="line">hosts.allow:   </span><br><span class="line">in.sshd:216.64.87.0/255.255.255.128</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>封掉 216.64.87.0 - 127 的 telnet。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hosts.deny   </span><br><span class="line">in.sshd:216.64.87.0/255.255.255.128</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>限制所有人的 TCP 连接，除非从 216.64.87.0 - 127 访问。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hosts.deny   </span><br><span class="line">ALL:ALL   </span><br><span class="line">hosts.allow   </span><br><span class="line">ALL:216.64.87.0/255.255.255.128</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>限制 216.64.87.0 - 127 对所有服务的访问。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hosts.deny   </span><br><span class="line">ALL:216.64.87.0/255.255.255.128</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-iptables命令"><a href="#2-iptables命令" class="headerlink" title="(2) iptables命令"></a>(2) iptables命令</h6><p>iptables 是<strong>防火墙</strong>相关的命令，可以用来<strong>限制 IP 登录</strong>。</p>
+<h4 id="Linux定时任务crontab"><a href="#Linux定时任务crontab" class="headerlink" title="Linux定时任务crontab"></a>Linux定时任务crontab</h4><p>crontab 命令常见于 Unix 和类 Unix 的操作系统之中，用于<strong>设置周期性被执行的指令</strong>。该命令从标准输入设备读取指令，并将其存放于 <strong>crontab 文件</strong>中，以供之后读取和执行。通常 crontab 储存的指令被<strong>守护进程激活</strong>，crond 常常在<strong>后台运行</strong>。这类作业一般称为 cron jobs。</p>
+<h5 id="1-crontab文件"><a href="#1-crontab文件" class="headerlink" title="1. crontab文件"></a>1. crontab文件</h5><p>crontab 文件包含送交 cron 守护进程的一<strong>系列作业和指令</strong>。每个用户可以拥有自己的 crontab 文件；同时，操作系统保存一个<strong>针对整个系统的 crontab 文件</strong>，该文件通常存放于 <strong>/etc</strong> 或者 /etc 之下的子目录中，而这个文件只能由系统管理员来修改。</p>
+<p>crontab 文件的<strong>每一行</strong>均遵守特定的格式，由<strong>空格或 tab 分隔为数个领域</strong>，每个领域可以放置单一或多个数值。 <strong>cron 服务</strong>是 Linux 的内置服务，但<strong>它不会开机自动启动</strong>，可以用以下命令启动和停止服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/sbin/service crond start</span><br><span class="line">/sbin/service crond stop</span><br><span class="line">/sbin/service crond restart</span><br><span class="line">/sbin/service crond reload</span><br></pre></td></tr></table></figure>
+
+<p>要把 cron 设为开机自动启动，需要在 <strong>/etc/rc.d/rc.local</strong> 脚本中加入 <strong>/sbin/service crond start</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[nano@localhost ~]$ crontab -l  <span class="comment"># 查看当前用户的crontab</span></span><br><span class="line">[nano@localhost ~]$ crontab -e  <span class="comment"># 编辑crontab</span></span><br><span class="line">[nano@localhost ~]$ crontab -r  <span class="comment"># 删除crontab</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2-操作符号"><a href="#2-操作符号" class="headerlink" title="2. 操作符号"></a>2. 操作符号</h5><img src="assets/crontab_cheatsheet.png" style="zoom:27%;" />
+
+<p>在一个区域里填写<strong>多个数值</strong>的方法：</p>
+<ul>
+<li>逗号（’,’）分开的值，例如：“1, 3, 4, 7, 8”。</li>
+<li>连词符（’-‘）指定值的<strong>范围</strong>，例如：“1-6”。</li>
+<li>星号（’<em>‘）代表*</em>任何可能的值**。例如，在“小时域”里的星号等于是“每一个小时”。</li>
+<li>某些 cron 程序的扩展版本也支持斜线（’/‘）操作符，用于表示<strong>跳过某些给定的数</strong>。例如，“/3”在小时域中等于“0, 3, 6, 9, 12, 15, 18, 21”等被 3 整除的数；。</li>
+</ul>
+<h5 id="3-时间设置"><a href="#3-时间设置" class="headerlink" title="3. 时间设置"></a>3. 时间设置</h5><p>前 5 个域称之<strong>分时日月周</strong>，方便记忆。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件格式说明</span></span><br><span class="line"><span class="comment">#  ——分钟（0 - 59）</span></span><br><span class="line"><span class="comment"># |  ——小时（0 - 23）</span></span><br><span class="line"><span class="comment"># | |  ——日（1 - 31）</span></span><br><span class="line"><span class="comment"># | | |  ——月（1 - 12）</span></span><br><span class="line"><span class="comment"># | | | |  ——星期（0 - 7，星期日=0或7）</span></span><br><span class="line"><span class="comment"># | | | | |</span></span><br><span class="line"><span class="comment"># * * * * * 被执行的命令</span></span><br></pre></td></tr></table></figure>
+
+<p>从<strong>第六个域起</strong>，指明要执行的命令。</p>
+<h5 id="4-例子"><a href="#4-例子" class="headerlink" title="4. 例子"></a>4. 例子</h5><ul>
+<li>每 1 分钟执行一次 command：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* * * * * command</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每小时的第 3 和第 15 分钟执行：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3,15 * * * * command</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在上午 8 点到 11 点的第 3 和第 15 分钟执行：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3,15 8-11 * * * command</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每隔两天的上午 8 点到 11 点的第 3 和第 15 分钟执行：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3,15 8-11 */2 * * command</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><ul>
+<li><a href="https://blog.csdn.net/sinat_24928447/article/details/78042290" target="_blank" rel="noopener">https://blog.csdn.net/sinat_24928447/article/details/78042290</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/C%20%E7%BD%91%E7%BB%9C/A%20%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="next" title="ShiftJava/C 网络/A 计算机网络">
+                <i class="fa fa-chevron-left"></i> ShiftJava/C 网络/A 计算机网络
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/D%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/Q%20Linux%20Shell%E7%BC%96%E7%A8%8B/" rel="prev" title="ShiftJava/D 操作系统/Q Linux Shell编程">
+                ShiftJava/D 操作系统/Q Linux Shell编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux系统管理"><span class="nav-number">1.</span> <span class="nav-text">Linux系统管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux启动"><span class="nav-number">1.1.</span> <span class="nav-text">Linux启动</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Linux启动流程分析"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. Linux启动流程分析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-内核引导"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">(1) 内核引导</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-运行init"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">(2) 运行init</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-系统初始化"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">(3) 系统初始化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-建立终端"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">(4) 建立终端</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-应用开机自启"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 应用开机自启</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux进程管理"><span class="nav-number">1.2.</span> <span class="nav-text">Linux进程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-查看进程"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 查看进程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-ps"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">(1) ps</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-pstree"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">(2) pstree</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-top"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">(3) top</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-netstat"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">(4) netstat</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-进程状态"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 进程状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-关闭进程"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 关闭进程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-kill命令"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">(1) kill命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-killall命令"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">(2) killall命令</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-进程优先级"><span class="nav-number">1.2.4.</span> <span class="nav-text">4. 进程优先级</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-父进程与子进程"><span class="nav-number">1.2.5.</span> <span class="nav-text">5. 父进程与子进程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-SIGCHLD"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">(1) SIGCHLD</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-wait"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">(2) wait()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-waitpid"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">(3) waitpid()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-孤儿进程"><span class="nav-number">1.2.5.4.</span> <span class="nav-text">(4) 孤儿进程</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-僵尸进程"><span class="nav-number">1.2.5.5.</span> <span class="nav-text">(5) 僵尸进程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux系统资源管理"><span class="nav-number">1.3.</span> <span class="nav-text">Linux系统资源管理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-资源查看"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 资源查看</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-vmstat命令"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">(1) vmstat命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-free命令"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">(2) free命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-查看CPU信息"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">(3) 查看CPU信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux网络管理"><span class="nav-number">1.4.</span> <span class="nav-text">Linux网络管理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-基础命令"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 基础命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-限制IP访问"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 限制IP访问</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-hosts-allow和hosts-deny"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">(1) hosts.allow和hosts.deny</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-iptables命令"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">(2) iptables命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux定时任务crontab"><span class="nav-number">1.5.</span> <span class="nav-text">Linux定时任务crontab</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-crontab文件"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. crontab文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-操作符号"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. 操作符号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-时间设置"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. 时间设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-例子"><span class="nav-number">1.5.4.</span> <span class="nav-text">4. 例子</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

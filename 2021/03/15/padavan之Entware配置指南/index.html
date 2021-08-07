@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="基于极路由1s以及Newifi3路由器的路由器配置教程，装python跑脚本不掉线校园网不是梦√。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Padavan路由器entware配置指南">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;03&#x2F;15&#x2F;padavan%E4%B9%8BEntware%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="基于极路由1s以及Newifi3路由器的路由器配置教程，装python跑脚本不掉线校园网不是梦√。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-03-17T06:52:18.428Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/03/15/padavan之Entware配置指南/"/>
+
+
+
+
+
+  <title>Padavan路由器entware配置指南 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/15/padavan%E4%B9%8BEntware%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Padavan路由器entware配置指南</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-15T21:00:00+08:00">
+                2021-03-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <center>基于极路由1s以及Newifi3路由器的路由器配置教程，装python跑脚本不掉线校园网不是梦√。</center><a id="more"></a>
+
+
+
+<h2 id="路由器开启Entware"><a href="#路由器开启Entware" class="headerlink" title="路由器开启Entware"></a>路由器开启Entware</h2><ol>
+<li>格式化SD卡ext4</li>
+<li>插入路由器，通电usb应用启用Optware选择Entware</li>
+<li>进入ssh，mount命令查看/dev/mmcblk0p1 on /media/AiCard_01 type ext4 是否存在，没有则mdev -s直至出现该行</li>
+<li>mkdir /media/AiDisk_a1/opt同时将SD卡中的opt链接至路由器系统中的opt文件：mount -o bind  /media/AiCard_0/opt /opt</li>
+<li>opkg.sh 等待几分钟直至出现success之类的话（在控制台Log里面可以看到下载情况）</li>
+<li>opkg update看是否正常更新opkg列表，没问题后可以进一步opkg upgrade</li>
+<li>在完成第6步之后一般可以直接输入python命令查看python运行环境是否跟随upgrade自动下载，如果没有则opkg install python（出现大小不匹配之类的错误则重新安装直至成功）</li>
+</ol>
+<h2 id="使用ssr进行内网穿透"><a href="#使用ssr进行内网穿透" class="headerlink" title="使用ssr进行内网穿透"></a>使用ssr进行内网穿透</h2><ol>
+<li>opkg install libsodium和opkg install git-http</li>
+<li>下载好manyuser版ssr，配置好config.json后，执行initcfg.sh（会出现cp命令错误，自己打开脚本分析发现只有几个文件复制并重命名的操作，所以可以直接跳过脚本的执行并自己按照脚本复制对应的几个文件并重命名即可）。之后进入文件中的shadowsocks文件夹，<br>找到shadowsocksr/shadowsocks/crypto/util.py做如下修改：<br>将<code>/usr/lib*/lib%s.*</code>%name改成<br>‘/opt/lib<em>/lib%s.</em>‘%name.<br>修改好之后直接同一目录下执行：<br>python server.py &amp;<br>命令运行ssr-server服务。服务正确运行后，即可开放防火墙在config.json中设置的对应端口（以25565为例）：<br>iptables -A INPUT -p tcp –dport 25565 -j ACCEPT<br>iptables -A OUTPUT -p tcp –dport 25565 -j ACCEPT<br>同时在外部网络–端口映射里设置，端口范围：25565，内部ip：192.168.2.1，本地端口25565，协议tcp</li>
+<li>在windows cmd中使用telnet 查看端口开放情况：<br>telnet 172.25.65.17 25565<br>有反应出现空白窗口即为开放端口成功。然后即可内网使用ssrserver穿透整个内网。</li>
+</ol>
+<h2 id="开启ipv6"><a href="#开启ipv6" class="headerlink" title="开启ipv6"></a>开启ipv6</h2><p>在管理后台“外部网络（WAN）”-“IPv6 设置”中设置：<br>    IPv6 连接类型：Native DHCPv6；即原生的 DHCPv6<br>    IPv6 外网设置<br>    获取 IPv6 外网地址：Stateless: RA<br>    DNSv6 外网设置<br>    自动获取 IPv6 DNS：否<br>    DNSv6 服务器 1：240c::6666<br>    DNSv6 服务器 2：2001:da8::666<br>设置完后再IPv6 内网设置<br>    通过 DHCPv6 获取内网 IPv6 地址：关闭（如果启动将一直报错：6relayd[805]: fail to relay to dc00 : ……）<br>    ipv6内网地址：dc00:101:101::1<br>    ipv6内网前缀长度：64<br>    启用 LAN 路由器通告：启用<br>    启用 LAN DHCPv6 服务器：Stateless &amp; stateful<br>设置好后点击页面下方的“应用本页面设置”，等待路由器反应过来后就打开“网络地图”-“外部网络状态”，可以看到已经获取到了 IPv6 地址<br>安装并运行6relayd<br>opkg update<br>opkg upgrade<br>opkg install 6relayd<br>安装好后再输入一下命令来运行6relayd（其中eth2.2是wan口的网卡名）<br>    6relayd -d -A eth2.2 br0<br>配置6relay开机运行脚本：<br>    6relayd -d -A eth2.2 br0<br>    logger -t “【6relayd】” “6relayd start”<br>复制并粘贴到“在路由器启动之后执行”中<br>有时ipv6会掉（路由器网口eth2.2有ipv6地址，但pc网络适配器显示ipv6不可访问），重新运行6relayd -d -A eth2.2 br0即可。</p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="opkg-Permission-denied"><a href="#opkg-Permission-denied" class="headerlink" title="opkg: Permission denied"></a>opkg: Permission denied</h3><p>描述：newifi3路由器中直接复制opt环境到内存卡中，运行opkg update等指令出现opkg: Permission denied，或者在运行opkg.sh时因为网络错误下载失败后出现该情况。<br>解决：路由器控制台-配置扩展环境-重置opt文件，即重新下载opt文件夹。</p>
+<h3 id="ImportError-opt-lib-libffi-so-6-invalid-ELF-header"><a href="#ImportError-opt-lib-libffi-so-6-invalid-ELF-header" class="headerlink" title="ImportError: /opt/lib/libffi.so.6: invalid ELF header"></a>ImportError: /opt/lib/libffi.so.6: invalid ELF header</h3><p>复制下载好的libffi.so.6过去，仍然报错：/opt/lib/libffi.so.6: file too short<br>将libffi.so.6.0.4也复制过去</p>
+<h3 id="安装好python后运行server-py报错："><a href="#安装好python后运行server-py报错：" class="headerlink" title="安装好python后运行server.py报错："></a>安装好python后运行server.py报错：</h3><p>描述：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">IPv6 not support</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File "server.py", line 215, in &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File "server.py", line 38, in main</span><br><span class="line">    config = shell.get_config(False)</span><br><span class="line">  File "/opt/home/admin/shadowsocksr-backup-manyuser/shadowsocks/../shadowsocks/shell.py", line 299, in get_config</span><br><span class="line">    check_config(config, is_local)</span><br><span class="line">  File "/opt/home/admin/shadowsocksr-backup-manyuser/shadowsocks/../shadowsocks/shell.py", line 129, in check_config</span><br><span class="line">    encrypt.try_cipher(config['password'], config['method'])</span><br><span class="line">  File "/opt/home/admin/shadowsocksr-backup-manyuser/shadowsocks/../shadowsocks/encrypt.py", line 46, in try_cipher</span><br><span class="line">    Encryptor(key, method)</span><br><span class="line">  File "/opt/home/admin/shadowsocksr-backup-manyuser/shadowsocks/../shadowsocks/encrypt.py", line 90, in __init__</span><br><span class="line">    random_string(self._method_info[1]))</span><br><span class="line">  File "/opt/home/admin/shadowsocksr-backup-manyuser/shadowsocks/../shadowsocks/encrypt.py", line 119, in get_cipher</span><br><span class="line">    return m[2](method, key, iv, op)</span><br><span class="line">  File "/opt/home/admin/shadowsocksr-backup-manyuser/shadowsocks/../shadowsocks/crypto/openssl.py", line 89, in __init__</span><br><span class="line">    load_openssl()</span><br><span class="line">  File "/opt/home/admin/shadowsocksr-backup-manyuser/shadowsocks/../shadowsocks/crypto/openssl.py", line 41, in load_openssl</span><br><span class="line">    raise Exception('libcrypto(OpenSSL) not found')</span><br></pre></td></tr></table></figure>
+
+<p>解决：根据网上说法，猜测是python的openssl未安装，但现在仍未解决问题。<br>最终解决办法找到，安装libsodium，git-http并且最最重要的：<br>找到shadowsocksr/shadowsocks/crypto/util.py<br>将<code>/usr/lib*/lib%s.*</code>%name改成<br>‘/opt/lib<em>/lib%s.</em>‘%name.</p>
+<h3 id="GUI无法修改wifi的SSID为特殊字符（如颜文字等）"><a href="#GUI无法修改wifi的SSID为特殊字符（如颜文字等）" class="headerlink" title="GUI无法修改wifi的SSID为特殊字符（如颜文字等）"></a>GUI无法修改wifi的SSID为特殊字符（如颜文字等）</h3><p>解决：直接去/etc/Wireless/RT2860中修改RT2860AP.dat，然后<br>ifconfig ra0 down<br>ifconfig ra0 up</p>
+<h3 id="ftp一直停留在输入密码界面，即使正确输入用户密码也无法进入"><a href="#ftp一直停留在输入密码界面，即使正确输入用户密码也无法进入" class="headerlink" title="ftp一直停留在输入密码界面，即使正确输入用户密码也无法进入"></a>ftp一直停留在输入密码界面，即使正确输入用户密码也无法进入</h3><p>解决：重新创建用户（以后在ftp中执行文件复制移动文件夹创建的操作时如果出现错误，可通过重新创建用户解决）</p>
+<h3 id="ftp上传文件后文件名乱码"><a href="#ftp上传文件后文件名乱码" class="headerlink" title="ftp上传文件后文件名乱码"></a>ftp上传文件后文件名乱码</h3><p>解决：上传时不要使用windows内置资源管理器，可使用winscp上传，ios可使用Documents上传</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1] <a href="https://www.hkepc.com/forum/viewthread.php?tid=2386961" target="_blank" rel="noopener">R6250+tomato+ssserver+softether+ssr, 2.4G穩定</a><br>[2] <a href="http://blog.sina.com.cn/s/blog_60b289890102xti4.html" target="_blank" rel="noopener">7620老毛子Padavan固件如何像openwrt一样安装额外的软件包（转自恩山）</a><br>[3] <a href="https://www.asmodeus.cn/archives/309" target="_blank" rel="noopener">ShadowsocksR 服务端安装教程</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/23/%E4%BD%BF%E7%94%A8pptp%E5%90%8E%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE%E9%97%AE%E9%A2%98/" rel="next" title="pptp远程桌面配置">
+                <i class="fa fa-chevron-left"></i> pptp远程桌面配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/A%20Java/A-8%20%E5%85%B3%E9%94%AE%E5%AD%97/" rel="prev" title="ShiftJava/A Java/A-8 关键字">
+                ShiftJava/A Java/A-8 关键字 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#路由器开启Entware"><span class="nav-number">1.</span> <span class="nav-text">路由器开启Entware</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用ssr进行内网穿透"><span class="nav-number">2.</span> <span class="nav-text">使用ssr进行内网穿透</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开启ipv6"><span class="nav-number">3.</span> <span class="nav-text">开启ipv6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见问题"><span class="nav-number">4.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#opkg-Permission-denied"><span class="nav-number">4.1.</span> <span class="nav-text">opkg: Permission denied</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ImportError-opt-lib-libffi-so-6-invalid-ELF-header"><span class="nav-number">4.2.</span> <span class="nav-text">ImportError: /opt/lib/libffi.so.6: invalid ELF header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装好python后运行server-py报错："><span class="nav-number">4.3.</span> <span class="nav-text">安装好python后运行server.py报错：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GUI无法修改wifi的SSID为特殊字符（如颜文字等）"><span class="nav-number">4.4.</span> <span class="nav-text">GUI无法修改wifi的SSID为特殊字符（如颜文字等）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ftp一直停留在输入密码界面，即使正确输入用户密码也无法进入"><span class="nav-number">4.5.</span> <span class="nav-text">ftp一直停留在输入密码界面，即使正确输入用户密码也无法进入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ftp上传文件后文件名乱码"><span class="nav-number">4.6.</span> <span class="nav-text">ftp上传文件后文件名乱码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 关键字finalfinal 关键字是面试中的常考点，可以用于修饰实例字段，方法，类等。 1. final修饰实例域实例域可以包含基本数据类型或者引用类型，final 修饰后效果不同。  对于基本类型，final 使==数值不变==；声明数据为==常量==，可以是编译时常量，也可以是在运行时被初始化后不能被改变的常量。 对于引用类型，final 使==引用不变==，构造器初始化之后就不能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;A Java&#x2F;A-8 关键字">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;A-8%20%E5%85%B3%E9%94%AE%E5%AD%97&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] 关键字finalfinal 关键字是面试中的常考点，可以用于修饰实例字段，方法，类等。 1. final修饰实例域实例域可以包含基本数据类型或者引用类型，final 修饰后效果不同。  对于基本类型，final 使==数值不变==；声明数据为==常量==，可以是编译时常量，也可以是在运行时被初始化后不能被改变的常量。 对于引用类型，final 使==引用不变==，构造器初始化之后就不能">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/A Java/A-8 关键字/"/>
+
+
+
+
+
+  <title>ShiftJava/A Java/A-8 关键字 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/A%20Java/A-8%20%E5%85%B3%E9%94%AE%E5%AD%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/A Java/A-8 关键字</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:14+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h3><h4 id="final"><a href="#final" class="headerlink" title="final"></a>final</h4><p>final 关键字是面试中的常考点，可以用于修饰<strong>实例字段，方法，类</strong>等。</p>
+<h5 id="1-final修饰实例域"><a href="#1-final修饰实例域" class="headerlink" title="1. final修饰实例域"></a>1. final修饰实例域</h5><p>实例域可以包含<strong>基本数据类型</strong>或者<strong>引用类型</strong>，final 修饰后效果不同。</p>
+<ul>
+<li>对于<strong>基本</strong>类型，final 使==<strong>数值不变</strong>==；声明数据为==<strong>常量</strong>==，可以是编译时常量，也可以是在运行时被初始化后<strong>不能被改变</strong>的常量。</li>
+<li>对于<strong>引用</strong>类型，final 使==<strong>引用不变</strong>==，构造器初始化之后就不能再修改，也就是这个变量<strong>不能引用其它对象</strong>。相当于该实例域==<strong>没有 setter 方法</strong>==。但是<strong>被引用</strong>对象的<strong>内部数据</strong>是可以修改的。</li>
+</ul>
+<p>下面一些例子。</p>
+<p>基本类型声明为 final，就变成常量，不能变化值了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="comment">// a = 5; // 错误 不能赋值</span></span><br></pre></td></tr></table></figure>
+
+<p>下面 final 修饰 boy 变量，表示其引用不能再变了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Boy boy = <span class="keyword">new</span> Boy(<span class="string">"Lucy"</span>);</span><br><span class="line"><span class="comment">// OK 可以改变内部属性值</span></span><br><span class="line">boy.name = <span class="string">"Jack"</span>;</span><br><span class="line"><span class="comment">// NO 不能改引用了</span></span><br><span class="line">boy = <span class="keyword">new</span> Boy(<span class="string">"Tom"</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-final修饰方法"><a href="#2-final修饰方法" class="headerlink" title="2. final修饰方法"></a><strong>2. final修饰方法</strong></h5><p>final 声明方法表示该方法不能被子类<strong>覆写</strong>。</p>
+<p><strong>private 方法隐式地被指定为 final</strong>。如果在子类中定义的方法和父类中的一个 private 方法签名相同，此时子类的方法不是覆写父类方法，而是在子类中定义了一个<strong>新的</strong>方法。</p>
+<blockquote>
+<p><strong>为何要使用final方法？</strong></p>
+</blockquote>
+<p>第一个原因是把<strong>方法锁定</strong>，防止该方法被继承，导致继承类修改方法原本的含义。</p>
+<p>第二个原因是<strong>效率</strong>。在早期的 Java 实现版本中，会将 final 方法转为<strong>内嵌调用</strong>提高一些效率。类中所有的 private 方法都隐式地指定为 final。</p>
+<h5 id="3-final修饰类"><a href="#3-final修饰类" class="headerlink" title="3. final修饰类"></a><strong>3. final修饰类</strong></h5><p>final 修饰类时表明该类<strong>不允许</strong>被<strong>继承</strong>。</p>
+<h5 id="4-final、finally和finalize区别"><a href="#4-final、finally和finalize区别" class="headerlink" title="4. final、finally和finalize区别"></a>4. final、finally和finalize区别</h5><p><strong>final</strong>：用于声明<strong>属性、方法和类</strong>，分别表示属性不可变、方法不可覆盖和类不可被继承。</p>
+<p><strong>finally</strong>：用于<strong>搭配 try catch 语句来处理异常情况</strong>。finally 一般情况下是都会执行的（可能也不会执行，参考异常部分），可以用于执行一些关闭资源操作。</p>
+<p><strong>finalize()</strong>：是 <strong>Object</strong> 中的方法。这里涉及到 JVM 如何判定对象是否存活的可达性分析算法，可达性分析算法对 GC Roots 不可达的对象进行标记，如果这个<strong>对象覆写了 finalize 方法</strong>，且在方法将这个对象重新与 GC Roots 关联的话，对象就<strong>不会被回收</strong>，用于对象被回收之前的<strong>自救</strong>（引诱面试官去问 JVM）。</p>
+<h4 id="static"><a href="#static" class="headerlink" title="static"></a>static</h4><p>static 可以修饰<strong>静态实例域、语句块、静态方法、内部类</strong>等。</p>
+<h5 id="1-修饰静态域"><a href="#1-修饰静态域" class="headerlink" title="1. 修饰静态域"></a>1. 修饰静态域</h5><p>可以修饰静态<strong>常量</strong>与静态<strong>变量</strong>。</p>
+<p>许多默认<strong>配置参数</strong>就会使用<strong>静态常量</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span> PI = <span class="number">3.14159</span> <span class="comment">// 静态常量</span></span><br><span class="line">System.out      <span class="comment">// 一个常用的静态常量</span></span><br></pre></td></tr></table></figure>
+
+<p>static 修饰的变量便是<strong>静态变量</strong>（<strong>类变量</strong>）。</p>
+<ul>
+<li><strong>实例变量</strong>：每创建一个对象实例就会产生一个实例变量，实例变量生命周期与这个实例相同。</li>
+<li><strong>静态变量</strong>：静态变量属于类（<strong>类变量</strong>），类所有的<strong>实例对象都共享该静态变量</strong>，静态变量在内存中<strong>只存在一份</strong>。应该直接通过类名来访问它。静态变量是存放在<strong>方法区</strong>中的，其实际引用指向的对象存储在堆中。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> x;         <span class="comment">// 实例变量</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> y;  <span class="comment">// 静态变量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// int x = A.x;  // Non-static field 'x' cannot be referenced from a static context</span></span><br><span class="line">        A a = <span class="keyword">new</span> A();</span><br><span class="line">        <span class="keyword">int</span> x = a.x;    <span class="comment">// 通过对象引用实例变量</span></span><br><span class="line">        <span class="keyword">int</span> y = A.y;    <span class="comment">// 通过类名引用静态变量</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-修饰静态方法"><a href="#2-修饰静态方法" class="headerlink" title="2. 修饰静态方法"></a>2. 修饰静态方法</h5><p>静态方法也是类方法，属于类。静态方法在<strong>类加载</strong>的时候就存在了，它<strong>不依赖于任何实例</strong>，所以静态方法中<strong>不能有 this 和 super</strong> 关键字。所以静态方法<strong>必须有实现</strong>，也就是说它<strong>不能是抽象方法</strong>。建议使用<strong>类名</strong>调用静态方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 合格即使没有任何逻辑但是有方法体</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">func1</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// public abstract static void func2();  // 不合法，静态方法不能是抽象的</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>静态方法只能访问所属类的静态字段和静态方法</strong>，不能访问实例方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> y;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">func1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> a = x;      <span class="comment">// 静态方法中使用静态变量</span></span><br><span class="line">        <span class="comment">// int b = y;   // 静态方法中不能引用实例变量</span></span><br><span class="line">        <span class="comment">// int b = this.y;     // 静态方法中没有this</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其他：</p>
+<ul>
+<li>使用静态方法的<strong>两种场景</strong>：1. 一个方法<strong>不需要访问对象状态</strong>，其所需参数都是通过显式参数提供。2. 一个方法只需要访问类的静态域。</li>
+<li><strong>静态工厂方法</strong>通常是由静态方法实现。应用场景：无法命名构造器；当使用构造器时，无法改变所构造的对象类型。</li>
+<li>main 方法是<strong>静态</strong>的，因此<strong>只能调用静态方法</strong>。实例方法需要构建对象来调用。一个类的 main 方法可以用来做<strong>单元测试</strong>。</li>
+</ul>
+<h5 id="3-修饰静态语句块"><a href="#3-修饰静态语句块" class="headerlink" title="3. 修饰静态语句块"></a>3. 修饰静态语句块</h5><p><strong>静态</strong>初始化块在<strong>==类初始化==</strong>时运行一次。而<strong>非静态</strong>的初始化块在每个对象创建后<strong>都会执行一次</strong>。详见后面初始化部分的例子。</p>
+<h5 id="4-静态内部类"><a href="#4-静态内部类" class="headerlink" title="4. 静态内部类"></a>4. 静态内部类</h5><p>非静态内部类依赖于外部类的实例，而<strong>静态内部类不需要</strong>。静态内部类<strong>不能访问外部类的非静态的变量和方法</strong>。</p>
+<h5 id="5-静态导包"><a href="#5-静态导包" class="headerlink" title="5. 静态导包"></a>5. 静态导包</h5><p>在使用静态变量和方法时不用再指明 ClassName，从而简化代码，无需类名即可使用静态变量与方法，但可读性大大降低。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.xxx.ClassName.*;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="this与super"><a href="#this与super" class="headerlink" title="this与super"></a>this与super</h4><h5 id="1-this"><a href="#1-this" class="headerlink" title="1. this"></a>1. this</h5><p>this 表示指向<strong>对象自己</strong>的一个指针，相当于是指向<strong>当前对象</strong>本身。在程序中易产生<strong>二义性</strong>之处，应使用 this 来指明当前对象。</p>
+<p>常用于形参与本地参数重名或构造方法中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">GetAge</span><span class="params">(<span class="keyword">int</span> age)</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>引用其他的<strong>构造方法</strong>。应该为构造函数中的<strong>第一条语句</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">Dog</span><span class="params">(String name)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Dog</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123; </span><br><span class="line">    <span class="comment">// 引用上面的构造方法</span></span><br><span class="line">    <span class="keyword">this</span>(name);</span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-super"><a href="#2-super" class="headerlink" title="2. super"></a>2. super</h5><p>super 是一个指代<strong>变量</strong>，用于在子类中指代<strong>父类对象</strong>。可以理解为是<strong>当前对象指向自己超（父）类对象的一个指针</strong>，而这个超类指的是离自己<strong>最近</strong>的一个父类。</p>
+<p>super 几种用法如下。</p>
+<h6 id="1-调用父类普通方法"><a href="#1-调用父类普通方法" class="headerlink" title="(1) 调用父类普通方法"></a>(1) 调用父类普通方法</h6><p>与 this 类似，super 相当于是指向<strong>当前对象的父类</strong>，这样就可以用 <strong>super.xxx</strong> 来引用父类的成员或方法（非 private）。</p>
+<p>如果子类<strong>覆写</strong>了父类的某个方法，可以通过使用 super 关键字来引用父类的<strong>方法</strong>实现。</p>
+<h6 id="2-调用父类构造方法"><a href="#2-调用父类构造方法" class="headerlink" title="(2) 调用父类构造方法"></a>(2) 调用父类构造方法</h6><p>super 访问父类的<strong>构造函数方法</strong>：可以使用 super 函数访问父类的构造函数，从而委托父类完成一些<strong>初始化</strong>的工作。</p>
+<p>子类构造器必须在<strong>第一句</strong>使用 super(params) 调用父类的构造方法，若父类有<strong>默认构造方法</strong>则子类的构造方法可以不用 super。如果父类有<strong>自定义</strong>的构造方法而<strong>没有默认构造方法</strong>，则子类构造方法<strong>必须使用 super 调用</strong>。否则报错。</p>
+<p>一个比较综合的例子：</p>
+<p><strong>父类如下</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String age;</span><br><span class="line">	<span class="comment">// 父类的自定义构造方法 没有默认构造方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Animal</span><span class="params">(String name, String age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">        System.out.println(<span class="string">"一只动物出生"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 父类方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eatFood</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"动物吃东西"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>子类如下</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Dog</span> <span class="keyword">extends</span> <span class="title">Animal</span></span>&#123;</span><br><span class="line">	<span class="comment">// 子类新增的字段</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String owner;</span><br><span class="line">	<span class="comment">// 子类构造方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Dog</span><span class="params">(String name, String age, String owner)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name, age);	<span class="comment">// 调用父类构造方法</span></span><br><span class="line">        <span class="keyword">this</span>.owner = owner;		</span><br><span class="line">        System.out.println(<span class="string">"一只小狗出生"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 覆写父类方法</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eatFood</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 引用父类的方法</span></span><br><span class="line">        <span class="keyword">super</span>.eatFood();</span><br><span class="line">        System.out.println(<span class="string">"小狗吃东西"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 静态类型是父类，动态类型是子类</span></span><br><span class="line">        Animal animal = <span class="keyword">new</span> Dog(<span class="string">"Jack"</span>, <span class="string">"12"</span>, <span class="string">"Tom"</span>);</span><br><span class="line">        animal.eatFood();    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">一只动物出生</span><br><span class="line">一只小狗出生</span><br><span class="line">小狗吃东西</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-super与this比较"><a href="#3-super与this比较" class="headerlink" title="3. super与this比较"></a>3. <strong>super与this比较</strong></h5><ul>
+<li><p>this 引用<strong>当前对象</strong>是实实在在存在的，可以作为<strong>函数参数</strong>，可以作为<strong>返回值</strong>，但 super 只是一个关键字，不能作为参数与返回值，它只是告诉<strong>编译器</strong>访问父类的相关变量与方法。</p>
+</li>
+<li><p>super() 和 this() 均需放在构造方法内<strong>第一行</strong>。</p>
+</li>
+<li><p>this 和 super <strong>不能同时出现在一个构造函数里面</strong>，因为 this 必然会调用其它的构造函数，其它的构造函数必然也会有 super 语句的存在，所以在同一个构造函数里面有相同的语句，就失去了语句的意义，编译器也不会通过。</p>
+</li>
+</ul>
+<h4 id="instanceof"><a href="#instanceof" class="headerlink" title="instanceof"></a>instanceof</h4><p>instanceof 关键字用于判断一个<strong>引用类型</strong>变量是否是<strong>一个类（或接口、抽象类、父类）</strong>的<strong>实例</strong>。在 Spring 源码中用挺多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IObject</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> <span class="keyword">implements</span> <span class="title">IObject</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="keyword">extends</span> <span class="title">Foo</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiStateTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">        test();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">        IObject f = <span class="keyword">new</span> Test();</span><br><span class="line">        <span class="comment">// f是Object的子类</span></span><br><span class="line">        <span class="keyword">if</span>(f <span class="keyword">instanceof</span> java.lang.Object)System.out.println(<span class="string">"true"</span>);<span class="comment">// true</span></span><br><span class="line">        <span class="keyword">if</span>(f <span class="keyword">instanceof</span> Foo)System.out.println(<span class="string">"true"</span>);				<span class="comment">// true</span></span><br><span class="line">        <span class="keyword">if</span>(f <span class="keyword">instanceof</span> Test)System.out.println(<span class="string">"true"</span>);			<span class="comment">// true</span></span><br><span class="line">        <span class="keyword">if</span>(f <span class="keyword">instanceof</span> IObject)System.out.println(<span class="string">"true"</span>);			<span class="comment">// true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>instanceof 也适用于<strong>数组类型</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String[] str = <span class="keyword">new</span> String[<span class="number">10</span>];</span><br><span class="line"><span class="keyword">if</span>(str <span class="keyword">instanceof</span> String[]) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="strictfp"><a href="#strictfp" class="headerlink" title="strictfp"></a>strictfp</h4><p>strictfp，即 <strong>strict float point</strong> (<strong>精确浮点</strong>)。 如果想让<strong>浮点运算更加精确</strong>，而且不会因为不同的硬件平台所执行的结果不一致的话，可以用关键字 strictfp。</p>
+<p>strictfp 关键字可应用于<strong>方法、类或接口</strong>。</p>
+<ul>
+<li><p>使用 strictfp 关键字修饰一个<strong>方法</strong>时，该方法中所有的 float 和 double 表达式都严格遵守 FP-strict 的限制，符合 IEEE-754 规范。</p>
+</li>
+<li><p>使用 strictfp 关键字修饰一个<strong>类或接口</strong>时，该类中的所有代码，包括<strong>嵌套类型</strong>中的初始设定值和代码，都将严格地进行计算。严格约束意味着所有表达式的结果都必须是 IEEE 754 算法对操作数预期的结果，以<strong>单精度和双精度格式</strong>表示。</p>
+</li>
+</ul>
+<h4 id="transient"><a href="#transient" class="headerlink" title="transient"></a>transient</h4><p>实现了 Serilizable 接口的对象可以<strong>被序列化</strong>，这种序列化模式使我们可以不必关系具体序列化的过程，只要这个类实现了 Serilizable 接口，这个类的所有<strong>属性和方法</strong>都会自动序列化。</p>
+<p>使用 transient 关键字修饰的属性<strong>不会被序列化</strong>。这个字段的生命周期仅存于调用者的内存中而不会写到磁盘里或网络中持久化。</p>
+<p>在实际开发过程中可能遇到这个类的有些属性需要序列化，而其他属性<strong>不需要</strong>被序列化。如果一个用户的一些敏感信息（如密码，银行卡号等），为了安全起见<strong>不希望在网络操作</strong>（主要涉及到序列化操作，本地序列化缓存也适用）中被传输，这些信息对应的变量就<strong>可以加上 transient 关键字</strong>。</p>
+<p>比如一些集合类，比如 <strong>ArrayList</strong> 中，内部使用数组存放数据，这个数组就是用 transient 关键字修饰的，这是因为这个<strong>动态数组往往放不满</strong>，所以可以自己实现序列化方法只去序列化已经存储的部分数据。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/15/padavan%E4%B9%8BEntware%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" rel="next" title="Padavan路由器entware配置指南">
+                <i class="fa fa-chevron-left"></i> Padavan路由器entware配置指南
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/A%20Java/A-7%20%E5%B8%B8%E7%94%A8%E6%8E%A5%E5%8F%A3/" rel="prev" title="ShiftJava/A Java/A-7 常用接口">
+                ShiftJava/A Java/A-7 常用接口 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#关键字"><span class="nav-number">1.</span> <span class="nav-text">关键字</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#final"><span class="nav-number">1.1.</span> <span class="nav-text">final</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-final修饰实例域"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. final修饰实例域</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-final修饰方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. final修饰方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-final修饰类"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. final修饰类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-final、finally和finalize区别"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. final、finally和finalize区别</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#static"><span class="nav-number">1.2.</span> <span class="nav-text">static</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-修饰静态域"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 修饰静态域</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-修饰静态方法"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 修饰静态方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-修饰静态语句块"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 修饰静态语句块</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-静态内部类"><span class="nav-number">1.2.4.</span> <span class="nav-text">4. 静态内部类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-静态导包"><span class="nav-number">1.2.5.</span> <span class="nav-text">5. 静态导包</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#this与super"><span class="nav-number">1.3.</span> <span class="nav-text">this与super</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-this"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. this</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-super"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. super</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-调用父类普通方法"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">(1) 调用父类普通方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-调用父类构造方法"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">(2) 调用父类构造方法</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-super与this比较"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. super与this比较</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#instanceof"><span class="nav-number">1.4.</span> <span class="nav-text">instanceof</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#strictfp"><span class="nav-number">1.5.</span> <span class="nav-text">strictfp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#transient"><span class="nav-number">1.6.</span> <span class="nav-text">transient</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

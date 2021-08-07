@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 面试常考算法题写一个LRU算法1. 题目设计并实现最近最少经⽤（LRU）缓存的数据结构。它应该⽀持以下操作： get 和 put。  get(key) - 如果键存在于缓存中，则获取键的值（总是正数），否则返回 -1。 put(key, value) - 如果键不存在，请设置或插⼊值。当缓存达到其最大容量时，它应该在插⼊新项⽬之前，  使最近最少使⽤的项目无效。    进阶：你是否可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;B 数据结构与算法&#x2F;K 面试常考算法代码题">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;B%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95&#x2F;K%20%E9%9D%A2%E8%AF%95%E5%B8%B8%E8%80%83%E7%AE%97%E6%B3%95%E4%BB%A3%E7%A0%81%E9%A2%98&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] 面试常考算法题写一个LRU算法1. 题目设计并实现最近最少经⽤（LRU）缓存的数据结构。它应该⽀持以下操作： get 和 put。  get(key) - 如果键存在于缓存中，则获取键的值（总是正数），否则返回 -1。 put(key, value) - 如果键不存在，请设置或插⼊值。当缓存达到其最大容量时，它应该在插⼊新项⽬之前，  使最近最少使⽤的项目无效。    进阶：你是否可以">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/B 数据结构与算法/K 面试常考算法代码题/"/>
+
+
+
+
+
+  <title>ShiftJava/B 数据结构与算法/K 面试常考算法代码题 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/B%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/K%20%E9%9D%A2%E8%AF%95%E5%B8%B8%E8%80%83%E7%AE%97%E6%B3%95%E4%BB%A3%E7%A0%81%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/B 数据结构与算法/K 面试常考算法代码题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:14+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="面试常考算法题"><a href="#面试常考算法题" class="headerlink" title="面试常考算法题"></a>面试常考算法题</h3><h4 id="写一个LRU算法"><a href="#写一个LRU算法" class="headerlink" title="写一个LRU算法"></a>写一个LRU算法</h4><h5 id="1-题目"><a href="#1-题目" class="headerlink" title="1. 题目"></a>1. 题目</h5><p>设计并实现最近最少经⽤（LRU）缓存的数据结构。它应该⽀持以下操作： get 和 put。</p>
+<ul>
+<li>get(key) - 如果键存在于缓存中，则获取键的值（总是正数），否则返回 -1。</li>
+<li>put(key, value) - 如果键不存在，请设置或插⼊值。当缓存达到其最大<strong>容量</strong>时，它应该在插⼊新项⽬之前，<br>  使最近最少使⽤的项目无效。  </li>
+</ul>
+<p><strong>进阶</strong>：你是否可以在 O(1) 时间复杂度内执⾏两项操作？  </p>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LRUCache cache = <span class="keyword">new</span> LRUCache(<span class="number">2</span>);	<span class="comment">// 设置最大容量为2</span></span><br><span class="line">cache.put(<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">cache.put(<span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">cache.get(<span class="number">1</span>); <span class="comment">// 返回1</span></span><br><span class="line">cache.put(<span class="number">3</span>, <span class="number">3</span>); <span class="comment">// 去除key2</span></span><br><span class="line">cache.get(<span class="number">2</span>); <span class="comment">// 返回-1(未找到key2)</span></span><br><span class="line">cache.get(<span class="number">3</span>); <span class="comment">// 返回 3</span></span><br><span class="line">cache.put(<span class="number">4</span>, <span class="number">4</span>); <span class="comment">// 去除key1</span></span><br><span class="line">cache.get(<span class="number">1</span>); <span class="comment">// 返回-1(未找到key1)</span></span><br><span class="line">cache.get(<span class="number">3</span>); <span class="comment">// 返回3</span></span><br><span class="line">cache.get(<span class="number">4</span>); <span class="comment">// 返回4</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2-题解"><a href="#2-题解" class="headerlink" title="2. 题解"></a>2. 题解</h5><h6 id="1-基于LinkedHashMap"><a href="#1-基于LinkedHashMap" class="headerlink" title="(1) 基于LinkedHashMap"></a>(1) 基于LinkedHashMap</h6><p>别用这个，字节 HR 说用了直接 0 分。</p>
+<p>还是贴一个代码，这里主要是要覆写 removeEldestEntry 方法才能设置<strong>缓存容量</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LRUCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">LinkedHashMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 设置缓存最大值</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_ENTRIES = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 覆写这个方法使其在数量超出时返回true、</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">removeEldestEntry</span><span class="params">(Map.Entry eldest)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 如果当前的size大于最大缓存值就返回true</span></span><br><span class="line">        <span class="keyword">return</span> size() &gt; MAX_ENTRIES;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    LRUCache() &#123;</span><br><span class="line">        <span class="comment">// 同时开启accessOrder为true</span></span><br><span class="line">        <span class="keyword">super</span>(MAX_ENTRIES, <span class="number">0.75f</span>, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-双向链表-哈希表"><a href="#2-双向链表-哈希表" class="headerlink" title="(2) 双向链表+哈希表"></a>(2) 双向链表+哈希表</h6><p>采⽤这两种数据结构的组合，get 操作就可以在 O(1) 时间复杂度内完成了。由于 put 操作我们要删除的节点⼀般是尾部节点，所以我们可以⽤⼀个变量 tail 时刻记录尾部节点的位置，这样 put 操作也可以在 O(1) 时间内完成了。  </p>
+<p>这里实现就是需要先来一个结点类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LRUNode</span> </span>&#123;</span><br><span class="line">    String key;</span><br><span class="line">    Object value;</span><br><span class="line">    LRUNode next;</span><br><span class="line">    LRUNode pre;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LRUNode</span><span class="params">(String key, Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.key = key;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：不管是 put 方法还是 get 方法，<strong>都需要将访问的结点重新放到链表头部</strong>，所以会抽出一个公共的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LRUCache</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	Map&lt;String, LRUNode&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">	LRUNode head;</span><br><span class="line">	LRUNode tail;</span><br><span class="line">	<span class="comment">// 缓存最⼤容量大于1</span></span><br><span class="line">	<span class="keyword">int</span> capacity;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">LRUCache</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.capacity = capacity;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 插入元素</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> key 键</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> value 值</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String key, Object value)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 说明缓存中没有任何元素</span></span><br><span class="line">		<span class="keyword">if</span> (head == <span class="keyword">null</span>) &#123;</span><br><span class="line">			head = <span class="keyword">new</span> LRUNode(key, value);</span><br><span class="line">			tail = head;</span><br><span class="line">			map.put(key, head);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 说明缓存中已经存在这个元素了</span></span><br><span class="line">		LRUNode node = map.get(key);</span><br><span class="line">		<span class="keyword">if</span> (node != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="comment">// 更新值</span></span><br><span class="line">			node.value = value;</span><br><span class="line">			<span class="comment">// 把这个结点从链表删除并且插⼊到头结点</span></span><br><span class="line">			removeAndInsert(node);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// 说明当前缓存不存在这个值</span></span><br><span class="line">			LRUNode newHead = <span class="keyword">new</span> LRUNode(key, value);</span><br><span class="line">			<span class="comment">// 此处溢出则需要删除最近最近未使用的节点</span></span><br><span class="line">			<span class="keyword">if</span> (map.size() &gt;= capacity) &#123;</span><br><span class="line">				map.remove(tail.key);</span><br><span class="line">				<span class="comment">// 删除尾结点</span></span><br><span class="line">				tail = tail.pre;</span><br><span class="line">				tail.next = <span class="keyword">null</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			map.put(key, newHead);</span><br><span class="line">			<span class="comment">// 将新的结点插入链表头部</span></span><br><span class="line">			newHead.next = head;</span><br><span class="line">			head.pre = newHead;</span><br><span class="line">			head = newHead;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 从缓存中取值</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">		LRUNode node = map.get(key);</span><br><span class="line">		<span class="comment">// 如果有值则需要将这个结点放到链表头部</span></span><br><span class="line">		<span class="keyword">if</span> (node != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="comment">// 把这个节点删除并插⼊到头结点</span></span><br><span class="line">			removeAndInsert(node);</span><br><span class="line">			<span class="keyword">return</span> node.value;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">removeAndInsert</span><span class="params">(LRUNode node)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 特殊情况先判断，例如该节点是头结点或是尾部节点</span></span><br><span class="line">		<span class="keyword">if</span> (node == head) &#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (node == tail) &#123;</span><br><span class="line">			tail = node.pre;</span><br><span class="line">			tail.next = <span class="keyword">null</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			node.pre.next = node.next;</span><br><span class="line">			node.next.pre = node.pre;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 插⼊到头结点</span></span><br><span class="line">		node.next = head;</span><br><span class="line">		node.pre = <span class="keyword">null</span>;</span><br><span class="line">		head.pre = node;</span><br><span class="line">		head = node;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="发红包"><a href="#发红包" class="headerlink" title="发红包"></a>发红包</h4><h5 id="1-题目-1"><a href="#1-题目-1" class="headerlink" title="1. 题目"></a>1. 题目</h5><p>例如一个人在群里发了100块钱的红包，群里有10个人一起来抢红包，每人抢到的金额随机分配。一般规则：</p>
+<ul>
+<li>所有人抢到的金额之和要等于红包金额，不能多也不能少。</li>
+<li>每个人至少抢到1分钱。</li>
+<li>要保证红包拆分的金额尽可能分布均衡，不要出现两极分化太严重的情况。</li>
+</ul>
+<h5 id="2-题解-1"><a href="#2-题解-1" class="headerlink" title="2. 题解"></a>2. 题解</h5><h6 id="1-二倍均值法"><a href="#1-二倍均值法" class="headerlink" title="(1) 二倍均值法"></a>(1) 二倍均值法</h6><p>二倍均值法：假设<strong>剩余</strong>红包金额为 m 元，<strong>剩余人数为 n</strong>，那么有如下公式：</p>
+<p><strong>每次抢到的金额 = 随机区间 [0.01，m / n × 2 - 0.01]元</strong>。</p>
+<p>这个公式保证了<strong>每次随机金额的平均值是相等</strong>的，不会因为抢红包的先后顺序而造成不公平。</p>
+<p>举个例子：假设有 5 个人，红包总额 100 元。100 ÷ 5 × 2 = 40，所以第 1 个人抢到的金额随机范围是 [0.01，39.99]元，在正常情况下，平均可以抢到 20 元。假设第 1 个人随机抢到了 20 元，那么剩余金额是 80 元。80 ÷ 4 × 2 = 40，所以第 2 个人抢到的金额的随机范围同样是 [0.01，39.99] 元，在正常的情况下，还是平均可以抢到 20 元。假设第 2 个人随机抢到了 20 元，那么剩余金额是 60 元。60 ÷ 3 × 2 = 40，所以第 3 个人抢到的金额的随机范围同样是 [0.01，39.99] 元，平均可以抢到 20 元。以此类推，每一次抢到<strong>金额随机范围的均值是相等</strong>的。</p>
+<p>注意：传入的<strong>钱是以分为单位</strong>，所以最后结果列表中红包是按分计算的，需要自己转换为元。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Integer&gt; <span class="title">divideRedPackage</span><span class="params">(Integer money, Integer people)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; moneyList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    Integer restMoney = money;</span><br><span class="line">    Integer restPeople = people;</span><br><span class="line">    Random random = <span class="keyword">new</span> Random();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; people - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="comment">// 随机范围：[1，剩余人均金额的2倍-1] 单位是:分</span></span><br><span class="line">        <span class="keyword">int</span> curMoney = random.nextInt(restMoney / restPeople * <span class="number">2</span> - <span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">        moneyList.add(curMoney);</span><br><span class="line">        restMoney = restMoney - curMoney;</span><br><span class="line">        restPeople--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后还剩一份</span></span><br><span class="line">    moneyList.add(restMoney);</span><br><span class="line">    <span class="keyword">return</span> moneyList;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    List&lt;Integer&gt; amountList = divideRedPackage(<span class="number">1000</span>, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">for</span> (Integer amount : amountList) &#123;</span><br><span class="line">        <span class="comment">// 由于结果是分，这里转换为元</span></span><br><span class="line">        System.out.println(<span class="string">"抢到金额:"</span> + <span class="keyword">new</span> BigDecimal(amount).divide(<span class="keyword">new</span> BigDecimal(<span class="number">100</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="生产者与消费者模型"><a href="#生产者与消费者模型" class="headerlink" title="生产者与消费者模型"></a>生产者与消费者模型</h4><h5 id="1-wait和notify实现"><a href="#1-wait和notify实现" class="headerlink" title="1. wait和notify实现"></a>1. wait和notify实现</h5><p>可以将生产者和消费者需要的方法写在<strong>公共类</strong>中。也就是创建一个<strong>资源类</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Resource</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 最大容量</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> MAX_VALUE = <span class="number">10</span>;</span><br><span class="line">	<span class="comment">// 缓存</span></span><br><span class="line">	LinkedList&lt;String&gt; linkedList = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 生产者方法</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">product</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="comment">// 注意这里是对linkedList加锁，不能对this加锁</span></span><br><span class="line">		<span class="keyword">synchronized</span>(linkedList) &#123;</span><br><span class="line">			<span class="keyword">while</span>(MAX_VALUE == linkedList.size()) &#123;</span><br><span class="line">				System.out.println(<span class="string">"仓库已满，【生产者】：暂时不能执行生产任务!"</span>);</span><br><span class="line">				linkedList.wait();</span><br><span class="line">			&#125;</span><br><span class="line">			linkedList.push(<span class="string">"李四"</span>);</span><br><span class="line">			System.out.println(<span class="string">"【生产者】：生产了一个产品\t【现仓储量为】:"</span> + linkedList.size());</span><br><span class="line">			linkedList.notifyAll();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 消费者方法</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">customer</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * 根据jdk的void notifyAll()的描述，“解除那些在该对象上调用wait()方法的线程的阻塞状态。该方法只能在同步方法或同步块内部调用。</span></span><br><span class="line"><span class="comment">		 * 如果当前线程不是对象所得持有者，</span></span><br><span class="line"><span class="comment">		 * 该方法抛出一个java.lang.IllegalMonitorStateException 异常”</span></span><br><span class="line"><span class="comment">		 * so我们使用同一把锁</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">synchronized</span> (linkedList) &#123;</span><br><span class="line">			<span class="comment">//多线程判断中使用while，不要使用if否则会出现虚假唤醒问题</span></span><br><span class="line">			<span class="keyword">while</span>(linkedList.size() == <span class="number">0</span>) &#123;</span><br><span class="line">				System.out.println(<span class="string">"【消费者】：仓库无货，暂时不能执行消费任务!"</span>);</span><br><span class="line">				linkedList.wait();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// 有货则消费</span></span><br><span class="line">			linkedList.pop();</span><br><span class="line">			System.out.println(<span class="string">"【消费者】：消费了一个产品\t【现仓储量为】:"</span> + linkedList.size());</span><br><span class="line">			linkedList.notifyAll();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 用一个仓库模拟</span></span><br><span class="line">    Resource resource = <span class="keyword">new</span> Resource();</span><br><span class="line">    <span class="comment">// 生产者线程</span></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">                Thread.sleep(<span class="number">0</span>);</span><br><span class="line">                resource.product();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 消费者线程</span></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">10</span>);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">                <span class="comment">// 消费</span></span><br><span class="line">                resource.customer();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">【生产者】：生产了一个产品	【现仓储量为】:1</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:2</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:3</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:4</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:5</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:6</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:7</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:8</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:9</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:10</span><br><span class="line">仓库已满，【生产者】：暂时不能执行生产任务!</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:9</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:8</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:7</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:6</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:5</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:4</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:3</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:2</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:1</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:0</span><br><span class="line">【消费者】：仓库无货，暂时不能执行消费任务!</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:1</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:2</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:3</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:4</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:5</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:6</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:7</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:8</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:9</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:10</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:9</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:8</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:7</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:6</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:5</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:4</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:3</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:2</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:1</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:0</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-await与signalAll实现"><a href="#2-await与signalAll实现" class="headerlink" title="2. await与signalAll实现"></a>2. await与signalAll实现</h5><p>将公共的属性和方法放在 <strong>Resouce 类</strong>中，在资源类中使用 Lock 中的 lock() 进行加锁，控制并发操作。使用 <strong>await() 方法阻塞线程，使用 signalAll() 唤醒线程</strong>。</p>
+<p>资源类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Resouce</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> MAX_VALUE = <span class="number">3</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> MIN_VALUE = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// 显式锁</span></span><br><span class="line">	<span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">	<span class="keyword">private</span> Condition condition = lock.newCondition();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 生产方法</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">product</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			lock.lock();</span><br><span class="line">			<span class="comment">// 如果生产的数量大于最大值则阻塞</span></span><br><span class="line">			<span class="keyword">while</span> (number &gt;= MAX_VALUE) &#123;</span><br><span class="line">				System.out.println(<span class="string">"【生产者】：当前仓库满了，停止生产"</span>);</span><br><span class="line">				condition.await();</span><br><span class="line">			&#125;</span><br><span class="line">			number++;</span><br><span class="line">			System.out.println(<span class="string">"【生产者】：生产了一个产品\t【现仓储量为】:"</span> + number);</span><br><span class="line">			condition.signalAll();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 消费方法</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			lock.lock();</span><br><span class="line">			<span class="comment">// 如果消费的值=0则阻塞</span></span><br><span class="line">			<span class="keyword">while</span> (number &lt;= MIN_VALUE) &#123;</span><br><span class="line">				System.out.println(<span class="string">"【消费者】：当前没有产品可以消费"</span>);</span><br><span class="line">				condition.await();</span><br><span class="line">			&#125;</span><br><span class="line">			number--;</span><br><span class="line">			System.out.println(<span class="string">"【消费者】：消费了一个产品\t【现仓储量为】:"</span> + number);</span><br><span class="line">			condition.signalAll();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Resouce resouce = <span class="keyword">new</span> Resouce();</span><br><span class="line">    <span class="comment">// 生产者线程</span></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            resouce.product();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="string">"生产者"</span>).start();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 消费者线程</span></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            resouce.consumer();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="string">"消费者"</span>).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">【生产者】：生产了一个产品	【现仓储量为】:<span class="number">1</span></span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:<span class="number">2</span></span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:<span class="number">3</span></span><br><span class="line">【生产者】：当前仓库满了，停止生产</span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:<span class="number">2</span></span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:<span class="number">1</span></span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:<span class="number">0</span></span><br><span class="line">【消费者】：当前没有产品可以消费</span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:<span class="number">1</span></span><br><span class="line">【生产者】：生产了一个产品	【现仓储量为】:<span class="number">2</span></span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:<span class="number">1</span></span><br><span class="line">【消费者】：消费了一个产品	【现仓储量为】:<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3-基于阻塞队列实现"><a href="#3-基于阻塞队列实现" class="headerlink" title="3. 基于阻塞队列实现"></a>3. 基于阻塞队列实现</h5><p>资源类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Resouce</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> MAX_VALUE = <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> MIN_VALUE = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 显式锁</span></span><br><span class="line">    <span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">    <span class="keyword">private</span> Condition condition = lock.newCondition();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生产方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">product</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            lock.lock();</span><br><span class="line">            <span class="comment">// 如果生产的数量大于最大值则阻塞</span></span><br><span class="line">            <span class="keyword">while</span> (number &gt;= MAX_VALUE) &#123;</span><br><span class="line">                System.out.println(<span class="string">"【生产者】：当前仓库满了，停止生产"</span>);</span><br><span class="line">                condition.await();</span><br><span class="line">            &#125;</span><br><span class="line">            number++;</span><br><span class="line">            System.out.println(<span class="string">"【生产者】：生产了一个产品\t【现仓储量为】:"</span> + number);</span><br><span class="line">            condition.signalAll();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 消费方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            lock.lock();</span><br><span class="line">            <span class="comment">// 如果消费的值=0则阻塞</span></span><br><span class="line">            <span class="keyword">while</span> (number &lt;= MIN_VALUE) &#123;</span><br><span class="line">                System.out.println(<span class="string">"【消费者】：当前没有产品可以消费"</span>);</span><br><span class="line">                condition.await();</span><br><span class="line">            &#125;</span><br><span class="line">            number--;</span><br><span class="line">            System.out.println(<span class="string">"【消费者】：消费了一个产品\t【现仓储量为】:"</span> + number);</span><br><span class="line">            condition.signalAll();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Resource resource = <span class="keyword">new</span> Resource(<span class="keyword">new</span> ArrayBlockingQueue(<span class="number">3</span>));</span><br><span class="line">    <span class="comment">// 生产者线程</span></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            resource.product();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="string">"生产者"</span>).start();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 消费者线程</span></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                resource.consumer();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="string">"消费者"</span>).start();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        TimeUnit.MILLISECONDS.sleep(<span class="number">10</span>);</span><br><span class="line">        resource.stop();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">生产者生产第<span class="number">1</span>个产品</span><br><span class="line">消费者消费第<span class="number">1</span>个产品</span><br><span class="line">生产者生产第<span class="number">1</span>个产品</span><br><span class="line">消费者消费第<span class="number">1</span>个产品</span><br><span class="line">生产者生产第<span class="number">1</span>个产品</span><br><span class="line">消费者消费第<span class="number">1</span>个产品</span><br><span class="line">生产者生产第<span class="number">1</span>个产品</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/B%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/X%20%E9%9D%A2%E8%AF%95%E4%BB%A3%E7%A0%81%E6%A8%A1%E6%9D%BF/" rel="next" title="ShiftJava/B 数据结构与算法/X 面试代码模板">
+                <i class="fa fa-chevron-left"></i> ShiftJava/B 数据结构与算法/X 面试代码模板
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/B%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/Z%20%E9%9D%A2%E8%AF%95%E4%BB%A3%E7%A0%81%E9%A2%98%E6%B1%87%E6%80%BB/" rel="prev" title="ShiftJava/B 数据结构与算法/Z 面试代码题汇总">
+                ShiftJava/B 数据结构与算法/Z 面试代码题汇总 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#面试常考算法题"><span class="nav-number">1.</span> <span class="nav-text">面试常考算法题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#写一个LRU算法"><span class="nav-number">1.1.</span> <span class="nav-text">写一个LRU算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-题目"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 题目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-题解"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 题解</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-基于LinkedHashMap"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">(1) 基于LinkedHashMap</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-双向链表-哈希表"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">(2) 双向链表+哈希表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#发红包"><span class="nav-number">1.2.</span> <span class="nav-text">发红包</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-题目-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 题目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-题解-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 题解</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-二倍均值法"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">(1) 二倍均值法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生产者与消费者模型"><span class="nav-number">1.3.</span> <span class="nav-text">生产者与消费者模型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-wait和notify实现"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. wait和notify实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-await与signalAll实现"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. await与signalAll实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-基于阻塞队列实现"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 基于阻塞队列实现</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

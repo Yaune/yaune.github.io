@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] 消息队列概述基础1. 什么是消息队列可以把消息队列比作是一个存放消息的容器，当需要使用消息的时候可以取出消息供自己使用。消息队列是分布式系统中重要的组件，使用消息队列主要是为了通过异步处理提高系统性能和削峰、降低系统耦合性。目前使用较多的消息队列有 ActiveMQ，RabbitMQ，Kafka，RocketMQ 等。 2. 消息模型(1) 点对点模型消息生产者向消息队列中发送了一个消">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;L 消息队列&#x2F;A 消息队列概述">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] 消息队列概述基础1. 什么是消息队列可以把消息队列比作是一个存放消息的容器，当需要使用消息的时候可以取出消息供自己使用。消息队列是分布式系统中重要的组件，使用消息队列主要是为了通过异步处理提高系统性能和削峰、降低系统耦合性。目前使用较多的消息队列有 ActiveMQ，RabbitMQ，Kafka，RocketMQ 等。 2. 消息模型(1) 点对点模型消息生产者向消息队列中发送了一个消">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;image-20200529170856732.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;image-20200529170910447.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;image-20200529170928430.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;mq-1.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;mq-2.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;mq-3.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;mq-4.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;nAc6zQ.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;mq-5.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;mq-6.png">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97&#x2F;A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0&#x2F;assets&#x2F;image-20200529170856732.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/L 消息队列/A 消息队列概述/"/>
+
+
+
+
+
+  <title>ShiftJava/L 消息队列/A 消息队列概述 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/A%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/L 消息队列/A 消息队列概述</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:17+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="消息队列概述"><a href="#消息队列概述" class="headerlink" title="消息队列概述"></a>消息队列概述</h3><h4 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h4><h5 id="1-什么是消息队列"><a href="#1-什么是消息队列" class="headerlink" title="1. 什么是消息队列"></a>1. 什么是消息队列</h5><p>可以把消息队列比作是一个存放消息的容器，当需要使用消息的时候可以取出消息供自己使用。消息队列是分布式系统中重要的组件，使用消息队列主要是为了<strong>通过异步处理提高系统性能和削峰、降低系统耦合性</strong>。目前使用较多的消息队列有 ActiveMQ，RabbitMQ，Kafka，RocketMQ 等。</p>
+<h5 id="2-消息模型"><a href="#2-消息模型" class="headerlink" title="2. 消息模型"></a>2. 消息模型</h5><h6 id="1-点对点模型"><a href="#1-点对点模型" class="headerlink" title="(1) 点对点模型"></a>(1) 点对点模型</h6><p>消息生产者向消息队列中发送了一个消息之后，只能<strong>被一个消费者消费一次</strong>。<strong>不可重复消费</strong>。</p>
+<img src="assets/image-20200529170856732.png" alt="image-20200529170856732" style="zoom:67%;" />
+
+<h6 id="2-发布-订阅模型"><a href="#2-发布-订阅模型" class="headerlink" title="(2) 发布/订阅模型"></a>(2) 发布/订阅模型</h6><p>消息生产者向频道发送一个消息之后，<strong>多个消费者可以从该频道订阅到这条消息并消费</strong>。<strong>可以重复消费</strong>。</p>
+<img src="assets/image-20200529170910447.png" alt="image-20200529170910447" style="zoom:67%;" />
+
+<p><strong>发布与订阅模式</strong>和<strong>观察者模式</strong>有以下不同：</p>
+<ul>
+<li><strong>观察者模式中</strong>，观察者和主题都知道对方的存在；而在发布与订阅模式中，生产者与消费者不知道对方的存在，它们之间通过频道进行通信。</li>
+<li><strong>观察者模式是同步的</strong>，当事件触发时，主题会调用观察者的方法，然后等待方法返回；<strong>而发布与订阅模式是异步的</strong>，生产者向频道发送一个消息之后，就不需要关心消费者何时去订阅这个消息，可以立即返回。</li>
+</ul>
+<img src="assets/image-20200529170928430.png" alt="image-20200529170928430" style="zoom:67%;" />
+
+<h5 id="3-使用场景"><a href="#3-使用场景" class="headerlink" title="3. 使用场景"></a>3. 使用场景</h5><blockquote>
+<p><strong>为什么使用消息队列?</strong></p>
+</blockquote>
+<p>消息队列常见的使用场景有很多，比较核心的有 3 个：<strong>解耦</strong>、<strong>异步</strong>、<strong>削峰</strong>。</p>
+<h6 id="1-解耦"><a href="#1-解耦" class="headerlink" title="(1) 解耦"></a>(1) 解耦</h6><p>A 系统发送数据到 <strong>BCD 三个系统</strong>，通过接口调用发送。如果 E 系统也要这个数据呢？那如果 C 系统现在不需要了呢？A 系统负责人几乎崩溃……</p>
+<img src="assets/mq-1.png" alt="mq-1" style="zoom: 80%;" />
+
+<p>在这个场景中，<strong>A 系统</strong>跟其它各种乱七八糟的系统<strong>严重耦合</strong>，A 系统产生一条比较关键的数据，很多系统都需要 A 系统将这个数据发送过来。A 系统要时时刻刻考虑 BCDE 四个系统如果挂了该咋办？要不要重发，要不要把消息存起来？</p>
+<p>如果使用 MQ，<strong>A 系统产生一条数据，发送到 MQ 里面去，哪个系统需要数据自己去 MQ 里面消费</strong>。如果新系统需要数据，直接从 MQ 里消费即可；如果某个系统不需要这条数据了，就取消对 MQ 消息的消费即可。这样下来，<strong>A 系统压根儿不需要去考虑要给谁发送数据，不需要维护这个代码，也不需要考虑人家是否调用成功、失败超时等情况。</strong></p>
+<img src="assets/mq-2.png" alt="mq-2" style="zoom:80%;" />
+
+<p>通过一个 MQ，Pub/Sub 发布订阅消息这么一个模型，A 系统就<strong>跟其它系统彻底解耦</strong>了。当一个系统或者一个模块，调用了多个系统或者模块，互相之间的调用很复杂，维护起来很麻烦，就可以考虑这样做。</p>
+<h6 id="2-异步"><a href="#2-异步" class="headerlink" title="(2) 异步"></a>(2) 异步</h6><p><strong>A 系统接收一个请求</strong>，需要在自己<strong>本地写库</strong>，还需要在 <strong>BCD 三个系统写库</strong>，自己本地写库要 3ms，BCD 三个系统分别写库要 300ms、450ms、200ms。最终请求总延时是 3 + 300 + 450 + 200 = 953ms，接近 1s，太久了。一般要求是每个请求都必须在 200 ms 以内完成。</p>
+<img src="assets/mq-3.png" alt="mq-3" style="zoom:80%;" />
+
+<p>如果<strong>使用 MQ</strong>，那么 A 系统连续<strong>发送 3 条消息到 MQ 队列</strong>中，然后各个系统自己去写库，假如耗时 5ms，A 系统从接受一个请求到返回响应给用户，总时长是 3 + 5 = 8ms，对于用户而言，其实感觉上就是点个按钮，<strong>8ms 以后就直接返回</strong>了。</p>
+<img src="assets/mq-4.png" alt="mq-4" style="zoom:80%;" />
+
+<p>一个异步与同步的例子：</p>
+<img src="assets/nAc6zQ.png" alt="nAc6zQ.png" style="zoom:40%;" />
+
+<h6 id="3-削峰"><a href="#3-削峰" class="headerlink" title="(3) 削峰"></a>(3) 削峰</h6><p>每天 0:00 到 12:00，A 系统风平浪静，每秒并发请求数量就 <strong>50 个</strong>。结果每次一到 12:00 ~ 13:00 ，每秒并发请求数量突然会暴增到 5k+ 条。但是系统是<strong>直接基于 MySQL</strong> 的，大量的请求涌入 MySQL，每秒钟对 MySQL 执行约 5k 条 SQL。一般的 MySQL，扛到每秒 2k 个请求就差不多了，请求太多就炸了。</p>
+<p>但是高峰期一过，到了下午的时候，就成了<strong>低峰期</strong>，可能也就 1w 的用户同时在网站上操作，每秒中的请求数量可能也就 50 个请求，对整个系统几乎没有任何的压力。</p>
+<img src="assets/mq-5.png" alt="mq-5" style="zoom: 70%;" />
+
+<p>如果使用 MQ，<strong>每秒 5k 个请求写入 MQ</strong>，A 系统每秒钟<strong>最多处理 2k 个请求</strong>，因为 MySQL 每秒钟最多处理 2k 个。A <strong>系统从 MQ 中慢慢拉取请求</strong>，每秒钟就拉取 2k 个请求，不要超过自己每秒能处理的最大请求数量就行，这样即使是高峰期的时候，A 系统也绝对不会挂掉。而 MQ 每秒钟 5k 个请求进来，就 2k 个请求出去，结果就导致在中午<strong>高峰期</strong>（1 个小时），可能有几十万甚至几百万的<strong>请求积压</strong>在 MQ 中。</p>
+<img src="assets/mq-6.png" alt="mq-6" style="zoom:80%;" />
+
+<p>这个短暂的高峰期积压是可以的，只要高峰期一过，A 系统就会快速将积压的消息给解决掉。</p>
+<h5 id="4-使用消息队列的问题"><a href="#4-使用消息队列的问题" class="headerlink" title="4. 使用消息队列的问题"></a>4. 使用消息队列的问题</h5><ul>
+<li><strong>系统可用性降低</strong>：系统可用性在某种程度上降低。在加入 MQ 之前，你不用考虑消息丢失或者说 MQ 挂掉等等的情况，但是引入 MQ 之后就需要去考虑了，比如需要考虑消息队列的<strong>高可用</strong>！</li>
+<li><strong>系统复杂性提高</strong>：加入MQ之后需要保证消息<strong>没有被重复消费、处理消息丢失的情况、保证消息传递的顺序性、消息堆积</strong>等等问题！</li>
+<li><strong>一致性问题</strong>：上面讲了消息队列可以实现异步，消息队列带来的异步确实可以提高系统响应速度。但是，万一消息的真正消费者并没有正确消费消息怎么办？这样就会导致数据不一致的情况了！比如 A 系统处理完了直接返回成功了，客户就以为这个请求已经成功；但是问题是，要是 BCD 三个系统那里，BD 两个系统写库成功了，结果 C 系统写库失败了，这里数据就不一致。</li>
+</ul>
+<p>所以消息队列实际是一种非常复杂的架构，引入它有很多好处，但是也得针对它带来的坏处做各种额外的技术方案和架构来规避掉。</p>
+<h5 id="5-可靠性"><a href="#5-可靠性" class="headerlink" title="5. 可靠性"></a>5. 可靠性</h5><h6 id="1-发送端的可靠性"><a href="#1-发送端的可靠性" class="headerlink" title="(1) 发送端的可靠性"></a>(1) 发送端的可靠性</h6><p>发送端完成操作后<strong>一定能将消息成功发送到消息队列</strong>中。</p>
+<p>实现方法：在<strong>本地数据库建一张消息表</strong>，将消息数据与业务数据保存在同一数据库实例里，这样就可以利用本地数据库的事务机制。<strong>事务提交成功后，将消息表中的消息转移到消息队列中，若转移消息成功则删除消息表中的数据，否则继续重传</strong>。</p>
+<h6 id="2-接收端的可靠性"><a href="#2-接收端的可靠性" class="headerlink" title="(2) 接收端的可靠性"></a>(2) 接收端的可靠性</h6><p>接收端能够从消息队列<strong>成功消费一次</strong>消息。</p>
+<p>两种实现方法：</p>
+<ul>
+<li>保证接收端处理消息的<strong>业务逻辑</strong>具有<strong>幂等性</strong>：只要具有幂等性，那么消费多少次消息，最后处理的结果都是一样的。</li>
+<li>保证<strong>消息具有唯一编号</strong>，并使用一张<strong>日志表来记录已经消费的消息编号</strong>。</li>
+</ul>
+<h4 id="JMS与AMQP"><a href="#JMS与AMQP" class="headerlink" title="JMS与AMQP"></a>JMS与AMQP</h4><h5 id="1-JMS"><a href="#1-JMS" class="headerlink" title="1. JMS"></a>1. JMS</h5><h6 id="1-JMS简介"><a href="#1-JMS简介" class="headerlink" title="(1) JMS简介"></a>(1) JMS简介</h6><p>JMS（JAVA Message Service,java消息服务）是 Java 的消息服务，JMS 的客户端之间可以通过 JMS 服务进行异步消息传输。<strong>JMS API 是一个消息服务的标准或者说是规范</strong>，允许应用程序组件基于 JavaEE 平台创建、发送、接收和读取消息。它使分布式通信耦合度更低，消息服务更加可靠以及异步性。</p>
+<p><strong>ActiveMQ 就是基于 JMS 规范实现的。</strong></p>
+<h6 id="2-JMS两种消息模型"><a href="#2-JMS两种消息模型" class="headerlink" title="(2) JMS两种消息模型"></a>(2) JMS两种消息模型</h6><p><strong>点到点（P2P）模型</strong>：使用<strong>队列（Queue）</strong>作为消息通信载体；满足<strong>生产者与消费者模式</strong>，一条消息只能被一个消费者使用，未被消费的消息在队列中保留直到被消费或超时。比如：生产者发送100条消息的话，两个消费者来消费一般情况下两个消费者会按照消息发送的顺序各自消费一半。</p>
+<p><strong>发布/订阅（Pub/Sub）模型</strong>：发布订阅模型（Pub/Sub） 使用<strong>主题（Topic）</strong>作为消息通信载体，类似于<strong>广播模式</strong>；发布者发布一条消息，该消息通过主题传递给所有的订阅者，<strong>在一条消息广播之后才订阅的用户则是收不到该条消息的</strong>。</p>
+<h6 id="3-JMS消息正文格式"><a href="#3-JMS消息正文格式" class="headerlink" title="(3) JMS消息正文格式"></a>(3) JMS消息正文格式</h6><p>JMS 定义了五种不同的消息正文格式，以及调用的消息类型，允许发送并接收以一些<strong>不同形式的数据</strong>，提供现有消息格式的一些级别的兼容性。</p>
+<ul>
+<li><strong>StreamMessage</strong>：Java 原始值的数据流。</li>
+<li><strong>MapMessage</strong>：一套名称-值对。</li>
+<li><strong>TextMessage</strong>：一个字符串对象。</li>
+<li><strong>ObjectMessage</strong>：一个序列化的 Java 对象。</li>
+<li><strong>BytesMessage</strong>：一个字节的数据流。</li>
+</ul>
+<h5 id="2-AMQP"><a href="#2-AMQP" class="headerlink" title="2. AMQP"></a>2. AMQP</h5><p>AMQP 即 Advanced Message Queuing Protocol，一个提供统一消息服务的应用层标准高级消息队列协议（二进制应用层协议），是应用层协议的一个开放标准，为面向消息的中间件设计，<strong>兼容 JMS</strong>。基于此协议的客户端与消息中间件可传递消息，并不受客户端/中间件同产品，不同的开发语言等条件的限制。</p>
+<p><strong>RabbitMQ 就是基于 AMQP 协议实现的。</strong></p>
+<p>提供了五种消息模型：①direct exchange；②fanout exchange；③topic change；④headers exchange；⑤system exchange。本质来讲，后四种和 JMS 的 pub/sub 模型没有太大差别，仅是在<strong>路由机制</strong>上做了更详细的划分。</p>
+<h5 id="3-JMS与AMQP比较"><a href="#3-JMS与AMQP比较" class="headerlink" title="3. JMS与AMQP比较"></a>3. JMS与AMQP比较</h5><table>
+<thead>
+<tr>
+<th align="center">对比</th>
+<th align="center">JMS</th>
+<th align="center">AMQP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">定义</td>
+<td align="center">Java API</td>
+<td align="center"><strong>协议</strong></td>
+</tr>
+<tr>
+<td align="center">跨语言</td>
+<td align="center">否</td>
+<td align="center"><strong>是</strong></td>
+</tr>
+<tr>
+<td align="center">跨平台</td>
+<td align="center">否</td>
+<td align="center"><strong>是</strong></td>
+</tr>
+<tr>
+<td align="center">支持消息类型</td>
+<td align="center">提供<strong>两种消息模型</strong>：① 点对点; ② 发布/订阅</td>
+<td align="center"><strong>提供了五种消息模型</strong></td>
+</tr>
+<tr>
+<td align="center">支持消息类型</td>
+<td align="center">支持多种消息类型</td>
+<td align="center"><strong>byte</strong>[]（二进制）</td>
+</tr>
+</tbody></table>
+<p><strong>总结：</strong></p>
+<ul>
+<li>AMQP 为消息定义了<strong>线路层</strong>（wire-level protocol）的协议，而 JMS 所定义的是 API 规范。在 Java 体系中，多个 client 均可以通过 JMS 进行交互，不需要应用修改代码，但是其对跨平台的支持较差。而 AMQP 天然具有<strong>跨平台、跨语言特性</strong>。</li>
+<li>JMS 支持 TextMessage、MapMessage 等复杂的<strong>消息类型</strong>；而 AMQP 仅<strong>支持 byte[] 消息类型</strong>（复杂的类型可<strong>序列化后</strong>发送）。</li>
+<li>由于 Exchange 提供的路由算法，AMQP 可以提供多样化的<strong>路由方式来传递消息到消息队列</strong>，而 JMS 仅支持 队列 和 主题/订阅 方式两种。 </li>
+</ul>
+<h4 id="常见消息队列"><a href="#常见消息队列" class="headerlink" title="常见消息队列"></a>常见消息队列</h4><h5 id="1-ActiveMQ"><a href="#1-ActiveMQ" class="headerlink" title="1. ActiveMQ"></a>1. ActiveMQ</h5><p><strong>ActiveMQ</strong> 的社区算是比较成熟，但是较目前来说，ActiveMQ 的性能比较差，而且版本迭代很慢，<strong>不推荐使用</strong>。</p>
+<h5 id="2-RabbitMQ"><a href="#2-RabbitMQ" class="headerlink" title="2. RabbitMQ"></a>2. RabbitMQ</h5><p><strong>RabbitMQ</strong> 在吞吐量方面虽然稍逊于 Kafka 和 RocketMQ ，但是由于它基于 erlang 开发，所以并发能力很强，性能极其好，延时很低，达到微秒级。但是也因为 RabbitMQ 基于 erlang 开发，所以国内很少有公司有实力做 erlang 源码级别的研究和定制。如果业务场景对并发量要求不是太高（十万级、百万级），那这四种消息队列中，RabbitMQ 一定是你的首选。如果是<strong>大数据领域的实时计算、日志采集等场景，用 Kafka 是业内标准的</strong>，绝对没问题，社区活跃度很高，绝对不会黄，何况几乎是全世界这个领域的事实性规范。</p>
+<h5 id="3-RocketMQ"><a href="#3-RocketMQ" class="headerlink" title="3. RocketMQ"></a>3. RocketMQ</h5><p><strong>RocketMQ</strong> 阿里出品，Java 系开源项目，可以根据源码定制 MQ，并且 RocketMQ 有阿里巴巴的实际业务场景的实战考验。RocketMQ 社区活跃度相对较为一般，不过也还可以，文档相对来说简单一些，然后接口这块不是<strong>按照标准 JMS 规范</strong>走的有些系统要迁移需要修改大量代码。</p>
+<h5 id="4-Kafka"><a href="#4-Kafka" class="headerlink" title="4. Kafka"></a>4. Kafka</h5><p><strong>kafka</strong> 的特点其实很明显，就是仅仅提供较少的核心功能，但是<strong>提供超高的吞吐量，ms 级的延迟，极高的可用性以及可靠性，而且分布式可以任意扩展</strong>。同时 kafka 最好是支撑较少的 topic 数量即可，保证其超高吞吐量。kafka 唯一的一点劣势是有<strong>可能消息重复消费</strong>，那么对数据准确性会造成极其轻微的影响，在大数据领域中以及日志采集中，这点轻微影响可以忽略这个特性天然适合大数据实时计算以及日志收集。</p>
+<h5 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h5><table>
+<thead>
+<tr>
+<th align="center">特性</th>
+<th align="center">ActiveMQ</th>
+<th align="center">RabbitMQ</th>
+<th align="center">RocketMQ</th>
+<th align="center">Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>单机吞吐量</strong></td>
+<td align="center">万级，比 RocketMQ、Kafka 低一个数量级</td>
+<td align="center">同 ActiveMQ</td>
+<td align="center">10 万级，支撑高吞吐</td>
+<td align="center"><strong>10 万级</strong>，高吞吐，一般配合大数据类的系统来进行<strong>实时数据计算、日志采集</strong>等场景</td>
+</tr>
+<tr>
+<td align="center">topic 数量对吞吐量的影响</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">topic 可以达到几百/几千的级别，吞吐量会有较小幅度的下降，这是 RocketMQ 的一大优势，在同等机器下，可以支撑大量的 topic</td>
+<td align="center">topic 从几十到几百个时候，吞吐量会大幅度下降，在同等机器下，Kafka 尽量保证 topic 数量不要过多，如果要支撑大规模的 topic，需要增加更多的机器资源</td>
+</tr>
+<tr>
+<td align="center"><strong>时效性</strong></td>
+<td align="center"><strong>ms 级</strong></td>
+<td align="center">微秒级，这是 RabbitMQ 的一大特点，延迟最低</td>
+<td align="center">ms 级</td>
+<td align="center"><strong>延迟在 ms 级以内</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>可用性</strong></td>
+<td align="center">高，基于主从架构实现高可用</td>
+<td align="center">同 ActiveMQ</td>
+<td align="center"><strong>非常高，分布式架构</strong></td>
+<td align="center"><strong>非常高，分布式</strong>，一个数据多个副本，少数机器宕机，不会丢失数据，不会导致不可用</td>
+</tr>
+<tr>
+<td align="center"><strong>消息可靠性</strong></td>
+<td align="center">有较低的概率丢失数据</td>
+<td align="center">基本不丢</td>
+<td align="center">经过参数优化配置，可以做到 0 丢失</td>
+<td align="center">经过参数优化配置，可以做到 0 丢失</td>
+</tr>
+<tr>
+<td align="center"><strong>功能支持</strong></td>
+<td align="center">MQ 领域的功能极其完备</td>
+<td align="center">基于 erlang 开发，并发能力很强，性能极好，延时很低</td>
+<td align="center">MQ 功能较为完善，还是分布式的，扩展性好</td>
+<td align="center">功能较为简单，主要支持简单的 MQ 功能，在大数据领域的实时计算以及日志采集被大规模使用</td>
+</tr>
+</tbody></table>
+<p>综上，各种对比之后，有如下建议：</p>
+<p>不推荐用 ActiveMQ。</p>
+<p>所以<strong>中小型公司</strong>，技术实力较为一般，技术挑战不是特别高，用 <strong>RabbitMQ</strong> 是不错的选择；<strong>大型公司</strong>，基础架构研发实力较强，用 <strong>RocketMQ</strong> 是很好的选择。</p>
+<p>如果是<strong>大数据领域</strong>的实时计算、日志采集等场景，用 <strong>Kafka</strong> 是业内标准的，绝对没问题，社区活跃度很高，几乎是全世界这个领域的事实性规范。</p>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><ul>
+<li><a href="http://developers-club.com/posts/270339/" target="_blank" rel="noopener">Observer vs Pub-Sub</a></li>
+<li><a href="https://blog.csdn.net/lizhitao/article/details/47723105" target="_blank" rel="noopener">消息队列中点对点与发布订阅区别</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/B%20RabbitMQ/" rel="next" title="ShiftJava/L 消息队列/B RabbitMQ">
+                <i class="fa fa-chevron-left"></i> ShiftJava/L 消息队列/B RabbitMQ
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/L%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/E%20%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="prev" title="ShiftJava/L 消息队列/E 消息队列面试题">
+                ShiftJava/L 消息队列/E 消息队列面试题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列概述"><span class="nav-number">1.</span> <span class="nav-text">消息队列概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基础"><span class="nav-number">1.1.</span> <span class="nav-text">基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-什么是消息队列"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 什么是消息队列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-消息模型"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 消息模型</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-点对点模型"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">(1) 点对点模型</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-发布-订阅模型"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">(2) 发布/订阅模型</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-使用场景"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-解耦"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">(1) 解耦</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-异步"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">(2) 异步</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-削峰"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">(3) 削峰</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-使用消息队列的问题"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. 使用消息队列的问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-可靠性"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. 可靠性</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-发送端的可靠性"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">(1) 发送端的可靠性</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-接收端的可靠性"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">(2) 接收端的可靠性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JMS与AMQP"><span class="nav-number">1.2.</span> <span class="nav-text">JMS与AMQP</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-JMS"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. JMS</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-JMS简介"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">(1) JMS简介</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-JMS两种消息模型"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">(2) JMS两种消息模型</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-JMS消息正文格式"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">(3) JMS消息正文格式</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-AMQP"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. AMQP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-JMS与AMQP比较"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. JMS与AMQP比较</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见消息队列"><span class="nav-number">1.3.</span> <span class="nav-text">常见消息队列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-ActiveMQ"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. ActiveMQ</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-RabbitMQ"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. RabbitMQ</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-RocketMQ"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. RocketMQ</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-Kafka"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. Kafka</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-总结"><span class="nav-number">1.3.5.</span> <span class="nav-text">5. 总结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料"><span class="nav-number">1.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

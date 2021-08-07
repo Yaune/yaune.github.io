@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] Atomic原子变量与Unsafe类与CAS原子变量1. 概述些看起来是原子的操作其实不是滴。比如 1count++;  这一步自增操作在内存中会存在好几个步骤。针对 cnt++ 这类复合操作，可以使用并发包中的原子操作类。原子操作类是通过循环 CAS 的方式来保证其原子性的。 Atomic 翻译成中文是原子的意思，这里 Atomic 是指一个操作是不可中断的。即使是在多个线程一起执行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShiftJava&#x2F;A Java&#x2F;C-6 Atomic与Unsafe类与CAS">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS&#x2F;index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="[TOC] Atomic原子变量与Unsafe类与CAS原子变量1. 概述些看起来是原子的操作其实不是滴。比如 1count++;  这一步自增操作在内存中会存在好几个步骤。针对 cnt++ 这类复合操作，可以使用并发包中的原子操作类。原子操作类是通过循环 CAS 的方式来保证其原子性的。 Atomic 翻译成中文是原子的意思，这里 Atomic 是指一个操作是不可中断的。即使是在多个线程一起执行">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS&#x2F;assets&#x2F;image-20200801153207464.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS&#x2F;assets&#x2F;image-20200612144911633.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS&#x2F;assets&#x2F;image-20200612144815259.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS&#x2F;assets&#x2F;image-20200801154946673.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS&#x2F;assets&#x2F;image-20200612145222308.png">
+<meta property="og:updated_time" content="2021-01-06T11:22:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;08&#x2F;07&#x2F;ShiftJava&#x2F;A%20Java&#x2F;C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS&#x2F;assets&#x2F;image-20200801153207464.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/07/ShiftJava/A Java/C-6 Atomic与Unsafe类与CAS/"/>
+
+
+
+
+
+  <title>ShiftJava/A Java/C-6 Atomic与Unsafe类与CAS | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/07/ShiftJava/A%20Java/C-6%20Atomic%E4%B8%8EUnsafe%E7%B1%BB%E4%B8%8ECAS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShiftJava/A Java/C-6 Atomic与Unsafe类与CAS</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-07T19:04:14+08:00">
+                2021-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h3 id="Atomic原子变量与Unsafe类与CAS"><a href="#Atomic原子变量与Unsafe类与CAS" class="headerlink" title="Atomic原子变量与Unsafe类与CAS"></a>Atomic原子变量与Unsafe类与CAS</h3><h4 id="原子变量"><a href="#原子变量" class="headerlink" title="原子变量"></a>原子变量</h4><h5 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h5><p>些<strong>看起来是原子</strong>的操作其实不是滴。比如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">count++;</span><br></pre></td></tr></table></figure>
+
+<p>这一步自增操作在内存中会存在好几个步骤。针对 <strong>cnt++</strong> 这类<strong>复合</strong>操作，可以使用并发包中的原子操作类。原子操作类是通过循环 <strong>CAS</strong> 的方式来保证其原子性的。</p>
+<p>Atomic 翻译成中文是原子的意思，这里 Atomic 是指一个操作是<strong>不可中断</strong>的。即使是在多个线程一起执行的时候，一个操作一旦开始，就不会被其他线程干扰。</p>
+<h5 id="2-什么是原子操作"><a href="#2-什么是原子操作" class="headerlink" title="2. 什么是原子操作"></a>2. 什么是原子操作</h5><p>原子（atom）本意是“不能被进一步分割的最小粒子”，而<strong>原子操作（atomic operation）意为”不可被中断的一个或一系列操作”</strong> 。在多处理器上实现原子操作就变得有点复杂。现在看看 Intel 处理器和 Java 里是如何实现原子操作的。  </p>
+<p>32 位 IA-32 处理器使用<strong>基于对缓存加锁或总线加锁</strong>的方式来实现多处理器之间的<strong>原子操作</strong>。  </p>
+<p>在 Java 中可以通过<strong>锁和循环 CAS 的方式</strong>来实现原子操作。  JVM 中的 CAS 操作正是利用了处理器提供的 <strong>CMPXCHG</strong> 指令实现的。<strong>自旋 CAS 实现的基本思路就是循环进行 CAS 操作直到成功为止</strong>。</p>
+<h5 id="3-原子操作实现方法"><a href="#3-原子操作实现方法" class="headerlink" title="3. 原子操作实现方法"></a>3. 原子操作实现方法</h5><h6 id="1-悲观的解决方案（阻塞同步）"><a href="#1-悲观的解决方案（阻塞同步）" class="headerlink" title="(1) 悲观的解决方案（阻塞同步）"></a>(1) 悲观的解决方案（阻塞同步）</h6><p>在并发环境下，如果不做任何同步处理，就会有线程安全问题。最直接的处理方式就是<strong>加锁</strong>。看一段 <strong>synchronized</strong> 关键字保证变量原子性的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Counter</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">addCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.count++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单的 count++ 操作，线程对象首先需要获取到 Counter 类实例的<strong>对象锁</strong>，然后完成自增操作，最后释放对象锁。整个过程中，无论是获取锁还是释放锁都是相当<strong>消耗成本</strong>的，一旦不能获取到锁，还需要<strong>阻塞</strong>当前线程等等。</p>
+<p>使用独占锁机制来解决，是一种<strong>悲观的</strong>并发策略，认为并发操作都是不安全的，每次操作数据的时候都认为别的线程会参与竞争修改，所以直接加锁。同一刻只能有一个线程持有锁，那其他线程就会阻塞。线程的挂起恢复会带来很大的性能开销，尽管 JVM 对于非竞争性的锁的获取和释放做了很多优化，但是一旦有多个线程竞争锁，频繁的阻塞唤醒，还是会有很大的性能开销的。所以，使用 synchronized 或其他重量级锁来处理显然不够合理。</p>
+<h6 id="2-乐观的解决方案（非阻塞同步）"><a href="#2-乐观的解决方案（非阻塞同步）" class="headerlink" title="(2) 乐观的解决方案（非阻塞同步）"></a>(2) 乐观的解决方案（非阻塞同步）</h6><p>对于这种情况可以将 count 变量声明成<strong>原子变量</strong>，那么对于 count 的自增操作都可以以<strong>原子的</strong>方式进行，就不存在脏数据的读取了。</p>
+<p>乐观的解决方案，顾名思义，就是很大度乐观，每次操作数据的时候，<strong>都认为别的线程不会参与竞争修改</strong>，也不加锁。如果操作成功了那最好；如果失败了，比如中途确有别的线程进入并修改了数据（依赖于冲突检测），也不会阻塞，可以采取一些补偿机制，一般的<strong>策略就是反复重试</strong>。很显然，这种思想相比简单粗暴利用锁来保证同步要合理的多。</p>
+<p><strong>原子变量</strong>保证了该<strong>变量的</strong>所有操作都是<strong>原子</strong>的，不会因为多线程的同时访问而导致脏数据的读取问题。synchronized 关键字也可以做到对变量的原子操作，如果单单只是为了解决对<strong>变量的原子操作</strong>，建议使用原子变量。具体的类可以参见 JUC 下的 atomic 包内的原子类。  </p>
+<h5 id="4-Atomic包"><a href="#4-Atomic包" class="headerlink" title="4. Atomic包"></a>4. Atomic包</h5><p>JUC 的原子类都存放在 java.util.concurrent.<strong>atomic</strong> 下，如下图所示。</p>
+<img src="assets/image-20200801153207464.png" alt="image-20200801153207464" style="zoom:80%;" />
+
+<p>在 Atomic 包里一共有 12 个类，四种原子更新方式，分别是原子更新基本类型，原子更新数组，原子更新引用和原子更新字段。Atomic 包里的类基本都是使用 <strong>Unsafe 类实现</strong>的包装类。 </p>
+<ul>
+<li><strong>原子更新基本类型类</strong>：AtomicInteger、AtomicLong、AtomicBoolean；</li>
+<li><strong>原子更新引用类型</strong>：AtomicReference、AtomicReference 的 ABA 实例、AtomicStampedRerence、AtomicMarkableReference；</li>
+<li><strong>原子更新数组类</strong>：AtomicIntegerArray、AtomicLongArray、AtomicReferenceArray；</li>
+<li><strong>原子更新字段类（Updater）</strong>：AtomicIntegerFieldUpdater、AtomicLongFieldUpdater、AtomicReferenceFieldUpdater。</li>
+</ul>
+<p>以下将主要介绍 AtomicInteger 和 AtomicReference 两种类型，AtomicBoolean  和 AtomicLong 的使用和内部实现原理几乎和 AtomicInteger 一样。</p>
+<h5 id="5-原子变量与synchronized比较"><a href="#5-原子变量与synchronized比较" class="headerlink" title="5. 原子变量与synchronized比较"></a>5. 原子变量与synchronized比较</h5><p>从思维模式上看，原子变量代表一种==<strong>乐观的非阻塞式</strong>==思维，它假定更新冲突比较少，假定没有别人会和我同时操作某个变量，于是在实际修改变量的值的之前不会锁定该变量，但是修改变量的时候是使用 CAS 进行的，一旦发现冲突，<strong>继续尝试</strong>直到成功修改该变量。</p>
+<p>而 synchronized 关键字则是一种<strong>悲观的阻塞式</strong>思维，它假定先更新很可能冲突，认为所有人都会和自己同时来操作某个变量，于是在将要操作该变量之前会<strong>加锁</strong>来锁定该变量，得不到锁的时候进入<strong>等待队列</strong>，因此会有<strong>线程切换</strong>等开销，进而继续操作该变量。</p>
+<h4 id="AtomicInteger"><a href="#AtomicInteger" class="headerlink" title="AtomicInteger"></a>AtomicInteger</h4><h5 id="1-AtomicInteger的基本使用"><a href="#1-AtomicInteger的基本使用" class="headerlink" title="1. AtomicInteger的基本使用"></a>1. AtomicInteger的基本使用</h5><p>首先看它的两个构造函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> value;</span><br><span class="line"><span class="comment">// 构造方法一</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicInteger</span><span class="params">(<span class="keyword">int</span> initialValue)</span> </span>&#123;</span><br><span class="line">    value = initialValue;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 构造方法二</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicInteger</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在通过构造函数构造 AtomicInteger 原子变量的时候，如果指定一个 <strong>int 的参数</strong>，那么该原子变量的值就会被<strong>赋值</strong>，否则就是默认的<strong>数值 0</strong>。</p>
+<p>也有获取和设置这个 value 值的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 非原子操作 用得少</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">int</span> newValue)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>当然，这两个方法<strong>并不是原子</strong>的，所以一般也<strong>很少</strong>使用，而以下的这些基于<strong>原子操作的方法</strong>则相对使用的频繁。之所以称为原子变量，是因为它包含一些以<strong>原子方式实现组合操作</strong>的方法。这些方法<strong>都依赖</strong>于下面讲的 ==<strong>CAS</strong>== 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于原子操作，获取当前原子变量中的值并为其设置新值</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSet</span><span class="params">(<span class="keyword">int</span> newValue)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 基于原子操作，比较当前的value是否等于expect，如果是设置为update并返回true，否则返回false</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 基于原子操作，获取当前的value值并自增一</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndIncrement</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 基于原子操作，获取当前的value值并自减一</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndDecrement</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 基于原子操作，获取当前的value值并为value加上delta</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAdd</span><span class="params">(<span class="keyword">int</span> delta)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 此外还有一些反向的方法，比如：先自增在获取值的等等</span></span></span><br></pre></td></tr></table></figure>
+
+<p>下面实现一个<strong>计数器</strong>的例子，之前用 synchronized 实现过，现在使用原子变量再次实现该问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义一个线程类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 定义一个静态原子变量</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> AtomicInteger value = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep((<span class="keyword">long</span>) ((Math.random())*<span class="number">100</span>));</span><br><span class="line">            <span class="comment">// 原子自增</span></span><br><span class="line">            value.incrementAndGet();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// main函数中启动100条线程并让他们启动</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    Thread[] threads = <span class="keyword">new</span> Thread[<span class="number">100</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)&#123;</span><br><span class="line">        threads[i] = <span class="keyword">new</span> MyThread();</span><br><span class="line">        threads[i].start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>;j &lt; <span class="number">100</span>; j++)&#123;</span><br><span class="line">        threads[j].join();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">"value:"</span> + MyThread.value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多次运行会得到相同的结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">value: 100</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-AtomicInteger源码解析"><a href="#2-AtomicInteger源码解析" class="headerlink" title="2. AtomicInteger源码解析"></a>2. AtomicInteger源码解析</h5><h6 id="1-Java8之前"><a href="#1-Java8之前" class="headerlink" title="(1) Java8之前"></a>(1) Java8之前</h6><p>AtomicInteger 的实现原理有点像<strong>包装类</strong>，内部主要操作的是 <strong>value 字段</strong>，这个字段<strong>保存</strong>就是原子变量的数值。value 字段定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> value;</span><br></pre></td></tr></table></figure>
+
+<p>首先 value 字段被 volatile 修饰，即<strong>不存在内存可见性问题</strong>。由于其内部实现原子操作的代码几乎类似，主要学习下 <strong>incrementAndGet</strong> 方法的实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">incrementAndGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;	<span class="comment">// 无限循环</span></span><br><span class="line">        <span class="comment">// 获取当前值</span></span><br><span class="line">        <span class="keyword">int</span> current = get();</span><br><span class="line">        <span class="comment">// 计算期望的next值</span></span><br><span class="line">        <span class="keyword">int</span> next = current + <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 进行比较</span></span><br><span class="line">        <span class="keyword">if</span> (compareAndSet(current, next)) &#123;</span><br><span class="line">            <span class="comment">// 只有设置成功才返回</span></span><br><span class="line">            <span class="keyword">return</span> next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>方法体是一个<strong>死循环</strong>，current 获取到当前原子变量中的值，由于 value 被修饰 volatile，所以不存在<strong>内存可见性</strong>问题，数据一定是<strong>最新</strong>的。然后 current 加一后赋值给 next，调用 CAS 原子操作判断 value 是否被别的线程修改过，如果还是原来的值，那么将 next 的值赋值给 value 并返回 next，否则重新获取当前 value的值，再次进行判断，<strong>直到操作完成</strong>。</p>
+<p>incrementAndGet 方法的一个很核心的思想是，在加一之前先去看看 value 的值是多少，<strong>真正加</strong>的时候再去看一下，如果发现变了，不操作数据，否则为 value 加一。</p>
+<p>这里调用了 compareAndSet 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ※ CAS方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, valueOffset, expect, update);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>==<strong>compareAndSet</strong> 方法==又被称为 <strong>==CAS==</strong>（<strong>比较并设置</strong>），该方法调用 <strong>unsafe</strong> 的一个 <strong>compareAndSwapInt</strong> 方法，这个方法是 <strong>native</strong>，看不到源码，但是需要知道该方法完成的一个目标：比较当前原子变量的值<strong>是否等于 expect</strong>，如果是则将其修改为 <strong>update</strong> 并返回 <strong>true</strong>，否则直接返回 false。即<strong>如果与期望值相等才更新，否则不更新</strong>。当然，这个操作本身就是原子的，较为底层的实现。</p>
+<h6 id="2-Java8"><a href="#2-Java8" class="headerlink" title="(2) Java8"></a>(2) Java8</h6><p>但是在 JDK8 以后，做了一些<strong>优化</strong>，但是最后还是调用的 <strong>compareAndSwapInt</strong> 方法。但基本思想还是没变。内部依然 有 value 变量保存数值，构造方法传入数值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> value;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicInteger</span><span class="params">(<span class="keyword">int</span> initialValue)</span> </span>&#123;</span><br><span class="line">    value = initialValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Java8 中 <strong>incrementAndGet</strong>() 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">incrementAndGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// U就是UnSafe类的静态实例</span></span><br><span class="line">    <span class="keyword">return</span> U.getAndAddInt(<span class="keyword">this</span>, VALUE, <span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Java8 之后很多操作都放到 Unsafe 类中了。如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UnSafe中的getAndAddInt</span></span><br><span class="line"><span class="meta">@HotSpotIntrinsicCandidate</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAddInt</span><span class="params">(Object o, <span class="keyword">long</span> offset, <span class="keyword">int</span> delta)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> v;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        v = getIntVolatile(o, offset);</span><br><span class="line">    &#125; <span class="keyword">while</span> (!weakCompareAndSetInt(o, offset, v, v + delta));</span><br><span class="line">    <span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// UnSafe中的compareAndSetInt</span></span><br><span class="line"><span class="meta">@HotSpotIntrinsicCandidate</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSetInt</span><span class="params">(Object o, <span class="keyword">long</span> offset, <span class="keyword">int</span> expected; <span class="keyword">int</span> x)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>AtomicInteger 类主要利用 <strong>CAS (compare and swap) + volatile 和 native 方法来保证原子操作</strong>，从而避免 synchronized 的高开销，执行效率大为提升。</p>
+<p>CAS 的原理是拿期望的值和原本的一个值作比较，如果相同则更新成新的值。UnSafe 类的 objectFieldOffset() 方法是一个本地方法，这个方法是用来拿到“原来的值”的内存地址，返回值是 valueOffset。另外 value 是一个 volatile 变量，在内存中可见，因此 JVM 可以保证任何时刻任何线程总能拿到该变量的最新值。</p>
+<h4 id="其他类"><a href="#其他类" class="headerlink" title="其他类"></a>其他类</h4><h5 id="1-AtomicReference"><a href="#1-AtomicReference" class="headerlink" title="1. AtomicReference"></a>1. AtomicReference</h5><p>对于一些<strong>自定义类或者字符串</strong>等这些==<strong>引用类型</strong>==，Java 并发包也提供了原子变量的接口支持。AtomicReference 内部使用<strong>泛型</strong>来实现的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 泛型保存引用类型</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> V value;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicReference</span><span class="params">(V initialValue)</span> </span>&#123;</span><br><span class="line">    value = initialValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AtomicReference</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有关其他的一些原子方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取并设置value的值为newvalue</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> V <span class="title">getAndSet</span><span class="params">(V newValue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (V)unsafe.getAndSetObject(<span class="keyword">this</span>, valueOffset, newValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AtomicReference 中<strong>少了</strong>一些自增自减的操作，但是对于 value 的修改依然是原子的。</p>
+<h5 id="2-原子更新字段类"><a href="#2-原子更新字段类" class="headerlink" title="2. 原子更新字段类"></a>2. 原子更新字段类</h5><p>使用 FieldUpdater 操作非原子变量的字段属性。使用 <strong>FieldUpdater</strong> 可以<strong>不必</strong>将字段设置为<strong>原子变量</strong>，利用<strong>反射</strong>直接以<strong>原子方式操作字段</strong>。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个计数器</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Counter</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义一个普通非原子变量，需用volatile修饰，保证可见性</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 传入类信息与变量信息</span></span><br><span class="line">        AtomicIntegerFieldUpdater&lt;Counter&gt; updater  = </span><br><span class="line">            AtomicIntegerFieldUpdater.newUpdater(Counter.class, "count");</span><br><span class="line">        updater.getAndIncrement(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后创建一百个线程随机调用同一个 Counter 对象的 addCount 方法，无论运行多少次，结果都是一百。这种方式实现的原子操作，对于被操作的变量<strong>不需要</strong>被包装成原子变量，但是却可以<strong>直接以原子方式操作它的数值</strong>。</p>
+<h4 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h4><h5 id="1-概述-1"><a href="#1-概述-1" class="headerlink" title="1. 概述"></a>1. 概述</h5><p>随着硬件指令集的发展，可以使用基于<strong>冲突检测的乐观并发策略</strong>：先进行操作，如果没有其它线程争用共享数据，那操作就成功了，否则采取补偿措施（不断地重试，直到成功为止）。这种乐观的并发策略的许多实现都不需要将线程阻塞，因此这种同步操作称为非阻塞同步。</p>
+<p>乐观锁需要操作和冲突检测这两个步骤具备<strong>原子性</strong>，这里就不能再使用互斥同步来保证了，只能靠<strong>硬件来完成</strong>。硬件支持的原子性操作最典型的是：<strong>比较并交换（Compare-and-Swap，CAS）</strong>。CAS 指令需要有 3 个操作数，分别是内存地址 V、旧的预期值 A 和新值 B。当执行操作时，只有当 V 的值等于 A，才将 V 的值更新为 B。</p>
+<h5 id="2-ABA问题"><a href="#2-ABA问题" class="headerlink" title="2. ABA问题"></a>2. ABA问题</h5><p>普通的原子变量 AtomicInteger 可能也会存在 ABA 问题。原子变量都依赖一个核心的方法，那就是 <strong>CAS</strong>。这个方法最核心的思想就是，更改变量值之前先获取该变量当前最新的值，然后在实际更改的时候再次获取该变量的值，如果没有被修改，那么进行更改，否则<strong>循环</strong>上述操作直至更改操作完成。</p>
+<p>假如一个线程想要对变量 count 进行修改，实际操作之前获取 count 的值为 A，此时来了一个线程将 count 值修改为 B，又来一个线程获取 count 的值为 B 并将 count 修改为 A，此时第一个线程<strong>全然不知道</strong> count 的值已经被修改两次了，虽然值还是 A，但是实际上数据<strong>已经是脏</strong>的。</p>
+<p>这就是典型的 ABA 问题，一个解决办法是对 count 的每次操作都记录下当前的一个<strong>时间戳</strong>，这样当原子操作 count 之前，不仅查看 count 的最新数值，还记录下该 count 的<strong>时间戳</strong>，在实际操作的时候，只有在 count 的数值和时间戳都没有被更改的情况之下才完成修改操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> stamp = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 引入时间戳防止ABA问题</span></span><br><span class="line">    AtomicStampedReference reference = <span class="keyword">new</span> AtomicStampedReference(count, stamp);</span><br><span class="line">    <span class="keyword">int</span> next = count++;</span><br><span class="line">    reference.compareAndSet(count, next, stamp, stamp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>AtomicStampedReference</strong> 的 CAS 方法要求传入<strong>四个参数</strong>，该方法的内部会同时比较 count 和 stamp，只有这两个值都没有发生改变的前提下，CAS 才会修改 count 的值。</p>
+<h4 id="Unsafe类"><a href="#Unsafe类" class="headerlink" title="Unsafe类"></a>Unsafe类</h4><h5 id="1-概述-2"><a href="#1-概述-2" class="headerlink" title="1. 概述"></a>1. 概述</h5><p>Unsafe 是位于 <strong>sun.misc 包</strong>下的一个类，主要提供一些用于执行<strong>低级别、不安全操作</strong>的方法，如<strong>直接访问系统内存资源、自主管理内存资源</strong>等，这些方法在提升 Java 运行效率、增强 Java 语言底层资源操作能力方面起到了很大的作用。</p>
+<p>Unsafe 类为一<strong>单例实现</strong>，提供<strong>静态方法 getUnsafe 获取 Unsafe 实例</strong>，当且仅当调用 getUnsafe 方法的类为<strong>引导类加载器 BootstrapClassLoader</strong> 所加载时才合法，否则抛出 SecurityException 异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Unsafe</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 单例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Unsafe theUnsafe;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CallerSensitive</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Unsafe <span class="title">getUnsafe</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Class var0 = Reflection.getCallerClass();</span><br><span class="line">        <span class="keyword">if</span> (!VM.isSystemDomainLoader(var0.getClassLoader())) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> SecurityException(<span class="string">"Unsafe"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> theUnsafe;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-如何获取Unsafe实例"><a href="#2-如何获取Unsafe实例" class="headerlink" title="2. 如何获取Unsafe实例"></a>2. 如何获取Unsafe实例</h5><p>1、把调用 Unsafe 相关方法的类 Demo 所在 jar 包路径追加到默认的 <strong>bootstrap</strong> 路径中，使得类 A 被引导类加载器加载。从而通过 Unsafe.getUnsafe 方法安全的获取 Unsafe 实例。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Xbootclasspath/a:$&#123;path&#125; <span class="comment">// 其中path为调用Unsafe相关方法的类所在jar包路径</span></span><br></pre></td></tr></table></figure>
+
+<p>2、通过<strong>反射</strong>获取单例对象 theUnsafe。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UnsafeInstance</span> </span>&#123;    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Unsafe <span class="title">reflectGetUnsafe</span><span class="params">()</span> </span>&#123;        </span><br><span class="line">        <span class="keyword">try</span> &#123;            </span><br><span class="line">            Field field = Unsafe.class.getDeclaredField("theUnsafe");           </span><br><span class="line">            field.setAccessible(<span class="keyword">true</span>);            </span><br><span class="line">            <span class="keyword">return</span> (Unsafe) field.get(<span class="keyword">null</span>);        </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;            </span><br><span class="line">            e.printStackTrace();        </span><br><span class="line">        &#125;        </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-Unsafe功能介绍"><a href="#3-Unsafe功能介绍" class="headerlink" title="3. Unsafe功能介绍"></a>3. Unsafe功能介绍</h5><p>Unsafe 提供的 API 大致可分为<strong>内存操作、CAS、Class 相关、对象操作、线程调度、系统信息获取、内存屏障、数组操作等几类</strong>，下面将对其相关方法和应用场景进行详细介绍。  </p>
+<p><img src="assets/image-20200612144911633.png" alt="image-20200612144911633"></p>
+<h6 id="1-内存操作"><a href="#1-内存操作" class="headerlink" title="(1) 内存操作"></a>(1) 内存操作</h6><p>这部分主要包含<strong>堆外内存</strong>的分配、拷贝、释放、给定地址值操作等方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分配内存, 相当于C++的malloc函数</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">allocateMemory</span><span class="params">(<span class="keyword">long</span> bytes)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 扩充内存</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">reallocateMemory</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">long</span> bytes)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 释放内存</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">freeMemory</span><span class="params">(<span class="keyword">long</span> address)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 在给定的内存块中设置值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">setMemory</span><span class="params">(Object o, <span class="keyword">long</span> offset, <span class="keyword">long</span> bytes, <span class="keyword">byte</span> value)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 内存拷贝</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">copyMemory</span><span class="params">(Object srcBase, <span class="keyword">long</span> srcOffset, Object destBase, <span class="keyword">long</span> destOffset, <span class="keyword">long</span> bytes)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 获取给定地址值，忽略修饰限定符的访问限制。与此类似操作还有: getInt，getDouble，getLong，getChar等</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title">getObject</span><span class="params">(Object o, <span class="keyword">long</span> offset)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 为给定地址设置值，忽略修饰限定符的访问限制，与此类似操作还有:putInt,putDouble，putLong，putChar等</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">putObject</span><span class="params">(Object o, <span class="keyword">long</span> offset, Object x)</span>;</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">byte</span> <span class="title">getByte</span><span class="params">(<span class="keyword">long</span> address)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 为给定地址设置byte类型的值（当且仅当该内存地址为allocateMemory分配 时，此方法结果才是确定的）</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">putByte</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">byte</span> x)</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>通常创建的普通对象都处于<strong>堆内内存</strong>（heap）中，堆内内存是由 JVM 所管控的 Java 进程内存，并且它们遵循 JVM 的内存管理机制，JVM 会采用垃圾回收机制统一管理堆内存。与之相对的是<strong>堆外内存</strong>，存在于 JVM 管控之外的内存区域，Java 中对堆外内存的操作，依赖于 Unsafe 提供的操作堆外内存的 <strong>native</strong> 方法。</p>
+<p><strong>使用堆外内存的原因</strong>：</p>
+<ul>
+<li>对垃圾回收停顿的改善。由于堆外内存是直接受操作系统管理而不是 JVM，所以当我们使用堆外内存时，即可保持较小的堆内内存规模。从而在 GC 时减少回收停顿对于应用的影响。</li>
+<li>提升程序 <strong>I/O 操作的性能</strong>。通常在 I/O 通信过程中，会存在堆内内存到堆外内存的<strong>数据拷贝</strong>操作，对于需要<strong>频繁进行内存间数据拷贝</strong>且生命周期较短的暂存数据，都建议<strong>存储到堆外内存</strong>。  </li>
+</ul>
+<p><strong>典型应用</strong>：</p>
+<p><strong>DirectByteBuffer</strong> 是 Java 用于实现<strong>堆外内存</strong>的一个重要类，通常用在通信过程中做<strong>缓冲池</strong>，如在 <strong>Netty</strong>、MINA 等 NIO 框架中应用广泛。DirectByteBuffer 对于堆外内存的创建、使用、销毁等逻辑均由 Unsafe 提供的堆外内存 API 来实现。</p>
+<p>下图为 DirectByteBuffer 构造函数，创 建DirectByteBuffer 的时候，通过 Unsafe.allocateMemory 分配内存、 Unsafe.setMemory 进行内存初始化，而后构建 Cleaner 对象用于跟踪 DirectByteBuffer 对象的垃圾回收，以实现当 DirectByteBuffer 被垃圾回收时，分配的堆外内存一起被释放。  </p>
+<p><img src="assets/image-20200612144815259.png" alt="image-20200612144815259"></p>
+<h6 id="2-CAS相关"><a href="#2-CAS相关" class="headerlink" title="(2) CAS相关"></a>(2) CAS相关</h6><p>如下源代码释义所示，这部分主要为 CAS 相关操作的方法。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * CAS</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> o 包含要修改field的对象</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> offset 对象中某field的偏移量</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> expected 期望值</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> update 更新值</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> true | false</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapObject</span><span class="params">(Object var1, <span class="keyword">long</span> var2, Object var4, Object var5)</span>;</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4, <span class="keyword">int</span> var5)</span>;</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapLong</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">long</span> var4, <span class="keyword">long</span> var6)</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>典型应用</strong>：</p>
+<p>如下图所示，AtomicInteger 的实现中，静态字段 <strong>valueOffset</strong> 即为字段 value 的<strong>内存偏移地址</strong>，valueOffset 的值在 AtomicInteger 初始化时，在<strong>静态代码块</strong>中通过 Unsafe 的 <strong>objectFieldOffset</strong> 方法获取。在 AtomicInteger 中提供的线程安全方法中，通过字段 valueOffset 的值可以定位到 AtomicInteger 对象中 value 的<strong>内存地址</strong>，从而可以根据 CAS 实现对 value 字段的<strong>原子操作</strong>。  </p>
+<img src="assets/image-20200801154946673.png" alt="image-20200801154946673" style="zoom:70%;" />
+
+<p>下图为某个 AtomicInteger 对象自增操作前后的<strong>内存</strong>示意图，对象的<strong>基地址</strong> baseAddress =“0x110000”，通过baseAddress+valueOffset 得到 value 的内存地址 valueAddress =“0x11000c”；然后通过 <strong>CAS</strong> 进行<strong>原子性的更新操作</strong>，成功则返回，否则继续重试，直到更新成功为止。</p>
+<img src="assets/image-20200612145222308.png" alt="image-20200612145222308" style="zoom:67%;" />
+
+<h6 id="3-线程调度"><a href="#3-线程调度" class="headerlink" title="(3) 线程调度"></a>(3) 线程调度</h6><p>包括<strong>线程挂起、恢复、锁机制</strong>等方法。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 取消阻塞线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">unpark</span><span class="params">(Object thread)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 阻塞线程</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">park</span><span class="params">(<span class="keyword">boolean</span> isAbsolute, <span class="keyword">long</span> time)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 获得对象锁（可重入锁）</span></span></span><br><span class="line"><span class="function">@Deprecated</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">monitorEnter</span><span class="params">(Object o)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 释放对象锁</span></span></span><br><span class="line"><span class="function">@Deprecated</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">monitorExit</span><span class="params">(Object o)</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 尝试获取对象锁</span></span></span><br><span class="line"><span class="function">@Deprecated</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">tryMonitorEnter</span><span class="params">(Object o)</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>方法 <strong>park、unpark</strong> 即可实现<strong>线程的挂起与恢复</strong>，将一个线程进行<strong>挂起是通过 park 方法</strong>实现的，调用 park 方法后，线程将一直<strong>阻塞直到超时或者中断等条件</strong>出现；<strong>unpark</strong> 可以终止一个挂起的线程，使其恢复正常。</p>
+<p><strong>典型应用</strong>：</p>
+<p>Java 锁和同步器框架的核心类 <strong>AbstractQueuedSynchronizer（AQS）</strong>，就是通过调用 <strong>LockSupport.park()</strong> 和<strong>LockSupport.unpark()</strong> 实现线程的<strong>阻塞和唤醒</strong>的，而 LockSupport 的 park、unpark 方法实际是调用 Unsafe 的 park、unpark 方式来实现。  </p>
+<h6 id="4-内存屏障"><a href="#4-内存屏障" class="headerlink" title="(4) 内存屏障"></a>(4) 内存屏障</h6><p>在 Java 8 中引入，用于定义<strong>内存屏障</strong>（也称内存栅栏，内存栅障，屏障指令等，是一类同步屏障指令，是 CPU 或编译器在对内存随机访问的操作中的一个同步点，使得此点之前的所有读写操作都执行后才可以开始执行此点之后的操作），<strong>避免代码重排序。</strong>  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 内存屏障，禁止load操作重排序。屏障前的load操作不能被重排序到屏障后，屏障后的load操作不能被重排序到屏障前</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">loadFence</span><span class="params">()</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 内存屏障，禁止store操作重排序。屏障前的store操作不能被重排序到屏障后，屏障后的store操作不能被重排序到屏障前</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">storeFence</span><span class="params">()</span>;</span></span><br><span class="line"><span class="function"><span class="comment">// 内存屏障，禁止load、store操作重排序</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">fullFence</span><span class="params">()</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>典型应用</strong>：</p>
+<p>在 Java 8 中引入了一种锁的新机制——<strong>StampedLock</strong>，它可以看成是<strong>读写锁的一个改进版本</strong>。StampedLock 提供了一种<strong>乐观读锁</strong>的实现，这种乐观读锁类似于无锁的操作，完全不会阻塞写线程获取写锁，从而缓解读多写少时写线程“饥饿”现象。由于 StampedLock 提供的乐观读锁不阻塞写线程获取读锁，当线程共享变量从<strong>主内存 load 到线程工作内存</strong>时，会存在<strong>数据不一致</strong>问题。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/A%20Java/C-5%20JUC%E7%BB%84%E4%BB%B6%E4%B8%8E%E7%BA%BF%E7%A8%8B%E5%8D%8F%E4%BD%9C/" rel="next" title="ShiftJava/A Java/C-5 JUC组件与线程协作">
+                <i class="fa fa-chevron-left"></i> ShiftJava/A Java/C-5 JUC组件与线程协作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/07/ShiftJava/A%20Java/C-4%20%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%BB%E7%BB%93/" rel="prev" title="ShiftJava/A Java/C-4 线程安全总结">
+                ShiftJava/A Java/C-4 线程安全总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yue</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">163</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Atomic原子变量与Unsafe类与CAS"><span class="nav-number">1.</span> <span class="nav-text">Atomic原子变量与Unsafe类与CAS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原子变量"><span class="nav-number">1.1.</span> <span class="nav-text">原子变量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-概述"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-什么是原子操作"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 什么是原子操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-原子操作实现方法"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 原子操作实现方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-悲观的解决方案（阻塞同步）"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">(1) 悲观的解决方案（阻塞同步）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-乐观的解决方案（非阻塞同步）"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">(2) 乐观的解决方案（非阻塞同步）</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-Atomic包"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. Atomic包</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-原子变量与synchronized比较"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. 原子变量与synchronized比较</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AtomicInteger"><span class="nav-number">1.2.</span> <span class="nav-text">AtomicInteger</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-AtomicInteger的基本使用"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. AtomicInteger的基本使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-AtomicInteger源码解析"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. AtomicInteger源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-Java8之前"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">(1) Java8之前</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-Java8"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">(2) Java8</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他类"><span class="nav-number">1.3.</span> <span class="nav-text">其他类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-AtomicReference"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. AtomicReference</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-原子更新字段类"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 原子更新字段类</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CAS"><span class="nav-number">1.4.</span> <span class="nav-text">CAS</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-概述-1"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-ABA问题"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. ABA问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unsafe类"><span class="nav-number">1.5.</span> <span class="nav-text">Unsafe类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-概述-2"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-如何获取Unsafe实例"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. 如何获取Unsafe实例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Unsafe功能介绍"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. Unsafe功能介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-内存操作"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">(1) 内存操作</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-CAS相关"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">(2) CAS相关</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-线程调度"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">(3) 线程调度</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-内存屏障"><span class="nav-number">1.5.3.4.</span> <span class="nav-text">(4) 内存屏障</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
