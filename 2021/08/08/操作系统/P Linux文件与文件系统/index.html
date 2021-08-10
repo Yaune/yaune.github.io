@@ -1,37 +1,1021 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="操作系统," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文为操作系统复习笔记，临时上传以供移动端阅读。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文件与文件系统">
+<meta property="og:url" content="http://yoursite.com/2021/08/08/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/P%20Linux%E6%96%87%E4%BB%B6%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="本文为操作系统复习笔记，临时上传以供移动端阅读。">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/.com//1563425402250.png">
+<meta property="og:image" content="http://yoursite.com/.com//1563425463927.png">
+<meta property="og:image" content="http://yoursite.com/.com//1563425414722.png">
+<meta property="og:image" content="http://yoursite.com/.com//1563425427777.png">
+<meta property="og:image" content="http://yoursite.com/.com//1563425533764.png">
+<meta property="og:image" content="http://yoursite.com/.com//1563425582619.png">
+<meta property="og:image" content="http://yoursite.com/.com//1563425605037.png">
+<meta property="article:published_time" content="2021-08-08T11:05:33.000Z">
+<meta property="article:modified_time" content="2021-08-08T14:15:39.185Z">
+<meta property="article:author" content="Yue">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/.com//1563425402250.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/08/操作系统/P Linux文件与文件系统/"/>
+
+
+
+
+
+  <title>Linux文件与文件系统 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/books" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            书
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/08/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/P%20Linux%E6%96%87%E4%BB%B6%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux文件与文件系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-08T19:05:33+08:00">
+                2021-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文为操作系统复习笔记，临时上传以供移动端阅读。<span id="more"></span></p>
+<p>[TOC]</p>
+<h3 id="Linux文件系统与文件"><a href="#Linux文件系统与文件" class="headerlink" title="Linux文件系统与文件"></a>Linux文件系统与文件</h3><p><strong>在 Linux 系统中，所有被操作系统管理的资源，例如网络接口卡、磁盘驱动器、打印机、输入输出设备、普通文件或是目录都被看作是一个文件。</strong></p>
+<p>Linux 中有一个重要的概念：<strong>一切都是文件</strong>。其实这是 UNIX 哲学的一个体现，而 Linux 是重写 UNIX 而来，所以这个概念也就传承了下来。在 UNIX 系统中，把一切资源都看作是文件，包括硬件设备。UNIX 系统把每个硬件都看成是一个文件，通常称为设备文件，这样用户就可以用<strong>读写文件的方式实现对硬件的访问</strong>。</p>
+<h4 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h4><h5 id="1-分区与文件系统"><a href="#1-分区与文件系统" class="headerlink" title="1. 分区与文件系统"></a>1. 分区与文件系统</h5><p>对分区进行<strong>格式化</strong>是为了在<strong>分区上建立文件系统</strong>。一个分区通常只能格式化为一个文件系统，但是<strong>磁盘阵列</strong>等技术可以将一个分区格式化为<strong>多个</strong>文件系统。</p>
+<h5 id="2-组成"><a href="#2-组成" class="headerlink" title="2. 组成"></a>2. 组成</h5><p>文件系统最主要的几个组成部分如下：</p>
+<ul>
+<li><p><strong>==inode==</strong>：一个<strong>文件</strong>占用一个 <strong>inode</strong>，记录文件的<strong>属性</strong>，同时记录此文件的<strong>实际内容所在的 block 编号</strong>；</p>
+</li>
+<li><p><strong>==block==</strong>：实际记录文件的<strong>内容</strong>，文件太大时，会占用<strong>多个 block</strong>。</p>
+</li>
+<li><p><strong>==superblock==</strong>：记录文件系统的<strong>整体信息</strong>，包括 inode 和 block 的总量、使用量、剩余量，以及文件系统的格式与相关信息等；</p>
+</li>
+<li><p><strong>==block bitmap==</strong>：记录 block <strong>是否被使用的位域</strong>。</p>
+</li>
+</ul>
+<p>下面的图甚妙。</p>
+<img src="/.com//1563425402250.png" alt="1563425402250" style="zoom:42%;">
+
+<h6 id="1-block"><a href="#1-block" class="headerlink" title="(1) block"></a>(1) block</h6><p>在 <strong>Ext2 文件系统</strong>中所支持的 <strong>block</strong> 大小有 <strong>1K，2K 及 4K</strong> 三种，不同的大小限制了<strong>单个文件和文件系统</strong>的最大大小。</p>
+<table>
+<thead>
+<tr>
+<th align="center">大小</th>
+<th align="center">1KB</th>
+<th align="center">2KB</th>
+<th align="center">4KB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">最大单一文件</td>
+<td align="center">16GB</td>
+<td align="center">256GB</td>
+<td align="center">2TB</td>
+</tr>
+<tr>
+<td align="center">最大文件系统</td>
+<td align="center">2TB</td>
+<td align="center">8TB</td>
+<td align="center">16TB</td>
+</tr>
+</tbody></table>
+<p>一个 block 只能被<strong>一个文件</strong>所使用，未使用的部分直接浪费了。因此如果需要存储大量的小文件，那么最好选用比较小的 block。</p>
+<h6 id="2-inode"><a href="#2-inode" class="headerlink" title="(2) inode"></a>(2) inode</h6><p>文件存储在硬盘上，硬盘的最小存储单位是<strong>扇区</strong>(Sector)，每个扇区存储 512 字节(0.5 kb)。操作系统读取硬盘的数据时，不会一个扇区一个扇区的读取，这样做效率较低，而是<strong>一次读取多个扇区，即一次读取一个块(block)。块由多个扇区组成，是文件读取的最小单位，块的最常见的大小是 4kb，约为 8 个连续的扇区组成。文件实际数据存储在块中</strong>。</p>
+<p>但还需要一个空间来存储文件的<strong>元信息 metadata</strong>，如文件拥有者，创建时间，权限，大小等。这种<strong>存储文件元信息的区域就叫 inode，译为索引节点。 每个文件都有一个 inode，存储文件的元信息。</strong></p>
+<p><strong>使用 stat 命令可以查看文件的 inode 信息。每个 inode 都有一个号码，Linux/Unix 操作系统不使用文件名来区分文件，而是使用 inode 号码区分不同的文件。</strong></p>
+<p>inode 具体包含以下信息（文件的<strong>属性</strong>）：</p>
+<ul>
+<li><strong>权限</strong> (read/write/excute)；</li>
+<li>拥有者与群组 (owner/group)；</li>
+<li><strong>容量</strong>；</li>
+<li>建立或状态改变的时间 (ctime)；</li>
+<li>最近一次的读取时间 (atime)；</li>
+<li>最近修改的时间 (mtime)；</li>
+<li>定义文件特性的旗标 (flag)，如 SetUID…；</li>
+<li>该文件真正内容的<strong>指向</strong> (pointer)。</li>
+</ul>
+<p>inode 具有以下特点：</p>
+<ul>
+<li>每个 inode 大小均<strong>固定为 128 bytes</strong> (新的 ext4 与 xfs 可设定到 256 bytes)；</li>
+<li><strong>每个文件</strong>都仅会占用一个 <strong>inode</strong>。</li>
+</ul>
+<p>inode 中记录了<strong>文件内容所在的 block 编号</strong>，但是每个 block 非常小，一个大文件<strong>随便都需要几十万的 block</strong>。而一个 inode 大小有限，无法直接引用这么多 block 编号。因此引入了<strong>间接、双间接、三间接引用</strong>。间接引用是指，让 inode 记录的引用 <strong>block 块记录引用信息</strong>。</p>
+<img src="/.com//1563425463927.png" alt="1563425463927" style="zoom:40%;">
+
+<h5 id="3-文件读取"><a href="#3-文件读取" class="headerlink" title="3. 文件读取"></a>3. 文件读取</h5><p>对于 ==<strong>Ext2</strong>== 文件系统，当要读取一个文件的内容时，先在 <strong>inode</strong> 中去查找文件内容所在的所有 <strong>block</strong>，然后把所有 block 的内容读出来。</p>
+<img src="/.com//1563425414722.png" alt="1563425414722" style="zoom: 85%;">
+
+<p>而对于 ==<strong>FAT</strong>== 文件系统，它<strong>没有 inode</strong>，<strong>每个 block</strong> 中存储着<strong>下一个 block</strong> 的编号，链式存储 block 编号。</p>
+<img src="/.com//1563425427777.png" alt="1563425427777" style="zoom:85%;">
+
+<h5 id="4-磁盘碎片"><a href="#4-磁盘碎片" class="headerlink" title="4. 磁盘碎片"></a>4. 磁盘碎片</h5><p>指一个文件内容所在的 block 过于<strong>分散</strong>，导致磁盘磁头移动距离过大，从而降低磁盘读写性能。</p>
+<h5 id="5-日志"><a href="#5-日志" class="headerlink" title="5. 日志"></a>5. 日志</h5><p>如果突然断电，那么文件系统会发生错误，例如断电前只修改了 block bitmap，而还没有将数据真正写入 block 中。</p>
+<p>ext3/ext4 文件系统引入了<strong>日志功能</strong>，可以利用日志来修复文件系统。</p>
+<h4 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h4><h5 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h5><p>建立一个<strong>目录</strong>时，会分配一个 <strong>inode</strong> 与<strong>至少一个 block</strong>。<strong>block 记录</strong>的内容是目录下所有<strong>文件的 inode 编号以及文件名</strong>。</p>
+<p>可以看出<strong>文件的 inode 本身不记录文件名</strong>，<strong>文件名</strong>记录在<strong>目录</strong>中，因此新增文件、删除文件、更改文件名这些操作与<strong>目录的 w 权限</strong>有关。</p>
+<h5 id="2-挂载"><a href="#2-挂载" class="headerlink" title="2. 挂载"></a>2. 挂载</h5><p>挂载利用<strong>目录</strong>作为<strong>文件系统的进入点</strong>，也就是说，进入<strong>目录</strong>之后就可以读取<strong>文件系统</strong>的数据。</p>
+<h5 id="3-目录结构"><a href="#3-目录结构" class="headerlink" title="3. 目录结构"></a>3. 目录结构</h5><p>为了使不同 <strong>Linux 发行版本</strong>的目录结构保持一致性，Filesystem Hierarchy Standard (FHS) 规定了 Linux 的目录结构。最基础的三个目录如下：</p>
+<ul>
+<li>==<strong>/</strong>== (root, 根目录)</li>
+<li><strong>==/usr==</strong> (unix software resource)：所有系统<strong>默认软件</strong>都会安装到这个目录；</li>
+<li><strong>==/var==</strong> (variable)：存放系统或程序运行过程中的<strong>数据文件</strong>。</li>
+</ul>
+<img src="/.com//1563425533764.png" alt="1563425533764" style="zoom:80%;">
+
+<p><strong>常见目录说明：</strong></p>
+<ul>
+<li><strong>/bin：</strong>存放<strong>二进制可执行文件</strong>(ls、cat、mkdir等)，常用命令一般都在这里。</li>
+<li><strong>/etc：</strong>存放<strong>系统管理和配置文件</strong>。</li>
+<li><strong>/home：</strong>存放所有<strong>用户文件</strong>的根目录，是用户主目录的基点，比如用户 user 的主目录就是 /home/user，可以用~user 表示。</li>
+<li><strong>/usr ：</strong>用于存放<strong>系统应用程序</strong>。</li>
+<li><strong>/opt：</strong> <strong>额外安装的可选应用程序包</strong>所放置的位置。一般情况下，可以把 Tomcat 等都安装到这里。</li>
+<li><strong>/proc：</strong>虚拟文件系统目录，是系统内存的映射。可直接访问这个目录来获取系统信息。</li>
+<li><strong>/root：</strong>超级用户（系统管理员）的主目录（特权阶级^o^）。</li>
+<li><strong>/sbin:</strong>  存放二进制可执行文件，只有 root 才能访问。这里存放的是系统管理员使用的系统级别的管理命令和程序。如 ifconfig 等。</li>
+<li><strong>/dev：</strong>用于存放设备文件。</li>
+<li><strong>/mnt：</strong>系统管理员安装临时文件系统的安装点，系统提供这个目录是让用户临时挂载其他的文件系统。</li>
+<li><strong>/boot：</strong>存放用于系统引导时使用的各种文件。</li>
+<li><strong>/lib ：</strong>存放着和系统运行相关的库文件 。</li>
+<li><strong>/tmp：</strong>用于存放各种临时文件，是公用的临时文件存储点。</li>
+<li><strong>/var：</strong> 用于存放运行时需要改变数据的文件，也是某些大文件的溢出区，比方说各种服务的日志文件（系统启动日志等。）等。</li>
+<li><strong>/lost+found：</strong>  这个目录平时是空的，系统非正常关机而留下“无家可归”的文件（windows下叫什么.chk）就在这里。</li>
+</ul>
+<h4 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h4><h5 id="1-文件类型"><a href="#1-文件类型" class="headerlink" title="1. 文件类型"></a>1. 文件类型</h5><p>Linux 支持很多文件类型，其中非常重要的文件类型有：普通文件，目录文件，链接文件，设备文件，管道文件，Socket 套接字文件等。</p>
+<h6 id="1-普通文件"><a href="#1-普通文件" class="headerlink" title="(1) 普通文件"></a>(1) 普通文件</h6><p>普通文件是指 txt,html,pdf 等等的这样应用层面的文件类型，用户可以根据访问权限对普通文件进行访问，修改和删除。</p>
+<h6 id="2-目录文件"><a href="#2-目录文件" class="headerlink" title="(2) 目录文件"></a>(2) 目录文件</h6><p><strong>目录</strong>也是一种<strong>文件</strong>，打开目录实际上是打开目录文件。目录文件包含了它目录下的所有文件名以及指向这些文件的指针。</p>
+<h6 id="3-链接文件"><a href="#3-链接文件" class="headerlink" title="(3) 链接文件"></a>(3) 链接文件</h6><p><strong>链接文件</strong>分为符号链接(软链接)文件和硬链接文件。下面<strong>详解</strong>。</p>
+<ul>
+<li>硬链接(Hard Link)：</li>
+<li>符号链接(软链接)(Symbolic Link)：</li>
+</ul>
+<h6 id="4-设备文件"><a href="#4-设备文件" class="headerlink" title="(4) 设备文件"></a>(4) 设备文件</h6><p>设备文件分为块设备文件和字符设备文件,设备文件一般存于 <strong>/dev</strong> 目录下。<strong>字符设备与块设备最根本的区别就是它们是否可以被随机访问。</strong></p>
+<ul>
+<li><strong>字符设备文件</strong>：字符设备是依照先后顺序被存取数据的设备，通常不支持随机存取，此类设备可以按字节/字符来读取数据， 如键盘，串口等等。</li>
+<li><strong>块设备文件</strong>：块设备是可以被随机存取数据的设备，应用程序可以访问块设备上任何一块位置。块设备以块的方式读取数据，在 windows 下也称为簇，块设备不支持字符的方式寻址。如硬盘，软盘，光碟等等。</li>
+</ul>
+<h6 id="5-管道文件"><a href="#5-管道文件" class="headerlink" title="(5) 管道文件"></a>(5) 管道文件</h6><p>管道文件一般用于<strong>进程间通信</strong>，使用 <strong>mkfifo</strong> 命令可以创建一个管道文件。</p>
+<h6 id="6-Socket套接字文件"><a href="#6-Socket套接字文件" class="headerlink" title="(6) Socket套接字文件"></a>(6) Socket套接字文件</h6><p>套接字文件被用于<strong>网络进程</strong>之间的通信，既可以使两台不同的机器进行通信，也可以用于本机的 Socket 网络程序。</p>
+<h5 id="2-链接"><a href="#2-链接" class="headerlink" title="2. 链接"></a>2. 链接</h5><p>详解一下链接文件，分为<strong>软连接和硬连接</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> ln [-sf] source_filename dist_filename</span></span><br><span class="line">-s ：默认是 hard link，加 -s 为 symbolic link</span><br><span class="line">-f ：如果目标文件存在时，先删除目标文件</span><br></pre></td></tr></table></figure>
+
+<p>两者关系图如下：</p>
+<img src="/.com//1563425582619.png" alt="1563425582619" style="zoom:56%;">
+
+<h6 id="1-实体链接-硬链接"><a href="#1-实体链接-硬链接" class="headerlink" title="(1) 实体链接(硬链接)"></a>(1) 实体链接(硬链接)</h6><p>在目录下创建一个<strong>条目</strong>，记录着文件名与 inode 编号，这个 inode 就是<strong>源文件的 inode</strong>。<strong>删除任意一个</strong>条目，文件还是<strong>存在</strong>，只要<strong>引用数量不为 0</strong>。</p>
+<p><strong>硬链接的文件拥有相同的 inode</strong>，因为操作系统是<strong>靠 inode 来区分文件</strong>的，2 个 inode 相同的文件，就代表它们<strong>是一个文件</strong>。删除一个文件并不会对其他拥有相同 inode 的文件产生影响，只有当 inode 相同的<strong>所有文件被删除</strong>了，也就是把硬链接和源文件都删除，这个文件才会被删除。</p>
+<p>硬链接的限制：<strong>不能跨越文件系统、不能对目录进行链接</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ln /etc/crontab .</span></span><br><span class="line"><span class="comment"># ll -i /etc/crontab crontab</span></span><br><span class="line">34474855 -rw-r--r--. 2 root root 451 Jun 10 2014 crontab</span><br><span class="line">34474855 -rw-r--r--. 2 root root 451 Jun 10 2014 /etc/crontab</span><br><span class="line"><span class="comment"># 这里这两个文件其实指向的是同一个文件，只有都删掉才能完全删除文件</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="2-符号链接-软链接"><a href="#2-符号链接-软链接" class="headerlink" title="(2) 符号链接(软链接)"></a>(2) 符号链接(软链接)</h6><p>符号链接文件保存着<strong>源文件所在的绝对路径</strong>，在读取时会定位到<strong>源文件</strong>上，可以理解为 <strong>Windows 的快捷方式。</strong></p>
+<p>当符号链接被删除时，并不会影响源文件。当<strong>源文件</strong>被删除了，链接文件就<strong>打不开</strong>了。</p>
+<p>因为记录的是<strong>路径</strong>，所以可以为<strong>==目录==建立链接</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ll -i /etc/crontab /root/crontab2</span></span><br><span class="line">34474855 -rw-r--r--. 2 root root 451 Jun 10 2014 /etc/crontab</span><br><span class="line">53745909 lrwxrwxrwx. 1 root root 12 Jun 23 22:31 /root/crontab2 -&gt; /etc/crontab</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-文件属性"><a href="#3-文件属性" class="headerlink" title="3. 文件属性"></a>3. 文件属性</h5><p>用户分为三种：<strong>文件拥有者、群组以及其它人</strong>，对不同的用户有不同的文件权限。</p>
+<p>使用 <strong>ll</strong> 查看一个文件时，会显示一个文件的信息，例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drwxr-xr-x 3 root root 17 May 6 00:14 .config</span><br></pre></td></tr></table></figure>
+
+<p>对这个信息的解释如下：</p>
+<ul>
+<li><strong>drwxr-xr-x</strong>：文件<strong>类型以及权限</strong>，第 1 位为文件<strong>类型字段</strong>，后 9 位为文件<strong>权限字段</strong>。</li>
+<li>3：<strong>链接数</strong>。</li>
+<li>root：文件<strong>拥有者</strong>。</li>
+<li>root：所属<strong>群组</strong>。</li>
+<li>17：文件大小。</li>
+<li>May 6 00:14：文件最后被修改的时间。</li>
+<li>.config：文件名。</li>
+</ul>
+<p>常见的文件类型及其含义有：</p>
+<ul>
+<li><strong>d</strong>：<strong>目录</strong></li>
+<li><strong>-</strong>：<strong>文件</strong></li>
+<li><strong>l</strong>：<strong>链接文件</strong></li>
+</ul>
+<p>9 位的文件权限字段中，每 3 个为一组，共 3 组，每一组分别代表对<strong>文件拥有者、所属群组以及其它人</strong>的文件权限。一组权限中的 3 位分别为 <strong>r、w、x</strong> 权限，表示<strong>可读、可写、可执行</strong>。</p>
+<p><strong>文件时间</strong>有以下三种：</p>
+<ul>
+<li>modification time (mtime)：文件的内容更新就会更新；</li>
+<li>status time (ctime)：文件的状态（权限、属性）更新就会更新；</li>
+<li>access time (atime)：读取文件时就会更新。</li>
+</ul>
+<h5 id="4-文件权限"><a href="#4-文件权限" class="headerlink" title="4. 文件权限"></a>4. 文件权限</h5><h6 id="1-修改权限"><a href="#1-修改权限" class="headerlink" title="(1) 修改权限"></a>(1) 修改权限</h6><p><strong>文件权限</strong>可以用一组数字来表示，此时一组权限的 3 个位当做二进制数字的位，从左到右每个位的权值为 4、2、1，即每个权限对应的<strong>数字权值为 ==r : 4、w : 2、x : 1==</strong>。</p>
+<p>使用 <strong>chmod 指令</strong>修改权限或者<strong>增删</strong>权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># chmod [-R] xyz dirname/filename</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：将 .bashrc 文件的权限修改为 <strong>-rwxr-xr–。</strong>这里就是用<strong>数字</strong>代表权限。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># chmod 754 .bashrc</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以使用<strong>符号</strong>来设定权限。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># chmod [ugoa]  [+-=] [rwx] dirname/filename</span></span><br><span class="line">- u：拥有者</span><br><span class="line">- g：所属群组</span><br><span class="line">- o：其他人</span><br><span class="line">- a：所有人</span><br><span class="line">- +：添加权限</span><br><span class="line">- -：移除权限</span><br><span class="line">- =：设定权限</span><br></pre></td></tr></table></figure>
+
+<p>示例：为 .bashrc 文件的所有用户<strong>添加</strong>写权限。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># chmod a+w .bashrc</span></span><br></pre></td></tr></table></figure>
+
+<p> 对<strong>文件和目录</strong>而言，读写执行表示<strong>不同的意义</strong>。</p>
+<p> <strong>对于文件：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">权限名称</th>
+<th align="center">可执行操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>r</strong>（读）</td>
+<td align="center">可以使用 cat <strong>查看文件的内容</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>w</strong>（写）</td>
+<td align="center">可以<strong>修改文件的内容</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>x</strong>（执行）</td>
+<td align="center">可以将其作为二进制文件<strong>运行</strong></td>
+</tr>
+</tbody></table>
+<p> <strong>对于目录</strong>需要特别理解：</p>
+<table>
+<thead>
+<tr>
+<th align="center">权限名称</th>
+<th align="center">可执行操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>r</strong>（读）</td>
+<td align="center">可以<strong>查看目录下列表</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>w</strong>（写）</td>
+<td align="center">可以<strong>创建和删除目录下文件</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>x</strong>（执行）</td>
+<td align="center"><strong>可以使用 cd 进入目录</strong></td>
+</tr>
+</tbody></table>
+<p>需要注意的是超级用户可以无视普通用户的权限，即使文件目录权限是 000，<strong>依旧可以访问</strong>。<br>在 linux 中的每个用户必须属于一个组，不能独立于组外。在 linux 中每个文件有所有者、所在组、其它组的概念。</p>
+<h6 id="2-文件默认权限"><a href="#2-文件默认权限" class="headerlink" title="(2) 文件默认权限"></a>(2) 文件默认权限</h6><ul>
+<li><strong>文件</strong>默认权限：文件<strong>默认没有可执行权限</strong>，因此为 <strong>666</strong>，也就是 ==<strong>-rw-rw-rw-</strong>== 。</li>
+<li><strong>目录</strong>默认权限：目录必须要能够<strong>进入</strong>，也就是必须拥有<strong>可执行权限</strong>，因此为 <strong>777</strong> ，也就是 ==<strong>drwxrwxrwx</strong>==。</li>
+</ul>
+<p>可以通过 <strong>umask</strong> 设置或者查看文件的<strong>默认权限</strong>，通常以掩码的形式来表示，例如 002 表示其它用户的权限去除了一个 2 的权限，也就是写权限，因此建立新文件时默认的权限为 -rw-rw-r–。</p>
+<h6 id="3-目录的权限"><a href="#3-目录的权限" class="headerlink" title="(3) 目录的权限"></a>(3) 目录的权限</h6><p><strong>文件名不是存储在一个文件的内容中，而是存储在一个文件所在的目录中</strong>。因此，拥有文件的 <strong>w 权限并不能对文件名进行修改</strong>。文件名是存放在<strong>目录的 block 中</strong>的，所以要新增、删除、修改文件名需要<strong>目录的 w 权限</strong>。</p>
+<p>==目录存储文件列表，一个目录的权限也就是对其<strong>文件列表</strong>的权限==。</p>
+<ul>
+<li><p><strong>r 权限</strong>表示可以读取目录的文件列表。</p>
+</li>
+<li><p><strong>w 权限</strong>表示可以<strong>修改</strong>文件列表，就是添加、删除文件、对文件名<strong>进行修改</strong>。</p>
+</li>
+<li><p><strong>x 权限</strong>可以让该目录成为工作目录（表示可以进入这个目录），x <strong>权限是 r 和 w 权限</strong>的<strong>基础</strong>，如果这个目录都不能进，也就没办法读取文件列表以及对文件列表进行修改了。</p>
+</li>
+</ul>
+<hr>
+<h4 id="文件与目录常见指令"><a href="#文件与目录常见指令" class="headerlink" title="文件与目录常见指令"></a>文件与目录常见指令</h4><h5 id="1-基本操作"><a href="#1-基本操作" class="headerlink" title="1. 基本操作"></a>1. 基本操作</h5><h6 id="1-ls"><a href="#1-ls" class="headerlink" title="(1) ls"></a>(1) ls</h6><p>列出文件或者目录的信息，目录的信息就是其中包含的文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> ls [-aAdfFhilnrRSt] file|dir</span></span><br><span class="line">-a ：列出全部的文件</span><br><span class="line">-d ：仅列出目录本身</span><br><span class="line">-l ：以长数据串行列出，包含文件的属性与权限等等数据</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-cd"><a href="#2-cd" class="headerlink" title="(2) cd"></a>(2) cd</h6><p>更换当前目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd [相对路径或绝对路径]</span><br><span class="line">cd # 进入/home目录</span><br></pre></td></tr></table></figure>
+
+<h6 id="3-mkdir"><a href="#3-mkdir" class="headerlink" title="(3) mkdir"></a>(3) mkdir</h6><p><strong>创建</strong>目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mkdir [-mp] 目录名称</span></span><br><span class="line">-m ：配置目录权限</span><br><span class="line">-p ：递归创建目录</span><br></pre></td></tr></table></figure>
+
+<h6 id="4-rmdir"><a href="#4-rmdir" class="headerlink" title="(4) rmdir"></a>(4) rmdir</h6><p><strong>删除</strong>目录，目录<strong>必须为空</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rmdir [-p] 目录名称</span><br><span class="line">-p ：递归删除目录</span><br></pre></td></tr></table></figure>
+
+<h6 id="5-touch"><a href="#5-touch" class="headerlink" title="(5) touch"></a>(5) touch</h6><p>更新<strong>文件时间</strong>或者<strong>建立新文件</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># touch [-acdmt] filename</span></span><br><span class="line">-a ： 更新 atime</span><br><span class="line">-c ： 更新 ctime，若该文件不存在则不建立新文件</span><br><span class="line">-m ： 更新 mtime</span><br><span class="line">-d ： 后面可以接更新日期而不使用当前日期，也可以使用 --date=<span class="string">&quot;日期或时间&quot;</span></span><br><span class="line">-t ： 后面可以接更新时间而不使用当前时间，格式为[YYYYMMDDhhmm]</span><br></pre></td></tr></table></figure>
+
+<h6 id="6-cp"><a href="#6-cp" class="headerlink" title="(6) cp"></a>(6) cp</h6><p><strong>复制文件</strong>。如果源文件有<strong>两个</strong>以上，则<strong>目的文件</strong>一定要是<strong>目录</strong>才行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cp [-adfilprsu] <span class="built_in">source</span> destination</span><br><span class="line">-a ：相当于 -dr --preserve=all 的意思，至于 dr 请参考下列说明</span><br><span class="line">-d ：若来源文件为链接文件，则复制链接文件属性而非文件本身</span><br><span class="line">-i ：若目标文件已经存在时，在覆盖前会先询问</span><br><span class="line">-p ：连同文件的属性一起复制过去</span><br><span class="line">-r ：递归持续复制</span><br><span class="line">-u ：destination 比 <span class="built_in">source</span> 旧才更新 destination，或 destination 不存在的情况下才复制</span><br><span class="line">--preserve=all ：除了 -p 的权限相关参数外，还加入 SELinux 的属性, links, xattr 等也复制了</span><br></pre></td></tr></table></figure>
+
+<p><strong>-r</strong> 代表<strong>递归拷贝</strong>。</p>
+<h6 id="7-rm"><a href="#7-rm" class="headerlink" title="(7) rm"></a>(7) rm</h6><p><strong>删除</strong>文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rm [-fir] 文件或目录</span></span><br><span class="line">-r ：递归删除</span><br></pre></td></tr></table></figure>
+
+<p>递归删除：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rm -rf folder</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="8-mv"><a href="#8-mv" class="headerlink" title="(8) mv"></a>(8) mv</h6><p><strong>移动</strong>文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mv [-fiu] source destination</span></span><br><span class="line"><span class="comment"># mv [options] source1 source2 source3 .... directory</span></span><br><span class="line">-f ： force 强制的意思，如果目标文件已经存在，不会询问而直接覆盖</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-获取文件内容"><a href="#2-获取文件内容" class="headerlink" title="2. 获取文件内容"></a>2. 获取文件内容</h5><h6 id="1-cat"><a href="#1-cat" class="headerlink" title="(1) cat"></a>(1) cat</h6><p>取得文件内容。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat [-AbEnTv] filename</span></span><br><span class="line">-n ：打印出行号，连同空白行也会有行号，-b 不会</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-tac"><a href="#2-tac" class="headerlink" title="(2) tac"></a>(2) tac</h6><p>是 cat 的<strong>反向操作</strong>，从<strong>最后一行</strong>开始打印。</p>
+<h6 id="3-more"><a href="#3-more" class="headerlink" title="(3) more"></a>(3) more</h6><p>和 cat 不同的是它可以<strong>一页一页</strong>查看文件内容，比较适合<strong>大文件</strong>的查看。</p>
+<h6 id="4-less"><a href="#4-less" class="headerlink" title="(4) less"></a>(4) less</h6><p>和 more 类似，但是多了一个<strong>向前翻页</strong>的功能。</p>
+<h6 id="5-head"><a href="#5-head" class="headerlink" title="(5) head"></a>(5) head</h6><p>取得文件<strong>前几行</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># head [-n number] filename</span></span><br><span class="line">-n ：后面接数字，代表显示几行的意思</span><br></pre></td></tr></table></figure>
+
+<h6 id="6-tail"><a href="#6-tail" class="headerlink" title="(6) tail"></a>(6) tail</h6><p>是 head 的反向操作，只是取得是<strong>后几行</strong>。</p>
+<h6 id="7-od"><a href="#7-od" class="headerlink" title="(7) od"></a>(7) od</h6><p>以字符或者十六进制的形式显示二进制文件。</p>
+<h5 id="3-指令与文件搜索"><a href="#3-指令与文件搜索" class="headerlink" title="3. 指令与文件搜索"></a>3. 指令与文件搜索</h5><h6 id="1-which"><a href="#1-which" class="headerlink" title="(1) which"></a>(1) which</h6><p><strong>指令搜索</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># which [-a] command</span></span><br><span class="line">-a ：将所有指令列出，而不是只列第一个</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-whereis"><a href="#2-whereis" class="headerlink" title="(2) whereis"></a>(2) whereis</h6><p><strong>文件搜索</strong>。速度比较快，因为它只搜索<strong>几个特定的目录</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># whereis [-bmsu] dirname/filename</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="3-locate"><a href="#3-locate" class="headerlink" title="(3) locate"></a>(3) locate</h6><p><strong>文件搜索</strong>。可以用关键字或者正则表达式进行搜索。</p>
+<p>locate 使用 /var/lib/mlocate/ 这个数据库来进行搜索，它存储在内存中，并且每天<strong>更新一次</strong>，所以无法用 locate 搜索新建的文件。可以使用 updatedb 来立即更新数据库。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># locate [-ir] keyword</span></span><br><span class="line">-r：正则表达式</span><br></pre></td></tr></table></figure>
+
+<h6 id="4-find"><a href="#4-find" class="headerlink" title="(4) find"></a>(4) find</h6><p><strong>文件搜索</strong>。可以使用文件的属性和权限进行搜索。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># find [basedir] [option]</span></span><br><span class="line">example: find . -name <span class="string">&quot;shadow*&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>(1) 与时间有关的选项</strong> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-mtime  n ：列出在 n 天前的那一天修改过内容的文件</span><br><span class="line">-mtime +n ：列出在 n 天之前 (不含 n 天本身) 修改过内容的文件</span><br><span class="line">-mtime -n ：列出在 n 天之内 (含 n 天本身) 修改过内容的文件</span><br><span class="line">-newer file ： 列出比 file 更新的文件</span><br></pre></td></tr></table></figure>
+
+<p>+4、4 和 -4 的指示的时间范围如下：</p>
+<img src="/.com//1563425605037.png" alt="1563425605037" style="zoom: 77%;">
+
+<p><strong>(2) 与文件拥有者和所属群组有关的选项</strong> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-uid n</span><br><span class="line">-gid n</span><br><span class="line">-user name</span><br><span class="line">-group name</span><br><span class="line">-nouser ：搜索拥有者不存在 /etc/passwd 的文件</span><br><span class="line">-nogroup：搜索所属群组不存在于 /etc/group 的文件</span><br></pre></td></tr></table></figure>
+
+<p><strong>(3) 与文件权限和名称有关的选项</strong> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-name filename</span><br><span class="line">-size [+-]SIZE：搜寻比 SIZE 还要大 (+) 或小 (-) 的文件。这个 SIZE 的规格有：c: 代表 byte，k: 代表 1024bytes。所以，要找比 50KB 还要大的文件，就是 -size +50k</span><br><span class="line">-<span class="built_in">type</span> TYPE</span><br><span class="line">-perm mode  ：搜索权限等于 mode 的文件</span><br><span class="line">-perm -mode ：搜索权限包含 mode 的文件</span><br><span class="line">-perm /mode ：搜索权限包含任一 mode 的文件</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/08/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/O%20Linux%E5%9F%BA%E7%A1%80/" rel="next" title="Linux基础">
+                <i class="fa fa-chevron-left"></i> Linux基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/08/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/Q%20Linux%20Shell%E7%BC%96%E7%A8%8B/" rel="prev" title="Linux Shell编程">
+                Linux Shell编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%8E%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">Linux文件系统与文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text">文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E5%88%86%E5%8C%BA%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 分区与文件系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E7%BB%84%E6%88%90"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 组成</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-block"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">(1) block</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-inode"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">(2) inode</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 文件读取</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E7%A3%81%E7%9B%98%E7%A2%8E%E7%89%87"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. 磁盘碎片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E6%97%A5%E5%BF%97"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. 日志</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.2.</span> <span class="nav-text">目录</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%8C%82%E8%BD%BD"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 挂载</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 目录结构</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">文件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 文件类型</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-%E6%99%AE%E9%80%9A%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">(1) 普通文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">(2) 目录文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-%E9%93%BE%E6%8E%A5%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">(3) 链接文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">(4) 设备文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-%E7%AE%A1%E9%81%93%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">(5) 管道文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#6-Socket%E5%A5%97%E6%8E%A5%E5%AD%97%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">(6) Socket套接字文件</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E9%93%BE%E6%8E%A5"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-%E5%AE%9E%E4%BD%93%E9%93%BE%E6%8E%A5-%E7%A1%AC%E9%93%BE%E6%8E%A5"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">(1) 实体链接(硬链接)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5-%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">(2) 符号链接(软链接)</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 文件属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. 文件权限</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-%E4%BF%AE%E6%94%B9%E6%9D%83%E9%99%90"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">(1) 修改权限</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-%E6%96%87%E4%BB%B6%E9%BB%98%E8%AE%A4%E6%9D%83%E9%99%90"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">(2) 文件默认权限</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E7%9A%84%E6%9D%83%E9%99%90"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">(3) 目录的权限</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8E%E7%9B%AE%E5%BD%95%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4"><span class="nav-number">1.4.</span> <span class="nav-text">文件与目录常见指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-ls"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">(1) ls</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-cd"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">(2) cd</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-mkdir"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">(3) mkdir</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-rmdir"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">(4) rmdir</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-touch"><span class="nav-number">1.4.1.5.</span> <span class="nav-text">(5) touch</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#6-cp"><span class="nav-number">1.4.1.6.</span> <span class="nav-text">(6) cp</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#7-rm"><span class="nav-number">1.4.1.7.</span> <span class="nav-text">(7) rm</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#8-mv"><span class="nav-number">1.4.1.8.</span> <span class="nav-text">(8) mv</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 获取文件内容</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-cat"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">(1) cat</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-tac"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">(2) tac</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-more"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">(3) more</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-less"><span class="nav-number">1.4.2.4.</span> <span class="nav-text">(4) less</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-head"><span class="nav-number">1.4.2.5.</span> <span class="nav-text">(5) head</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#6-tail"><span class="nav-number">1.4.2.6.</span> <span class="nav-text">(6) tail</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#7-od"><span class="nav-number">1.4.2.7.</span> <span class="nav-text">(7) od</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E6%8C%87%E4%BB%A4%E4%B8%8E%E6%96%87%E4%BB%B6%E6%90%9C%E7%B4%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. 指令与文件搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-which"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">(1) which</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-whereis"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">(2) whereis</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-locate"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">(3) locate</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-find"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">(4) find</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

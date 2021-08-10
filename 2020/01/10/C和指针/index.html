@@ -1,37 +1,1132 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文为《C和指针》的阅读笔记，主要针对知识盲点进行分析与记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《C和指针》阅读笔记">
+<meta property="og:url" content="http://yoursite.com/2020/01/10/C%E5%92%8C%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="本文为《C和指针》的阅读笔记，主要针对知识盲点进行分析与记录。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-01-10T11:05:26.000Z">
+<meta property="article:modified_time" content="2020-12-03T11:10:40.433Z">
+<meta property="article:author" content="Yue">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/10/C和指针/"/>
+
+
+
+
+
+  <title>《C和指针》阅读笔记 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/books" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            书
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/10/C%E5%92%8C%E6%8C%87%E9%92%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《C和指针》阅读笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-10T19:05:26+08:00">
+                2020-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文为《C和指针》的阅读笔记，主要针对知识盲点进行分析与记录。<span id="more"></span></p>
+<h3 id="一章"><a href="#一章" class="headerlink" title="一章"></a>一章</h3><ol>
+<li><p>形参中被声明为<code>const</code>， 表示函数将不会修改调用者所传递的参数。</p>
+</li>
+<li><p>无返回值的函数称为过程（procedure）。</p>
+</li>
+<li><p>在C语言中，数组参数是以引用（reference）形式传递的，也就是传址调用，而常量和标量则是按值（value）传递的。在函数中对标量参数的任何修改都会在函数返回时丢失，因此，被调用函数无法修改调用函数以传值形式传递给它的参数</p>
+</li>
+<li><p>c语言中不存在“string”数据类型，但在整个语言中存在一项约定：字符串就是一串以NUL字符结尾的字符。NUL 是作为字符串终止符，它本身并不被看成字符串的一部分。</p>
+<p>注：NUL是ASCII 字符集中’\0’ 字符的名字，它的字节模式为全0。 NULL 指一个其值为0的<strong><u>指针</u></strong>。他们都是整型，其值也相同，所以他们可以互换使用。字符NULL在头文件 <code>stdio.h</code> 中有定义，而另一方面并不存在预定义的NUL，所以使用字符常量’\0’ 替代它而不能直接使用NUL。</p>
+</li>
+<li><p>字符串常量 “Hello” 在内存中占据6个字符空间，分别是H、e、l、l、o和NUL。</p>
+</li>
+<li><p><code>printf()</code>函数的第一个参数是一个格式字符串，其包含格式指定符（格式代码）和一些普通字符，普通字符将按照原样打印出来，但每个格式指定符将使后续参数的值按照它所指定的格式打印。</p>
+</li>
+<li><p>C语言形参中声明数组可以不必是给出其长度，不论调用函数的程序传递给它的数组参数长度是多少，这个函数将照收不误。如：<code>read_coluimn_numbers(int columns[], int max)</code> 。</p>
+</li>
+<li><p><code>scanf()</code>函数的格式代码与<code>printf()</code> 颇为相似但却不完全相同，<code>%d, %ld, %f, %lf, %c</code>这5个参数用于读取标量值，所有变量参数的前面必须加上 “&amp;” 符号。使用所有格式代码（除了%c之外）时，输入值之前的空白（空格、制表符、换行符等）都会被跳过，值后面的空白表示该值得结束。因此，使用 %s 格式码输入字符串时，中间不能包含空白。</p>
+</li>
+<li><p>绝大多数C编译器不会对数组下标的有效性进行检查，因此在将输入字符存入数组时需要对数组下标进行有效性检查，使其不超出数组范围。如果不进行检查而读取的值超过数组长度，那么这些值将会存储在紧随数组之后的内存位置，这样便会破坏原先存储在这个位置的数据。</p>
+</li>
+</ol>
+<p>–20.11.12–</p>
+<h3 id="二章"><a href="#二章" class="headerlink" title="二章"></a>二章</h3><ol>
+<li>一个C语言程序的源代码保存在一个或多个源文件中，但一个函数只能完整地除锈安在同一个源文件中。</li>
+<li>每个源文件都被分别编译，产生对应的目标文件，然后目标文件被链接在一起，形成可执行程序。</li>
+<li>程序必须载入到内存中才能执行。在宿主式环境中，这个任务由操作系统完成。在自由是环境中，程序常常永久存储于ROM 中。</li>
+<li>在绝大多数机器里，程序在运行时使用堆栈存储函数的局部变量和返回地址。程序同时也可以使用静态内存，存储于静态内存中的变量在程序的整个执行执行过程中将一直保留他们的值。</li>
+<li>注释不允许嵌套，注释将被预处理器去除。</li>
+<li>标识符由字母、数字和下划线组成，但不能以数字开头，在标识符中，大小写字母是不一样的。</li>
+<li>关键字由系统保留，不能作为标识符使用。</li>
+<li>在使用字符集缺少的某些字符时，可以使用三字母代替，但字符串常量中的字符可能被错误地解释为三字母词(以??开头)，可以使用转义序列打印无法打印的字符。</li>
+</ol>
+<h3 id="三章"><a href="#三章" class="headerlink" title="三章"></a>三章</h3><ol>
+<li><p>变量的三个属性：作用域、链接属性和存储属性。</p>
+</li>
+<li><p>C语言中有4种基本的数据类型—-整型、浮点型、指针和聚合类型（数组、结构等），所有其他类型都是从这4中基本类型的某种组合派生而来。</p>
+</li>
+<li><p>长整型至少应该和整型一样长，而整型至少应该和短整型一样长，long double至少和double一样长，而double至少和float一样长。</p>
+</li>
+<li><p>所有的浮点型至少能够容纳从10^-37 到 10^37之间的任何值。</p>
+</li>
+<li><p>浮点数字面值在缺省情况下是double类型，它后跟L或l表示long double，跟一个F或f表示一个float值。</p>
+</li>
+<li><p>字面值(literal，又翻译为常量)这个术语是字面值常量的缩写——这是一种实体，指定了自身的值，ANSI C允许命名常量(named constant, 声明为const的变量)的创建，它与普通变量极为类似。区别在于，当它被初始化后值便无法修改。</p>
+</li>
+<li><p>因为无法通过程序指定一个字面值作为变量存放在内存中的地址，所以C语言中没有指针常量这一概念定义（NULL指针除外，它可以用0值表示）</p>
+</li>
+<li><p>NUL字符作为字符串的终止符，其是不可打印的。空字符串结尾也有NUL字符作为终止符。</p>
+</li>
+<li><p>ANSI编译器允许把一个字符串常量存储于一个地方即使它在程序中出现多次。因此在ANSI中，不允许修改字符串常量，或者提供编译时选项，让你自行选择是否允许修改字符串常量。在实践中，请尽量避免修改字符串常量，如果需要修改，可将它存储于数组中。</p>
+</li>
+<li><p>当一个字符串常量出现于一个表达式中时，表达式所使用的值就是这些存储字符串常量的地址，而不是这些字符本身。因此，不能讲一个字符串常量赋值给一个字符数组，因为字符串常量的直接值是一个指针，而不是这些字符本身。</p>
+</li>
+<li><p>对于字符串常量的赋值、复制等操作可以通过C函数库的函数实现，包括对字符串进行复制、连接、比较以及计算字符串长度和在字符串中查找特定的字符的函数。</p>
+</li>
+<li><p>int* b, c, d中，只有b是指向整型的指针，而c和d都只是普通的整型。</p>
+</li>
+<li><p>在声明指针变量并同时进行赋值时容易产生误解，char *message = “Hello world!”初始值是字符串常量中第1个字符的地址赋值给message本身，而不是表达式 *message。其等效于</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">char	*message;</span><br><span class="line">message = &quot;Hello world!&quot;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>typedef char *ptr_to_char;</code>这个声明把标识符ptr_to_char作为指向字符指针类型的新名字，<code>ptr_to_char a;</code>则声明了a是一个指向字符串的指针。使用typedef而不用#define来创建新的类型名，是因为后者无法正确地处理指针类型，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#define  d_ptr_to_char  char*</span><br><span class="line">d_ptr_to_char	a, b;</span><br></pre></td></tr></table></figure>
+
+<p>正确地声明了a，但是b却被声明为一个字符。在定义更为复杂的类型名字时，如函数指针或指向数组的指针，使用typedef更合适。</p>
+</li>
+</ol>
+<p>–20.11.13–</p>
+<ol start="14">
+<li><p>常量的值是不能被修改的，只有初始化时才能进行一次赋值。</p>
+</li>
+<li><p>指针变量和它所指向的实体都可能成为常量，例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>	*pi;</span><br></pre></td></tr></table></figure>
+
+<p>pi是一个普通的指向整型的指针。而变量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>	<span class="keyword">const</span> *pci;</span><br></pre></td></tr></table></figure>
+
+<p>则是一个指向 整型常量 的 指针，你可以修改指针的值（指针指向的地址值），但不能修改它所指向的值（指针指向的地址上存储的内容）。相比之下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> * <span class="keyword">const</span> pci;</span><br></pre></td></tr></table></figure>
+
+<p>则声明pci为一个指向 整型 的 常量指针，无法修改它的值，但却可以修改它所指向的地址上的整型的值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> * <span class="keyword">const</span> cpci;</span><br></pre></td></tr></table></figure>
+
+<p>最后，在cpci这个例子里， 无论是指针本身还是它所指向的地址的值都是常量，是无法修改的。</p>
+</li>
+<li><p><code>#define</code>是指令是另一种常见创建名字常量的机制，<code>#define</code>只要在允许使用字面值常量的地方都可以使用，如声明数长度，而const变量只能用于允许使用变量的地方。</p>
+</li>
+<li><p>使用名字常量可以给数值其符号名，否则数值只能写成字面值的形式，名字常量可以提高程序的维护性。</p>
+</li>
+<li><p>编译器可以确认4种不同类型的作用域：文件作用域、函数组用于、代码块作用域和原型作用域。</p>
+</li>
+<li><p>位于一堆花括号之间的所有语句称为一个代码块(block scope)。当代码块处于嵌套状态时，声明于内层代码块的标识符的作用域到达该代码块的尾部便告终止。然鹅，如果内层代码块有一个标识符的名字与外层代码块的一个标识符同名，内层的那个标识符就将隐藏外层的标识符——外层的那个标识符无法在内层代码块中通过名字访问。</p>
+</li>
+<li><p>在非嵌套的情况下，声明于每个代码的变量无法被另一个代码块访问，因为它们的作用域并无重叠之处，且这两个代码块中的变量能够共享一个内存地址，因为任意时刻，两个非嵌套代码块最多只有一个处于活动状态。</p>
+</li>
+<li><p>任何在所有代码块之外声明的标识符都具有文件作用域(file scope)，它表示这些标识符从它们的声明之处知道它所在的源文件结尾处都是可以访问的。</p>
+</li>
+<li><p>原型作用域(prototype scope)值适用于在函数原型中声明的参数名。</p>
+</li>
+<li><p>函数作用域(function scope)只适用于语句标签，语句标签用于goto语句。一个函数中的所有语句标签必须唯一。</p>
+</li>
+<li><p>链接属性共有3种——external(外部)、internal(内部)和none(无)。没有链接属性的标识符被当做单独的个体，该标识符的多个声明被当做独立不同的实体。internal链接属性的标识符在同一个源文件内的所有声明都指向同一个实体，但不同源文件的多个声明则分属不同的实体。最后external链接属性的标识符不论声明多少次、位于几个源文件，都表示一个实体。</p>
+</li>
+<li><p>只有具备文件作用域的标识符才能拥有external或internal的链接属性，其他作用域的标识符都是none属性。默认缺省情况下，具备文件作用域的标识符拥有external属性，即该标识符可以跨文件访问，也就是说，在一个源文件定义的全局变量，可以在另一个源文件直接访问，而一般会在需要使用该变量的源文件的声明中添加extern关键字来使读者更容易理解。</p>
+</li>
+<li><p>使用static关键字可以使得原先拥有external属性的标识符变为internal属性，但要注意：static关键字只有在作用于external属性的标识符(代码块之外的变量声明)才能修改其链接属性，但标识符的存储类型和作用域不收影响。对其他作用域的标识符是另一种功能。当它用于代码块内部的变量声明时，static关键字用于修改变量的存储类型，从自动变量修改为静态变量。但变量的链接属性和作用域不受影响。这种方式声明的变量在程序执行前创建，在程序执行时一直存在，而不是每次代码块开始执行前后创建和销毁。</p>
+</li>
+<li><p>文件作用域的标识符经static关键字修饰后变成内部变量，其不能跨文件访问，只在该文件中可见(static关键字的隐藏属性)。另外加extern也没用，因为链接属性只能修改一次。</p>
+</li>
+<li><p>extern关键字没有像static关键字使用作用域的限制，如下方代码<code>extern int k</code>声明为k指定external链接属性，这样一来函数就可以访问在其他原文件声明的外部变量了，链接属性只能修改一次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static int i;</span><br><span class="line">int func() &#123;</span><br><span class="line">	extern int i;</span><br><span class="line">	extern int k;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上例子中，函数内的extern关键字并不会修改static属性。</p>
+</li>
+<li><p>有3个地方可以存储变量：普通内存、运行时堆栈、硬件寄存器。</p>
+</li>
+<li><p>变量的缺省存储类型取决于其声明位置。凡是在代码块之外声明的变量总是存储于静态内存中，也就不属于堆栈的内存，这类变量为静态变量，静态变量在程序运行之前创建，在程序整个执行期间始终存在，若无重新赋值，在程序结束前会维持不变。</p>
+</li>
+<li><p>在代码块内部声明的变量缺省的存储类型是自动的，只有程序执行到声明自动变量的代码块时其才被创建，离开该代码块时便自动销毁。再次执行同一代码块时便重新创建，与上一次无关联。</p>
+</li>
+<li><p>代码块内声明的变量加上static关键字可使其从自动变为静态存储类型，使其生命周期摆脱代码块执行周期限制而在程序的整个执行周期内都存在。</p>
+</li>
+<li><p>修改变量的存储类型并不表示修改该变量的作用域，它仍然只能在该代码块内部按名字访问。</p>
+</li>
+<li><p>函数形参不能声明为静态，因为实参总是在堆栈中传递给函数，用于支持递归。</p>
+</li>
+<li><p>关键字register用于自动变量的声明，提示其存储于硬件寄存器中，这类变量称为寄存器变量。通常寄存器变量比存储于内存的变量访问起来效率更高。但编译器并全部识别register关键字，甚至忽略一部分，这由编译器决定。</p>
+</li>
+<li><p>有些计算机中，把频繁执行间接访问操作的指针存放于寄存器可大大提高程序效率。</p>
+</li>
+<li><p>函数形参可以声明为寄存器变量，编译器会在函数的起始位置把这些值从堆栈复制到寄存器中，但完全有可能这个优化措施节省的时间和空间开销还抵不上复制几个值所用的开销。</p>
+</li>
+<li><p>寄存器变量的创建和销毁时间与自动变量相同，但它需要一些额外的工作。在一个使用寄存器变量的函数返回之前，这些寄存器先前存储的值必须恢复，确保调用者的寄存器未被破坏。许多机器使用堆栈来完成这个任务，在函数开始时把所有寄存器的内容都保存在堆栈中，当函数返回时，这些值在复制回寄存器中。</p>
+</li>
+<li><p>机器并不向你提供寄存器变量的地址，因为许多机器的硬件实现并未给寄存器指定地址，由于寄存器值的保存和恢复，某个特定的寄存器在不同的时刻所保存的值不一定相同。</p>
+</li>
+<li><p>自动变量和静态变量的初始化存在一个重要的差别。子啊静态变量的初始化中，可以把可执行文件想要初始化的值放在程序执行时变量将会使用的位置。当可执行文件载入内存时，这个已经保存了正确初始值的位置将幅值给那个变量。</p>
+</li>
+<li><p>完成静态变量初始化任务并不需要额外的时间和指令，变量将会得到正确地值，如果未显式地指定初始值则默认初始化为0。</p>
+</li>
+<li><p>自动变量初始化需要更多的开销，因为当程序链接时还无法判断自动变量的存储位置。因此局部变量在函数的每次调用可能占据不同的位置，自动变量没有缺省初始值。</p>
+</li>
+<li><p>自动变量的初始化较之赋值语句效率并无提高，除了声明const变量外，在声明变量的同时进行初始化和声明后赋值只有风格只差，并无效率之别。</p>
+</li>
+<li><p>隐式的赋值语句使自动变量在程序执行到它们所声明的函数(或代码块)时，每次都将重新初始化。这个行为与静态变量大不相同，后者只是在程序开始执行前初始化一次。</p>
+</li>
+<li><p>由于自动变量的初始化在程序运行时执行，所以任何表达式都可作为其初始化的值，而静态变量没有这一优点。</p>
+</li>
+</ol>
+<p>–20.11.13–</p>
+<ol start="46">
+<li><strong>作用域、存储类型示例</strong></li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>	a = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">extern</span>	<span class="keyword">int</span> b;</span><br><span class="line"><span class="keyword">static</span> 	<span class="keyword">int</span> c;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">d</span><span class="params">( <span class="keyword">int</span> e )</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>	f = <span class="number">15</span>;</span><br><span class="line">    <span class="keyword">register</span> 	<span class="keyword">int</span>	b;</span><br><span class="line">    <span class="keyword">static</span>		<span class="keyword">int</span>	g = <span class="number">20</span>;</span><br><span class="line">    <span class="keyword">extern</span>		<span class="keyword">int</span>	a;</span><br><span class="line">    ...</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span>	e;</span><br><span class="line">        <span class="keyword">int</span>	a;</span><br><span class="line">        <span class="keyword">extern</span>	<span class="keyword">int</span>	h;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span>	x;</span><br><span class="line">        <span class="keyword">int</span>	e;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span>	<span class="keyword">int</span>	<span class="title">i</span><span class="params">()</span>	</span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>​    以上例子程序阐明了作用域和存储类型。属于文件作用域的声明在缺省情况下为external链接属性，所以第1行的a的链接属性为external。如果b的定义在其他地方，第2行的extern关键字在技术上井非必需,但在风格上却是加上这个关键字为好。第3行的static关键字修改了c的缺省链接属性，把他改成了internal。声明了变量a和b（具有external链接属性）的其他源文件在使用这两个变量时实际所访问的声明于此处的这两个变量。但是，变量c只能由这个源文件访问，因为它具有internal链接属性。</p>
+<p>​    变量a、b、c的存储类型为静态，表示它们并不是存储于堆栈中。因此，这些变量在程序执行之前创建，并一直保持它们的值，直到程序结束。当程序开始执行时，变量a将初始化为5。</p>
+<p>​    这些变量的作用域一直延伸到这个源文件结束为止，但第7行和第13行声明的局部变量a和b在那部分程序中将隐藏同名的静态变量。因此这3个变量的作用域为：</p>
+<p>a    第1至12行，第17至29行</p>
+<p>b    第2至6行，第25至29行</p>
+<p>c    第3至29行</p>
+<p>​    第4行声明了两个标识符。d的作用域从第4行直到文件结束。函数d的定义对于这个源文件中以后想要调用它的函数而言起到函数原型的作用。作为函数名，d在缺省情况下具有 external  链接属性，所以其他源文件只要在文件上存在d的原型,就可以调用d。如果我们将函数声明为 static，就可以把它的链接属性从 external改为 internal，但这样做将使其他源文件不能访问这个函数。对于 函数而言，存储类型并不是问题，因为代码总是存储于静态内存中。</p>
+<p>​    参数e不具有链接属性，所以我们只能从函数内部通过名字访问它。它具有自动存储类型，所以它在函数被调用时被创建，当函数返回时消失。由于与局部变量冲突，它的作用域限于第6至11行，第17至19行以及第23至24行。</p>
+<p>​    第6至8行声明局部变量，所以它们的作用域到函数结束为止。它们不具有链接属性，所以它们不能在函数的外部通过名字访问（这是它们称为局部变量的原因）。f 的存储类型是自动，当函数每次被调用时，它通过显式赋值被初始化为15。b的存储类型是寄存器类型，所以它的初始值是垃圾。g的存储类型是静态，所以它在程序的整个执行过程中一直存在。当程序开始执行时，它被初始化为20。当函数每次被调用时，它并不会被重新初始化。</p>
+<p>​    第9行的声明并不需要。这个代码块位于第1行声明的作用域之内。  第12和13行为代码块声明局部变量。它们都具有自动存储类型,不具有链接属性,它们的作用域延伸至第16行。这些变量和先前声明的a和e不同，而且由于名字冲突，在这个代码块中，以 前声明的同名变量是不能被访问的。</p>
+<p>​    第14行使全局变量h在这个代码块内可以被访问。它具有external链接属性，存储于静态内存中。这是唯一一个必须使用extern关键字的声明，如果没有它，h将变成另一个局部变量。</p>
+<p>​    第19行和20行用于创建局部变量（自动、无链接属性、作用域限于本代码块）。这个e和参数e是不同的变量，它和第12行声明的e也不相同。在这个代码块中，从第11行到第18行并无嵌套 ，所以编译器可以使用相同的内存来存储两个代码块中不同的变量e。如果你想让这两个代码块中的e表示同一个变量，那么你就不应该把它声明为局部变量。</p>
+<p>​    最后，第25行声明了函数i，它具有静态链接属性。静态链接属性可以防止它被这个源文件之外的任何函数调用。事实上，其他的源文件也可能声明它自己的函数i，它与这个源文件的i是不同的函数。i的作用域从它声明的位置直到这个源文件结束。函数d不可以调用函数i，因为在d之前不存在i的原型。</p>
+<ol start="47">
+<li><p>具有external链接属性的实体在其他语言的术语里成为全局(global)实体。</p>
+</li>
+<li><p>只要变量并非声明于代码块内部，它在缺省情况下的链接属性即为external。如果一个变量声明于代码块内部，在它前面添加extern关键字将使它所引用的是全局变量而非局部变量。</p>
+</li>
+<li><p>具有external链接属性的实体总是具有静态存储类型。</p>
+</li>
+<li><p>作用域、链接属性和存储类型总结</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="center">变量类型</th>
+<th align="center">声明的位置</th>
+<th align="center">是否存储于堆栈</th>
+<th align="center">作用域</th>
+<th>如果声明为static</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">全局</td>
+<td align="center">所有代码块之外</td>
+<td align="center">否</td>
+<td align="center">从声明到文件尾</td>
+<td>不允许从其他源文件访问</td>
+</tr>
+<tr>
+<td align="center">局部</td>
+<td align="center">代码块起始处</td>
+<td align="center">是</td>
+<td align="center">整个代码块</td>
+<td>变量不存储于堆栈中，它的值在程序整个执行期一直保持</td>
+</tr>
+<tr>
+<td align="center">形式参数</td>
+<td align="center">函数头部</td>
+<td align="center">是</td>
+<td align="center">整个函数</td>
+<td>不允许</td>
+</tr>
+</tbody></table>
+<ol start="51">
+<li><p>一个无符号变量可不可以比相同长度的有符号变量容纳更多的值？</p>
+<p>否，任何给定的n个位的值2^n个不同的组合。一个有符号值和无符号值仅有的区别在于它的一半值是如何解释的。在一个有符号值中，它们是负值。在一个无符号值中，它们是一个更大的正值。即容纳的值的范围是一样的，只是值的区间不同。</p>
+</li>
+<li><p>假如int和float类型都是32位长，你觉得那种类型能容纳的值更多一些？</p>
+<p>在绝大多数浮点系统中，零通常有多种表示形式，而且通过使用不规范的小数形式，其他值也具有不同的表示形式，因此 float 能够表示的不同值的数量比 int 少。</p>
+</li>
+<li><p>某个函数包含了一个自动变量，这个函数子啊同一行中被调用了两次，该变量第二次调用起始时的值和第一次调用即将结束时的值有无可能相同？</p>
+<p>有可能相同，但不能指望它，它是不可靠的，在有些架构的机器上，一个硬件中断将把机器的状态信息压倒堆栈上，它们将破坏这些变量。</p>
+</li>
+</ol>
+<p>–20.11.16–</p>
+<h3 id="四章"><a href="#四章" class="headerlink" title="四章"></a>四章</h3><ol>
+<li>if else 语句中else语句从属于最靠近它的不完整的 if 语句</li>
+</ol>
+<h3 id="五章"><a href="#五章" class="headerlink" title="五章"></a>五章</h3><ol>
+<li><p>右移位操作存在一个左移位操作不存在的问题：从左移入新位时，(1)逻辑移位，左移入的位用0填充；(2)算术移位，新位由符号位决定，符号位为1则均为1，0则移入的位均为0，以保持原数正负形式不变。只有操作数是负值时算术左移和逻辑左移不同。标准中，右移位情况下，所有无符号值都是逻辑移位，而有符号值移位类型取决于编译器。因此有符号数的右移位操作是不可移植的。</p>
+</li>
+<li><p>左右移位操作符的操作数都必须是整数类型。</p>
+</li>
+<li><p>移位操作数是负数时<code>a &lt;&lt; -5</code> ，该表达式实际可能执行左移27位，这类移位行为在标准中未定义，所以应该避免这种类型的移位，这类移位操作不可移植。</p>
+</li>
+<li><p>位操作实例</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">置<span class="number">1</span>操作：value = value | <span class="number">1</span> &lt;&lt; bit_number;	    或者value |= <span class="number">1</span> &lt;&lt; bit_number;</span><br><span class="line">置<span class="number">0</span>操作：value = value &amp; ~(<span class="number">1</span> &lt;&lt; bit_number);	或者value &amp;= ~(<span class="number">1</span> &lt;&lt; bit_number);</span><br></pre></td></tr></table></figure>
+
+<p>对指定位进行测试，如果该位为1，则下列表达式结果为非零值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">value &amp; <span class="number">1</span> &lt;&lt; bit_number</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>赋值表达式的值就是左操作数的新值，它可以作为其他赋值操作符的操作数，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r = s + ( t = u - v ) / <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这条语句把表达式<code>u-v</code>的值赋值给t，然后把t的值除以3，再把除法结果与s相加，其结果赋值给r。尽管这种写法合法，但为了方便阅读维护，建议拆开写。</p>
+</li>
+<li><p>将整型值赋值给字符型变量时，整型值将被截短后进行赋值，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> ch;</span><br><span class="line"><span class="keyword">while</span>( ( ch = getchar() ) != EOF )</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，<code>getchar()</code>函数返回值是整型，而在定义<code>ch</code>时定义成字符型，将导致<code>getchar</code>返回值被截短，而EOF是整型，所以截短后的返回值存入<code>ch</code>并提升为整型并与EOF进行比较。当这段错误代码在有符号字符集的机器上运行时，如果取了一个值为\377的字节时，循环会终止，因为这个值截短再提升之后与EOF相等。而当这段代码在使用无符号字符集的机器上运行时，这个循环将永远不会终止！</p>
+</li>
+<li><p>尽量使用复合赋值符，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[ <span class="number">2</span> * (y - <span class="number">6</span>*f(x)) ] += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>相当于</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[ 2 * (y - 6*f(x)) ] = a[ 2 * (y - 6*f(x)) ] + 1</span><br></pre></td></tr></table></figure>
+
+<p>但+=操作符的左操作数a[ 2 * (y - 6*f(x)) ]只求值一次，效率更高，出错率更低。</p>
+</li>
+<li><p><code>sizeof</code> 不是函数而是一个操作符，它可以判断操作数(表达式、变量)的长度，以字节为单位表示，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sizeof</span>(<span class="keyword">int</span>)					<span class="keyword">sizeof</span> x</span><br></pre></td></tr></table></figure>
+
+<p>第一个表达式返回整型变量的字节数，其结果取决于机器环境。第二个表达式返回变量x所占的字节数，当操作数为数组时返回该数组的长度，以字节为单位。判断表达式的长度并不需要对表达式进行求值，所以</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sizeof</span>(a = b + <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>并没有向a赋任何值。</p>
+</li>
+<li><p><code>++</code>或<code>--</code>操作符要求操作数必须是左值，前缀和后缀形式的增值操作符都复制一份变量值的拷贝，前缀操作符在进行复制之前增加变量的值，而后缀操作符在进行复制之后在增加变量的值。这些操作符的结果不是被他们所修改的变量，而是变量值的拷贝，因此：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">++a = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<p><code>++a</code>的结果是a值的拷贝，并不是变量本身，因此无法向一个值进行赋值。</p>
+</li>
+<li><p>关系操作符(&gt;、&gt;=、&lt;、&lt;=、!=、==)产生的结果都是一个整型值，而不是布尔值，c语言没布尔值。</p>
+</li>
+<li><p>逻辑操作符( &amp;&amp; 和 || )的短路求值(short-circuited evaluation)：&amp;&amp;和||操作符总是先对左操作数进行求值，如果满足短路条件(&amp;&amp;中左操作数为假或||左操作数为真)，则不再对右操作数进行求值。</p>
+</li>
+<li><p>逗号操作符将两个或多个表达式分隔开来，这些表达式自左向右逐个求值，整个逗号表达式的值就是<strong>最后</strong>那个表达式的值。逗号操作符妙用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a = get_value();</span><br><span class="line">count_value( a );</span><br><span class="line"><span class="keyword">while</span>( a &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">    a = get_value( <span class="number">0</span> );</span><br><span class="line">    count_value( a );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以改写成</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>( a = get_value( <span class="number">0</span> ), count_value( a ), a &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者使用内嵌赋值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>( count_value(a = get_value(<span class="number">0</span>) ), a &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>arrar[ 下标 ]</code>与<code>*( array + ( 下标 ) )</code>是等价的。</p>
+</li>
+<li><p>如果s是个结构变量，那么<code>s.a</code>就访问s中名叫a的成员。用指向结构的指针访问结构成员时，可以用<code>-&gt;</code>访问其成员，而不是用<code>.</code>操作符。</p>
+</li>
+<li><p>c语言没有布尔类型，所以用整型替代，<strong>零是假，任何非零值都为真</strong>。</p>
+</li>
+<li><p>c语言中常通过<code>#define FALSE 0</code> 和<code>#define TRUE 1</code> 来把整型值当做布尔值使用，因此某一布尔值判断是否为真时不要通过比较而是直接用<code>if(a)</code>或<code>if(!a)</code>来进行判断。整型值与布尔值不要混用，如果该整型变量在程序中作为布尔值使用，则该变量始终只有TRUE(1)或FALSE(0)两个值，而不要有其他2、3等整型数值。</p>
+</li>
+<li><p>如果变量是整型值而不是布尔值，在对其进行测试时应该显式地进行测试<code>if( value != 0 )</code> 而不用简写<code>if(value)</code> 因为简写暗示该变量本质上是布尔型的。</p>
+</li>
+<li><p>左值可以出现在赋值符的左边，它标识计算机内存中的一个位置。右值表示一个值，只能出现在赋值符的右边。每个左值同时也可以是个右值，但右值不能是左值。</p>
+</li>
+<li><p>字面值常量都不是左值，变量可以作为左值而表达式也可以作为左值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[ b + <span class="number">10</span> ] = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>下标引用实际上是一个操作符，所以表达式的左边实际上是个表达式，但它因为表示了一个特定的位置而合法存在。</p>
+</li>
+<li><p>c语言中有<strong>4个操作符</strong>( ? : 、&amp;&amp;、||、, )可以对整个表达式的求值顺序施加控制，它们或者保证某个子表达式能够在另一个子表达式的所有求值过程完成之前进行求值，或者可能使得某个表达式被完全跳过而不再求值。</p>
+</li>
+<li><p>表达式的求值顺序并非完全有操作符优先级决定，如下面的语句是非常危险的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c + --c</span><br></pre></td></tr></table></figure>
+
+<p>操作符的优先级规则要求自减运算在加法运算之前进行，但没法确定加法操作数左边的c是自减之前还是之后的值，不同的编译器会有不同的情况。</p>
+</li>
+<li><p>操作符的优先级决定了相邻的操作数哪个先被执行，如果优先级相等，那么将由它们的结合性决定，但这些不能完全决定表达式的求值顺序。编译器只要不违反优先级和结合性原则，便可以自由决定求值顺序，这种情况是不可移植的，要极力避免的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f() + g() + h();</span><br></pre></td></tr></table></figure>
+
+<p>上面尽管左边的加法运算必须在右边的加法运算之前执行，但对于各个函数的调用顺序并没有规则加以限制，如果这些函数执行同一个I/O任务或修改同一个全局变量，那么顺序将会导致结果有区别，所以最好使用临时变量让函数调用单独运行。</p>
+</li>
+<li><p>条件操作符在运行时较if语句是更快还是更慢？</p>
+<p>if方案看上去更臃肿一些，因为它具有两条存储到i的指令，但是它们之间只有一条指令会执行，所以条件操作符和if语句二者速度并无区别。</p>
+</li>
+</ol>
+<p>–20.11.17–</p>
+<h3 id="六章"><a href="#六章" class="headerlink" title="六章"></a>六章</h3><ol>
+<li><p>硬件并不提供变量名字与内存位置之间的关联，它是由编译器实现的，硬件仍然通过地址访问内存位置。</p>
+</li>
+<li><p>变量包含了一序列内容为0或1的位，它们可以被解释成整数，也可以被解释成浮点数，这取决于它们被使用的方式。不能简单的通过检查一个值的位来判断它的类型，必须观察这个值的使用方式。</p>
+</li>
+<li><p>通过一个指针访问它所指向的地址的过程称为间接访问(indirection)或解引用指针(dereferencing the pointer)。这个用于执行间接访问的操作符是单目操作符*。</p>
+</li>
+<li><p>声明一个变量指针并不会自动分配任何内存。在对指针执行间接访问前，指针必须进行<strong>初始化</strong>：或者使它指向现有的内存，或者给它分配动态内存。对未初始化的指针变量执行间接访问操作是非法的，而且这种错误常常难以检测。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *a;</span><br><span class="line">*a = <span class="number">12</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在unix系统上，这个错误被称为“段违例( segmentation violation )”或“内存错误(memory fault)”，它提示程序试图访问一个未分配给程序的内存位置。在windows中，对未初始化或者非法指针进行间接的访问操作是一般保护性异常( General Portection Exception )的根源之一。</p>
+</li>
+<li><p>NULL 指针是一个特殊的指针变量，它表示不指向任何东西。要使一个指针变量为NULL，你可以给它赋一个零值，为测试一个指针变量是否为NULL，你可以将它与0值进行比较。</p>
+</li>
+<li><p>对一个NULL指针进行解引用是非法的。其后果因编译器而异，两个常见的后果是返回内存位置0的值以及终止程序。</p>
+</li>
+<li><p>除了NULL指针外，没有其他内建的记法来表示指针常量，因为程序员通常无法预测编译器会把变量放在内存中的什么位置。</p>
+</li>
+<li><p>指针是变量，因此也可以作为左值。</p>
+</li>
+<li><p>假设a存储于位置100，那么<code>*100 - 25</code>看上去是把25赋值给a，但这是错的，这是非法的，因为字面值100的类型是整型，而间接访问操作只能作用于指针类型的表达式，如果确实想把25存储于位置100，那么必须使用强制类型转换：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*(<span class="keyword">int</span> *)<span class="number">100</span> = <span class="number">25</span>;</span><br></pre></td></tr></table></figure>
+
+<p>把100从整型转换为指向整型的指针。</p>
+</li>
+<li><p>指针变量与其他变量一样，占据内存中某个特定的位置，所以用&amp;操作符取得它的地址是合法的，而register变量不能用&amp;。</p>
+</li>
+<li><p>下面</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> ch = <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="keyword">char</span> *cp = &amp;ch;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">表达式</th>
+<th align="center">右值</th>
+<th align="center">能否为左值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">&amp;ch</td>
+<td align="center">变量ch的地址</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">cp</td>
+<td align="center">cp的值</td>
+<td align="center">可</td>
+</tr>
+<tr>
+<td align="center">&amp;cp</td>
+<td align="center">指向字符的指针cp的地址</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">*cp</td>
+<td align="center">cp所指地址存储的值: ‘a’</td>
+<td align="center">可</td>
+</tr>
+<tr>
+<td align="center">*cp +1</td>
+<td align="center">cp所指地址存储的值的拷贝加上1:  ‘b’</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">*(cp + 1)</td>
+<td align="center">cp后面内存位置上的值</td>
+<td align="center">可</td>
+</tr>
+<tr>
+<td align="center">++cp</td>
+<td align="center">增值后的指针的一份拷贝: 拷贝的cp的值为原来cp的值+1</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">cp++</td>
+<td align="center">返回cp的值的一份拷贝然后在增加cp的值，整个表达式的值是cp原值的拷贝</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">*++cp</td>
+<td align="center">ch后面内存地址的值</td>
+<td align="center">可</td>
+</tr>
+<tr>
+<td align="center">*cp++</td>
+<td align="center">ch的值: *cp</td>
+<td align="center">*cp = ?, cp+1</td>
+</tr>
+<tr>
+<td align="center">++*cp</td>
+<td align="center">++作用于所有右侧操作数，结果是cp指向的位置的值+1</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">(*cp)++</td>
+<td align="center">ch增值前的原先值</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">++*++cp</td>
+<td align="center">访问cp+1后指向的值并+1作为输出</td>
+<td align="center">非法</td>
+</tr>
+<tr>
+<td align="center">++*cp++</td>
+<td align="center">访问cp指向的值+1作为输出，最后cp+1</td>
+<td align="center">非法</td>
+</tr>
+</tbody></table>
+<p>注：++操作符优先级高于*操作符。但 <code>*cp++</code>中表达式结果看上去先执行间接访问操作。事实上，这里涉及3个步骤：(1) ++操作符产生cp的一份拷贝，(2)++操作符增加cp的值， (3)cp的拷贝执行间接访问操作并作为表达式的输出。</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/20/%E5%B0%86hexo%E9%83%A8%E7%BD%B2%E5%88%B0github%E4%B8%8A%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" rel="next" title="将hexo部署到github上遇到的一些问题">
+                <i class="fa fa-chevron-left"></i> 将hexo部署到github上遇到的一些问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/10/hexo%E9%83%A8%E7%BD%B2%E5%88%B0vps/" rel="prev" title="hexo部署到私有云服务器">
+                hexo部署到私有云服务器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">一章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%AB%A0"><span class="nav-number">2.</span> <span class="nav-text">二章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%AB%A0"><span class="nav-number">3.</span> <span class="nav-text">三章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%AB%A0"><span class="nav-number">4.</span> <span class="nav-text">四章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E7%AB%A0"><span class="nav-number">5.</span> <span class="nav-text">五章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E7%AB%A0"><span class="nav-number">6.</span> <span class="nav-text">六章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

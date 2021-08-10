@@ -1,37 +1,755 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在服务器上搭建frp内网穿透服务端，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="frp结合nginx实现内网穿透">
+<meta property="og:url" content="http://yoursite.com/2020/01/13/padavan%E9%83%A8%E7%BD%B2ftp%E5%AE%9E%E7%8E%B0frp%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="路漫漫其修远兮">
+<meta property="og:description" content="在服务器上搭建frp内网穿透服务端，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-01-13T08:48:10.000Z">
+<meta property="article:modified_time" content="2020-11-19T04:16:40.298Z">
+<meta property="article:author" content="Yue">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"right","wideth":200,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":1},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/13/padavan部署ftp实现frp穿透问题/"/>
+
+
+
+
+
+  <title>frp结合nginx实现内网穿透 | 路漫漫其修远兮</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">路漫漫其修远兮</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/books" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            书
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/13/padavan%E9%83%A8%E7%BD%B2ftp%E5%AE%9E%E7%8E%B0frp%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="路漫漫其修远兮">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">frp结合nginx实现内网穿透</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-13T16:48:10+08:00">
+                2020-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <center>在服务器上搭建frp内网穿透服务端，实现外网访问路由器主页、ftp服务器等本地功能，同时使用nginx实现frp与其他静态网站服务共用80端口。</center><span id="more"></span>
+
+<h2 id="frp在服务器上的搭建"><a href="#frp在服务器上的搭建" class="headerlink" title="frp在服务器上的搭建"></a>frp在服务器上的搭建</h2><p>搭建具体搭建以及配置方式参考github开源项目：<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/blob/master/README_zh.md">frp</a><br>在该项目下载对应软件包配置好配置文件后运行即可，frps为服务端，frpc为客户端。</p>
+<h2 id="frps-ini配置"><a href="#frps-ini配置" class="headerlink" title="frps.ini配置"></a>frps.ini配置</h2><p>在服务器中运行的frps服务端配置文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port	= 	5443</span><br><span class="line">bind_addr	= 	0.0.0.0</span><br><span class="line"></span><br><span class="line">auth_token	= 	frpofpadavan</span><br><span class="line">vhost_http_port = 	10080</span><br><span class="line"></span><br><span class="line">subdomain_host  =       frp.yourwebsite.com</span><br><span class="line"></span><br><span class="line">dashboard_port	= 	6443</span><br><span class="line">dashboard_user	= 	username</span><br><span class="line">dashboard_pwd	=	password</span><br><span class="line"></span><br><span class="line">max_pool_count	= 	50</span><br><span class="line">tcp_mux		= 	true</span><br></pre></td></tr></table></figure>
+
+<p>在云服务器安全组中开放端口: 5443,10080,6443。其中：</p>
+<ul>
+<li>bind_port<br>frp服务端监听的端口</li>
+<li>bind_addr<br>frp服务端公网ip，frps部署在服务器中，使用0.0.0.0即可</li>
+<li>auth_token<br>连接秘钥，需要与客户端相同</li>
+<li>subdomain_host<br>自定义二级域名，frpc设置subdomain的参数后，实现subdomain.subdomain_host访问web</li>
+<li>dashboard<br>frp服务状态监控，访问服务器域名加端口输入用户密码即可进入</li>
+<li>max_pool_count<br>开启最大连接池限定</li>
+<li>tcp_mux<br>开启tcp多路复用</li>
+</ul>
+<h2 id="frpc-ini配置"><a href="#frpc-ini配置" class="headerlink" title="frpc.ini配置"></a>frpc.ini配置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr      =   xxx.xxx.xxx.xxx</span><br><span class="line">server_port      =   5443</span><br><span class="line">auth_token       =   frpofpadavan</span><br><span class="line"></span><br><span class="line">tcp_mux          =   true</span><br><span class="line">protocol         =   tcp</span><br><span class="line">pool_count       =   2</span><br><span class="line"></span><br><span class="line">[web]</span><br><span class="line">type       = http</span><br><span class="line">local_ip   = 192.168.2.1</span><br><span class="line">local_port = 80</span><br><span class="line">subdomain  = padavan</span><br><span class="line"></span><br><span class="line">[ssh]</span><br><span class="line">type       = tcp</span><br><span class="line">remote_port= 2222</span><br><span class="line">local_ip   = 192.168.2.1</span><br><span class="line">local_port = 22</span><br><span class="line"></span><br><span class="line">[range:ftp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip  = 192.168.2.1</span><br><span class="line">local_port = 21,50000-50100</span><br><span class="line">remote_port = 2121,50000-50100</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>server_addr<br>服务器公网ip</li>
+<li>server_port、auth_token、tcp_mux<br>与frps中设置的相同</li>
+<li>protocol<br>底层通信使用kcp协议时另其至为kcp，不使用为tcp，默认tcp，可不设置</li>
+<li>pool_count<br>连接池数目，视具体情况而定</li>
+</ul>
+<p>[web]</p>
+<ul>
+<li>local_ip、local_port<br>路由器控制台主页地址和登陆端口</li>
+<li>subdomain<br>二级域名设置</li>
+</ul>
+<p>如果有需要可以继续照相同格式增加[web1]、[web2]等设置，实现二级域名访问其他本地网页功能</p>
+<p>[range:ftp]</p>
+<ul>
+<li>local_port<br>除了映射到本地的ftp端口，还要映射完整被动模式的端口范围（<code>注:</code>该连续端口在路由器以及云服务器的防火墙中都要开放），因为padavan中ftp服务器默认开启pasv模式，在文件传输的时候需要使用该范围端口</li>
+<li>remote_port<br>设置访问ftp的端口（记得防火墙中开放）以及与上述ftp被动模式对应的端口范围</li>
+</ul>
+<p>如果ftp服务器pasv下使用frp穿透不设置被动端口映射，将会出现用户授权成功但获取目录失败的情况。</p>
+<p>配置完成后：</p>
+<ul>
+<li><code>padavan.frp.yourdomain.com:10080</code>访问路由器控制端口</li>
+<li>在putty等软件中配置地址<code>yourdomain.com</code>端口<code>2222</code>，即可访问路由器的shell</li>
+<li>在winscp等软件中配置地址<code>yourdomain.com</code>端口<code>2121</code>，即可访问本地ftp服务。</li>
+</ul>
+<p>大多数人购买云服务器并不仅仅是为了实现内网穿透，还会搭建网站等，所以nginx的使用可以实现frp和其他网站共用80端口的功能，这样在访问路由器控制页的时候不需要输入端口号，直接输入网址<code>padavan.frp.yourdomain.com</code>即可。</p>
+<h2 id="nginx配置"><a href="#nginx配置" class="headerlink" title="nginx配置"></a>nginx配置</h2><p>在nginx中，在http中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">···</span><br><span class="line">http &#123;</span><br><span class="line">    ···</span><br><span class="line">    server &#123;</span><br><span class="line">            listen       443 ssl http2;</span><br><span class="line">            server_name  *.frp.yourdomain.com;</span><br><span class="line">            </span><br><span class="line">            ssl_certificate 	/etc/nginx/cert/certificate.pem;</span><br><span class="line">            ssl_certificate_key	/etc/nginx/cert/certificate.key;</span><br><span class="line">            ssl_session_timeout 5m;</span><br><span class="line">            ssl_protocols		TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">            ssl_ciphers		ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">            ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            location / &#123;</span><br><span class="line"></span><br><span class="line">                proxy_pass http://云服务器ip:10080; </span><br><span class="line">                proxy_set_header Host $host;</span><br><span class="line">                proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                proxy_set_header REMOTE-HOST $remote_addr;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                proxy_set_header Upgrade $http_upgrade;</span><br><span class="line">                proxy_set_header Connection &quot;upgrade&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name *.frp.yourdomain.com;</span><br><span class="line">        </span><br><span class="line">        return 301 https://$http_host$request_uri;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p>上述配置，监听80端口的并将其转发到443端口，在443中使用nginx反向代理功能，过滤*.frp.yourdomain.com的网址并将其发送至上游服务器（frp），proxy_pass中服务器端口为<code>vhost_http_port</code>端口。如此即可实现使用https和http都可访问路由器web服务且不用输入端口号的功能。</p>
+<p>若服务器没有占用80端口的服务，可以直接设置frps.ini中的<code>vhost_http_port</code>为80而无需安装配置nginx，这样亦可以实现URL不输入端口直接访问路由器控制页等本地web服务。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000016556569">frp 和 nginx 搭建一个内网穿透服务器</a><br><a target="_blank" rel="noopener" href="https://www.right.com.cn/forum/thread-331114-1-1.html">padavan怎么利用frp内网穿透ftp服务器？</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/10/hexo%E9%83%A8%E7%BD%B2%E5%88%B0vps/" rel="next" title="hexo部署到私有云服务器">
+                <i class="fa fa-chevron-left"></i> hexo部署到私有云服务器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/11/06/VPS%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" rel="prev" title="VPS初始化配置指南">
+                VPS初始化配置指南 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#frp%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">frp在服务器上的搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#frps-ini%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">frps.ini配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#frpc-ini%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">frpc.ini配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx%E9%85%8D%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">nginx配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yue</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
